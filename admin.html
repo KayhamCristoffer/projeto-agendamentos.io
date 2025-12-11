@@ -1,38 +1,345 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
+  <!-- Meta Tags Essenciais -->
   <meta charset="UTF-8">
-  <title>Painel Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO -->
+  <meta name="description" content="Painel administrativo - Gerenciar agendamentos">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Título -->
+  <title>Painel Admin - Sistema de Agendamentos</title>
+  
+  <!-- Estilos -->
   <link rel="stylesheet" href="assets/style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 </head>
 
 <body>
-<div class="container">
-  <h2>Painel Administrativo</h2>
+  <!-- Container Principal -->
+  <main class="container" role="main" style="max-width: 800px;">
+    <!-- Cabeçalho -->
+    <header>
+      <h2>🛠️ Painel Administrativo</h2>
+      <p>Gerencie todos os agendamentos do sistema</p>
+    </header>
 
-  <button onclick="carregar()">Carregar Agendamentos</button>
+    <!-- Estatísticas -->
+    <div id="stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+        <div style="font-size: 32px; font-weight: bold;" id="totalAgendamentos">0</div>
+        <div style="font-size: 14px; opacity: 0.9;">Total</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+        <div style="font-size: 32px; font-weight: bold;" id="pendentes">0</div>
+        <div style="font-size: 14px; opacity: 0.9;">Pendentes</div>
+      </div>
+      <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+        <div style="font-size: 32px; font-weight: bold;" id="hoje">0</div>
+        <div style="font-size: 14px; opacity: 0.9;">Hoje</div>
+      </div>
+    </div>
 
-  <ul id="lista"></ul>
-</div>
+    <!-- Controles -->
+    <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+      <button onclick="carregar()" class="button" style="flex: 1; min-width: 150px;">
+        🔄 Atualizar Lista
+      </button>
+      
+      <button onclick="filtrarPorStatus('pendente')" class="button button-outline" style="flex: 1; min-width: 150px;">
+        📋 Pendentes
+      </button>
+      
+      <button onclick="filtrarPorStatus('todos')" class="button button-outline" style="flex: 1; min-width: 150px;">
+        📊 Todos
+      </button>
+    </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-<script src="firebase/firebase-config.js"></script>
+    <!-- Filtros -->
+    <div style="margin-bottom: 24px;">
+      <input 
+        type="text" 
+        id="buscar" 
+        placeholder="🔍 Buscar por nome, serviço ou e-mail..." 
+        style="margin-bottom: 8px;"
+      />
+    </div>
 
-<script>
-function carregar(){
-  firebase.database().ref("agendamentos").once("value")
-    .then(snapshot => {
-        lista.innerHTML = "";
-        snapshot.forEach(item => {
-          const dados = item.val();
-          let li = document.createElement("li");
-          li.textContent = `${dados.nome} - ${dados.servico} - ${dados.dataHora}`;
-          lista.appendChild(li);
+    <!-- Lista de Agendamentos -->
+    <div id="listaContainer">
+      <div id="loading" style="text-align: center; padding: 40px;">
+        <div class="spinner"></div>
+        <p>Carregando agendamentos...</p>
+      </div>
+      <ul id="lista" style="display: none;"></ul>
+      <div id="vazio" style="display: none; text-align: center; padding: 40px; color: #6c757d;">
+        <p style="font-size: 48px; margin-bottom: 16px;">📭</p>
+        <p>Nenhum agendamento encontrado</p>
+      </div>
+    </div>
+
+    <!-- Links de Navegação -->
+    <a href="index.html" style="text-align: center; margin-top: 24px;">
+      ← Voltar para página inicial
+    </a>
+  </main>
+
+  <!-- Firebase SDK (versão 9 - compatibilidade) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
+  <!-- Configuração Firebase -->
+  <script src="firebase/firebase-config.js"></script>
+
+  <!-- Lógica do Painel Admin -->
+  <script>
+    // Elementos do DOM
+    const listaElement = document.getElementById('lista');
+    const loadingElement = document.getElementById('loading');
+    const vazioElement = document.getElementById('vazio');
+    const buscarInput = document.getElementById('buscar');
+    const totalElement = document.getElementById('totalAgendamentos');
+    const pendentesElement = document.getElementById('pendentes');
+    const hojeElement = document.getElementById('hoje');
+
+    // Variáveis globais
+    let todosAgendamentos = [];
+    let filtroAtual = 'todos';
+
+    // Função principal para carregar agendamentos
+    function carregar() {
+      loadingElement.style.display = 'block';
+      listaElement.style.display = 'none';
+      vazioElement.style.display = 'none';
+
+      firebase.database().ref("agendamentos").once("value")
+        .then(snapshot => {
+          todosAgendamentos = [];
+          
+          snapshot.forEach(item => {
+            const dados = item.val();
+            todosAgendamentos.push({
+              id: item.key,
+              ...dados
+            });
+          });
+
+          // Ordenar por data/hora (mais recentes primeiro)
+          todosAgendamentos.sort((a, b) => {
+            return new Date(b.dataHora) - new Date(a.dataHora);
+          });
+
+          atualizarEstatisticas();
+          renderizarLista(todosAgendamentos);
+          loadingElement.style.display = 'none';
+        })
+        .catch(error => {
+          console.error('Erro ao carregar:', error);
+          loadingElement.innerHTML = `<p style="color: #dc3545;">❌ Erro ao carregar agendamentos</p>`;
         });
-    })
-}
-</script>
+    }
 
+    // Função para renderizar lista
+    function renderizarLista(agendamentos) {
+      listaElement.innerHTML = '';
+
+      if (agendamentos.length === 0) {
+        listaElement.style.display = 'none';
+        vazioElement.style.display = 'block';
+        return;
+      }
+
+      listaElement.style.display = 'block';
+      vazioElement.style.display = 'none';
+
+      agendamentos.forEach(item => {
+        const li = document.createElement('li');
+        li.style.borderLeft = `4px solid ${item.status === 'pendente' ? '#ffc107' : '#28a745'}`;
+        li.style.position = 'relative';
+        
+        // Formatar data
+        const data = new Date(item.dataHora);
+        const dataFormatada = data.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+        const horaFormatada = data.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        // Verificar se é hoje
+        const hoje = new Date();
+        const ehHoje = data.toDateString() === hoje.toDateString();
+
+        li.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <strong style="font-size: 16px; color: #212529;">👤 ${item.nome}</strong>
+                ${ehHoje ? '<span style="background: #ffc107; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">HOJE</span>' : ''}
+              </div>
+              
+              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
+                📞 ${item.telefone || 'Não informado'}
+              </div>
+              
+              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
+                ✂️ <strong>${item.servico}</strong>
+              </div>
+              
+              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
+                📅 ${dataFormatada} às ${horaFormatada}
+              </div>
+              
+              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
+                📧 ${item.userEmail || 'visitante'}
+              </div>
+              
+              ${item.observacoes && item.observacoes !== 'Nenhuma' ? `
+                <div style="font-size: 13px; color: #495057; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px;">
+                  💬 <em>${item.observacoes}</em>
+                </div>
+              ` : ''}
+              
+              <div style="font-size: 12px; color: #adb5bd; margin-top: 8px;">
+                🕐 Criado em: ${new Date(item.criadoEm).toLocaleString('pt-BR')}
+              </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button 
+                onclick="alterarStatus('${item.id}', '${item.status === 'pendente' ? 'confirmado' : 'pendente'}')"
+                style="padding: 8px 16px; font-size: 12px; white-space: nowrap; min-width: 100px;"
+                class="button ${item.status === 'pendente' ? 'button-success' : 'button-secondary'}"
+              >
+                ${item.status === 'pendente' ? '✅ Confirmar' : '🔄 Pendente'}
+              </button>
+              
+              <button 
+                onclick="confirmarExclusao('${item.id}', '${item.nome}')"
+                style="padding: 8px 16px; font-size: 12px; white-space: nowrap;"
+                class="button button-danger"
+              >
+                🗑️ Excluir
+              </button>
+            </div>
+          </div>
+        `;
+        
+        listaElement.appendChild(li);
+      });
+    }
+
+    // Função para atualizar estatísticas
+    function atualizarEstatisticas() {
+      const total = todosAgendamentos.length;
+      const pendentes = todosAgendamentos.filter(a => a.status === 'pendente').length;
+      
+      const hoje = new Date();
+      const hojeCount = todosAgendamentos.filter(a => {
+        const dataAgenda = new Date(a.dataHora);
+        return dataAgenda.toDateString() === hoje.toDateString();
+      }).length;
+
+      totalElement.textContent = total;
+      pendentesElement.textContent = pendentes;
+      hojeElement.textContent = hojeCount;
+    }
+
+    // Função para filtrar por status
+    function filtrarPorStatus(status) {
+      filtroAtual = status;
+      
+      let filtrados = todosAgendamentos;
+      if (status !== 'todos') {
+        filtrados = todosAgendamentos.filter(a => a.status === status);
+      }
+      
+      renderizarLista(filtrados);
+    }
+
+    // Função para alterar status
+    function alterarStatus(id, novoStatus) {
+      firebase.database().ref(`agendamentos/${id}`).update({
+        status: novoStatus,
+        atualizadoEm: new Date().toISOString()
+      })
+      .then(() => {
+        console.log('✅ Status atualizado');
+        carregar(); // Recarregar lista
+      })
+      .catch(error => {
+        console.error('❌ Erro ao atualizar status:', error);
+        alert('Erro ao atualizar status: ' + error.message);
+      });
+    }
+
+    // Função para confirmar exclusão
+    function confirmarExclusao(id, nome) {
+      if (confirm(`⚠️ Deseja realmente excluir o agendamento de "${nome}"?\n\nEsta ação não pode ser desfeita!`)) {
+        excluirAgendamento(id);
+      }
+    }
+
+    // Função para excluir agendamento
+    function excluirAgendamento(id) {
+      firebase.database().ref(`agendamentos/${id}`).remove()
+        .then(() => {
+          console.log('✅ Agendamento excluído');
+          carregar(); // Recarregar lista
+        })
+        .catch(error => {
+          console.error('❌ Erro ao excluir:', error);
+          alert('Erro ao excluir agendamento: ' + error.message);
+        });
+    }
+
+    // Função de busca
+    buscarInput.addEventListener('input', function(e) {
+      const termo = e.target.value.toLowerCase();
+      
+      const filtrados = todosAgendamentos.filter(item => {
+        return (
+          item.nome.toLowerCase().includes(termo) ||
+          item.servico.toLowerCase().includes(termo) ||
+          (item.userEmail && item.userEmail.toLowerCase().includes(termo)) ||
+          (item.telefone && item.telefone.includes(termo))
+        );
+      });
+      
+      renderizarLista(filtrados);
+    });
+
+    // Carregar automaticamente ao abrir a página
+    window.addEventListener('load', carregar);
+
+    // Atualizar automaticamente a cada 30 segundos
+    setInterval(carregar, 30000);
+  </script>
+
+  <!-- Estilos adicionais -->
+  <style>
+    @media (max-width: 768px) {
+      #stats {
+        grid-template-columns: 1fr;
+      }
+      
+      li > div {
+        flex-direction: column !important;
+      }
+      
+      li button {
+        width: 100%;
+        min-width: auto !important;
+      }
+    }
+  </style>
 </body>
 </html>

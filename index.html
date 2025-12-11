@@ -1,27 +1,88 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
+  <!-- Meta Tags Essenciais -->
   <meta charset="UTF-8">
-  <title>Agendamentos Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO -->
+  <meta name="description" content="Sistema de agendamentos online para pequenos negócios - Simples, rápido e eficiente">
+  <meta name="keywords" content="agendamentos, serviços, pequenos negócios, salão, barbearia">
+  <meta name="author" content="Kayham Cristoffer">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sistema de Agendamentos Online">
+  <meta property="og:description" content="Gerencie seus agendamentos de forma simples e eficiente">
+  
+  <!-- Título -->
+  <title>Agendamentos Online - Página Inicial</title>
+  
+  <!-- Estilos -->
   <link rel="stylesheet" href="assets/style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
 </head>
 
 <body>
-  <div class="container">
-    <h2>Agendamentos Online</h2>
+  <!-- Container Principal -->
+  <main class="container" role="main">
+    <!-- Cabeçalho -->
+    <header>
+      <h2>📅 Agendamentos Online</h2>
+      <p>Bem-vindo! Escolha uma opção para começar:</p>
+    </header>
 
-    <p>Bem-vindo! Escolha uma opção:</p>
+    <!-- Navegação -->
+    <nav aria-label="Menu principal">
+      <a href="login.html" class="button" role="button">
+        🔐 Login / Criar Conta
+      </a>
+      
+      <a href="agendar.html" class="button" role="button">
+        📆 Agendar Serviço
+      </a>
+      
+      <a href="admin.html" class="button" role="button">
+        🛠️ Painel Administrativo
+      </a>
+    </nav>
 
-    <a href="login.html"><button>Login / Criar Conta</button></a>
-    <a href="agendar.html"><button>Agendar Serviço</button></a>
-    <a href="admin.html"><button>Painel Administrativo</button></a>
-  </div>
+    <!-- Informações -->
+    <footer style="margin-top: 24px;">
+      <p style="font-size: 14px; color: #6c757d;">
+        Sistema desenvolvido para pequenos negócios<br>
+        <strong>Simples • Rápido • Eficiente</strong>
+      </p>
+    </footer>
+  </main>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <!-- Firebase SDK (versão 9 - compatibilidade) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <script src="firebase/firebase-config.js"></script>
-    <script src="firebase/database.js"></script>
+  <!-- Configuração Firebase -->
+  <script src="firebase/firebase-config.js"></script>
+  <script src="firebase/database.js"></script>
+  
+  <!-- Analytics (opcional) -->
+  <script>
+    // Log de acesso à página inicial
+    console.log('✅ Sistema de Agendamentos Online carregado com sucesso');
+    
+    // Verificar status de autenticação
+    if (typeof firebase !== 'undefined') {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          console.log('✅ Usuário autenticado:', user.email);
+        } else {
+          console.log('ℹ️ Nenhum usuário autenticado');
+        }
+      });
+    }
+  </script>
 </body>
 </html>
