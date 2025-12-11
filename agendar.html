@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendar Serviço</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+<div class="container">
+
+  <h2>Agendar Serviço</h2>
+
+  <input id="nome" type="text" placeholder="Seu nome" required />
+  <input id="servico" type="text" placeholder="Serviço desejado" required />
+  <input id="dataHora" type="datetime-local" required />
+
+  <button onclick="enviarAgendamento()">Enviar Agendamento</button>
+
+  <p id="msg"></p>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+<script src="firebase/firebase-config.js"></script>
+
+<script>
+function enviarAgendamento(){
+
+  const dados = {
+    nome: nome.value,
+    servico: servico.value,
+    dataHora: dataHora.value,
+    user: firebase.auth().currentUser?.email || "visitante"
+  };
+
+  firebase.database().ref("agendamentos").push(dados)
+    .then(() => msg.innerText = "Agendamento enviado!")
+    .catch(err => msg.innerText = err.message);
+}
+</script>
+
+</body>
+</html>

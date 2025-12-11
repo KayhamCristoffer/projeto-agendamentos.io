@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel Admin</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+<div class="container">
+  <h2>Painel Administrativo</h2>
+
+  <button onclick="carregar()">Carregar Agendamentos</button>
+
+  <ul id="lista"></ul>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+<script src="firebase/firebase-config.js"></script>
+
+<script>
+function carregar(){
+  firebase.database().ref("agendamentos").once("value")
+    .then(snapshot => {
+        lista.innerHTML = "";
+        snapshot.forEach(item => {
+          const dados = item.val();
+          let li = document.createElement("li");
+          li.textContent = `${dados.nome} - ${dados.servico} - ${dados.dataHora}`;
+          lista.appendChild(li);
+        });
+    })
+}
+</script>
+
+</body>
+</html>
