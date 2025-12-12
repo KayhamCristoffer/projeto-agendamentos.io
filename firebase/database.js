@@ -172,10 +172,208 @@ function verificarDisponibilidade(dataHora) {
 }
 
 // ============================================
+// FUNÇÕES DE PERFIL DE USUÁRIO
+// ============================================
+
+/**
+ * Criar/Atualizar perfil de usuário
+ * @param {string} userId - ID do usuário
+ * @param {Object} dados - Dados do perfil
+ * @returns {Promise}
+ */
+function salvarPerfilUsuario(userId, dados) {
+  const perfil = {
+    ...dados,
+    atualizadoEm: new Date().toISOString()
+  };
+  return db.ref(`usuarios/${userId}`).set(perfil);
+}
+
+/**
+ * Obter perfil de usuário
+ * @param {string} userId - ID do usuário
+ * @returns {Promise}
+ */
+function obterPerfilUsuario(userId) {
+  return db.ref(`usuarios/${userId}`).once('value')
+    .then((snapshot) => snapshot.val());
+}
+
+/**
+ * Atualizar campos específicos do perfil
+ * @param {string} userId - ID do usuário
+ * @param {Object} dados - Dados para atualizar
+ * @returns {Promise}
+ */
+function atualizarPerfilUsuario(userId, dados) {
+  const dadosAtualizados = {
+    ...dados,
+    atualizadoEm: new Date().toISOString()
+  };
+  return db.ref(`usuarios/${userId}`).update(dadosAtualizados);
+}
+
+/**
+ * Verificar se usuário é admin
+ * @param {string} userId - ID do usuário
+ * @returns {Promise<boolean>}
+ */
+function isAdmin(userId) {
+  return obterPerfilUsuario(userId)
+    .then((perfil) => perfil && perfil.role === 'admin');
+}
+
+// ============================================
+// FUNÇÕES DE CHAT
+// ============================================
+
+/**
+ * Enviar mensagem no chat
+ * @param {string} agendamentoId - ID do agendamento
+ * @param {Object} mensagem - Dados da mensagem
+ * @returns {Promise}
+ */
+function enviarMensagem(agendamentoId, mensagem) {
+  const msg = {
+    ...mensagem,
+    timestamp: Date.now(),
+    criadoEm: new Date().toISOString()
+  };
+  return db.ref(`chats/${agendamentoId}/mensagens`).push(msg);
+}
+
+/**
+ * Listar mensagens de um chat
+ * @param {string} agendamentoId - ID do agendamento
+ * @param {Function} callback - Callback com mensagens
+ */
+function listarMensagens(agendamentoId, callback) {
+  db.ref(`chats/${agendamentoId}/mensagens`)
+    .orderByChild('timestamp')
+    .on('value', (snapshot) => {
+      const mensagens = [];
+      snapshot.forEach((child) => {
+        mensagens.push({
+          id: child.key,
+          ...child.val()
+        });
+      });
+      callback(mensagens);
+    });
+}
+
+/**
+ * Marcar mensagens como lidas
+ * @param {string} agendamentoId - ID do agendamento
+ * @param {string} userId - ID do usuário
+ * @returns {Promise}
+ */
+function marcarComoLido(agendamentoId, userId) {
+  return db.ref(`chats/${agendamentoId}/lido/${userId}`).set(Date.now());
+}
+
+/**
+ * Obter contagem de mensagens não lidas
+ * @param {string} agendamentoId - ID do agendamento
+ * @param {string} userId - ID do usuário
+ * @param {number} ultimaLeitura - Timestamp da última leitura
+ * @returns {Promise<number>}
+ */
+function contarMensagensNaoLidas(agendamentoId, userId, ultimaLeitura) {
+  return db.ref(`chats/${agendamentoId}/mensagens`)
+    .orderByChild('timestamp')
+    .startAt(ultimaLeitura + 1)
+    .once('value')
+    .then((snapshot) => {
+      let count = 0;
+      snapshot.forEach((child) => {
+        const msg = child.val();
+        if (msg.userId !== userId) {
+          count++;
+        }
+      });
+      return count;
+    });
+}
+
+// ============================================
+// FUNÇÕES DE HORÁRIOS DISPONÍVEIS
+// ============================================
+
+/**
+ * Verificar disponibilidade de horário com duração
+ * @param {string} data - Data no formato YYYY-MM-DD
+ * @param {string} horario - Horário no formato HH:MM
+ * @param {number} duracao - Duração em minutos
+ * @returns {Promise<boolean>}
+ */
+function verificarDisponibilidadeComDuracao(data, horario, duracao) {
+  const dataHoraInicio = `${data}T${horario}`;
+  const [hora, min] = horario.split(':').map(Number);
+  
+  // Calcular horário de fim
+  const totalMin = hora * 60 + min + duracao;
+  const horaFim = Math.floor(totalMin / 60);
+  const minFim = totalMin % 60;
+  const horarioFim = `${String(horaFim).padStart(2, '0')}:${String(minFim).padStart(2, '0')}`;
+  const dataHoraFim = `${data}T${horarioFim}`;
+  
+  // Buscar agendamentos na faixa de horário
+  return db.ref('agendamentos')
+    .orderByChild('dataHora')
+    .startAt(data)
+    .endAt(data + 'T23:59')
+    .once('value')
+    .then((snapshot) => {
+      let disponivel = true;
+      snapshot.forEach((child) => {
+        const agendamento = child.val();
+        if (agendamento.status !== 'cancelado') {
+          const agendHorario = agendamento.dataHora.split('T')[1];
+          const agendDuracao = agendamento.duracao || 30;
+          const [agendHora, agendMin] = agendHorario.split(':').map(Number);
+          const agendTotalMin = agendHora * 60 + agendMin;
+          const agendFimMin = agendTotalMin + agendDuracao;
+          
+          const novoInicioMin = hora * 60 + min;
+          const novoFimMin = novoInicioMin + duracao;
+          
+          // Verificar sobreposição
+          if (!(novoFimMin <= agendTotalMin || novoInicioMin >= agendFimMin)) {
+            disponivel = false;
+          }
+        }
+      });
+      return disponivel;
+    });
+}
+
+/**
+ * Obter horários disponíveis para uma data
+ * @param {string} data - Data no formato YYYY-MM-DD
+ * @param {number} duracao - Duração do serviço em minutos
+ * @returns {Promise<Array>}
+ */
+function obterHorariosDisponiveis(data, duracao = 30) {
+  // Gerar todos os slots possíveis
+  const slots = window.gerarSlotsHorario ? window.gerarSlotsHorario(data) : [];
+  
+  // Verificar disponibilidade de cada slot
+  const promises = slots.map(horario => 
+    verificarDisponibilidadeComDuracao(data, horario, duracao)
+      .then(disponivel => ({ horario, disponivel }))
+  );
+  
+  return Promise.all(promises)
+    .then(results => results.filter(r => r.disponivel).map(r => r.horario));
+}
+
+// ============================================
 // Exportar funções para uso global
 // ============================================
 
 if (typeof window !== 'undefined') {
+  // Agendamentos
   window.salvarAgendamento = salvarAgendamento;
   window.listarAgendamentos = listarAgendamentos;
   window.listarAgendamentosOnce = listarAgendamentosOnce;
@@ -188,6 +386,22 @@ if (typeof window !== 'undefined') {
   window.listarAgendamentosPorStatus = listarAgendamentosPorStatus;
   window.contarAgendamentos = contarAgendamentos;
   window.verificarDisponibilidade = verificarDisponibilidade;
+  
+  // Perfil
+  window.salvarPerfilUsuario = salvarPerfilUsuario;
+  window.obterPerfilUsuario = obterPerfilUsuario;
+  window.atualizarPerfilUsuario = atualizarPerfilUsuario;
+  window.isAdmin = isAdmin;
+  
+  // Chat
+  window.enviarMensagem = enviarMensagem;
+  window.listarMensagens = listarMensagens;
+  window.marcarComoLido = marcarComoLido;
+  window.contarMensagensNaoLidas = contarMensagensNaoLidas;
+  
+  // Horários
+  window.verificarDisponibilidadeComDuracao = verificarDisponibilidadeComDuracao;
+  window.obterHorariosDisponiveis = obterHorariosDisponiveis;
 }
 
 console.log('✅ Funções de banco de dados carregadas');
