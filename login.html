@@ -1,372 +1,249 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Meta Tags Essenciais -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO -->
+  <meta name="description" content="Login e cadastro no sistema de agendamentos online">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Título -->
   <title>Login - Sistema de Agendamentos</title>
+  
+  <!-- Estilos -->
   <link rel="stylesheet" href="assets/style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
 </head>
 
 <body>
-  <div class="container">
-    <div class="text-center mb-3">
-      <h2>🔐 Bem-vindo!</h2>
-      <p>Entre na sua conta ou crie uma nova</p>
-    </div>
-
-    <!-- Tabs de Login/Cadastro -->
-    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color);">
-      <button class="btn btn-ghost btn-full" id="tabLogin" onclick="mostrarTab('login')" style="border-radius: 0; border-bottom: 3px solid var(--primary-color);">
-        Login
-      </button>
-      <button class="btn btn-ghost btn-full" id="tabCadastro" onclick="mostrarTab('cadastro')" style="border-radius: 0;">
-        Cadastrar
-      </button>
-    </div>
+  <!-- Container Principal -->
+  <main class="container" role="main">
+    <!-- Cabeçalho -->
+    <header>
+      <h2>🔐 Autenticação</h2>
+      <p>Entre com sua conta ou crie uma nova</p>
+    </header>
 
     <!-- Formulário de Login -->
-    <form id="formLogin" class="slide-up">
+    <form id="loginForm" aria-label="Formulário de login" onsubmit="return false;">
+      <!-- Campo Email -->
       <div class="form-group">
-        <label class="form-label" for="loginEmail">E-mail</label>
+        <label for="email" class="visually-hidden">E-mail</label>
         <input 
-          class="form-input" 
+          id="email" 
           type="email" 
-          id="loginEmail" 
-          placeholder="seu@email.com"
+          placeholder="Digite seu e-mail" 
           required
           autocomplete="email"
+          aria-required="true"
+          aria-describedby="emailHelp"
         />
+        <small id="emailHelp" style="display: none;">Digite um e-mail válido</small>
       </div>
 
+      <!-- Campo Senha -->
       <div class="form-group">
-        <label class="form-label" for="loginSenha">Senha</label>
+        <label for="senha" class="visually-hidden">Senha</label>
         <input 
-          class="form-input" 
+          id="senha" 
           type="password" 
-          id="loginSenha" 
-          placeholder="••••••••"
+          placeholder="Digite sua senha" 
           required
           autocomplete="current-password"
           minlength="6"
+          aria-required="true"
+          aria-describedby="senhaHelp"
         />
+        <small id="senhaHelp" style="display: none;">A senha deve ter no mínimo 6 caracteres</small>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-full">
+      <!-- Botões de Ação -->
+      <button type="submit" onclick="login()" class="button">
         ✅ Entrar
       </button>
-
-      <div class="text-center mt-2">
-        <a href="#" onclick="mostrarEsqueciSenha(); return false;" style="font-size: 14px;">
-          Esqueci minha senha
-        </a>
-      </div>
-    </form>
-
-    <!-- Formulário de Cadastro -->
-    <form id="formCadastro" class="hidden">
-      <div class="form-group">
-        <label class="form-label" for="cadNome">Nome Completo</label>
-        <input 
-          class="form-input" 
-          type="text" 
-          id="cadNome" 
-          placeholder="Seu nome completo"
-          required
-          autocomplete="name"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadTelefone">Telefone</label>
-        <input 
-          class="form-input" 
-          type="tel" 
-          id="cadTelefone" 
-          placeholder="(00) 00000-0000"
-          required
-          autocomplete="tel"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadEmail">E-mail</label>
-        <input 
-          class="form-input" 
-          type="email" 
-          id="cadEmail" 
-          placeholder="seu@email.com"
-          required
-          autocomplete="email"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadSenha">Senha</label>
-        <input 
-          class="form-input" 
-          type="password" 
-          id="cadSenha" 
-          placeholder="••••••••"
-          required
-          autocomplete="new-password"
-          minlength="6"
-        />
-        <small class="form-help">Mínimo de 6 caracteres</small>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadSenhaConfirm">Confirmar Senha</label>
-        <input 
-          class="form-input" 
-          type="password" 
-          id="cadSenhaConfirm" 
-          placeholder="••••••••"
-          required
-          autocomplete="new-password"
-          minlength="6"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-full">
-        ➕ Criar Conta
-      </button>
-    </form>
-
-    <!-- Formulário de Esqueci Senha -->
-    <form id="formEsqueciSenha" class="hidden">
-      <div class="text-center mb-2">
-        <p style="font-size: 14px; color: var(--text-secondary);">
-          Digite seu e-mail e enviaremos instruções para redefinir sua senha
-        </p>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="resetEmail">E-mail</label>
-        <input 
-          class="form-input" 
-          type="email" 
-          id="resetEmail" 
-          placeholder="seu@email.com"
-          required
-          autocomplete="email"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-full">
-        📧 Enviar E-mail de Recuperação
+      
+      <button type="button" onclick="criarConta()" class="button button-outline">
+        ➕ Criar Nova Conta
       </button>
 
-      <div class="text-center mt-2">
-        <a href="#" onclick="voltarParaLogin(); return false;" style="font-size: 14px;">
-          ← Voltar para login
-        </a>
-      </div>
-    </form>
-
-    <!-- Mensagens -->
-    <div id="mensagem" class="mt-2"></div>
-
-    <!-- Link para home -->
-    <div class="text-center mt-3">
-      <a href="index.html" class="btn btn-ghost">
+      <!-- Link para voltar -->
+      <a href="index.html" style="text-align: center; margin-top: 16px;">
         ← Voltar para página inicial
       </a>
-    </div>
-  </div>
 
-  <!-- Firebase SDK -->
+      <!-- Mensagens de Feedback -->
+      <div id="msg" role="alert" aria-live="polite" aria-atomic="true"></div>
+    </form>
+  </main>
+
+  <!-- Firebase SDK (versão 9 - compatibilidade) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-  <!-- Scripts -->
+  <!-- Configuração Firebase -->
   <script src="firebase/firebase-config.js"></script>
-  <script src="firebase/database.js"></script>
-  <script src="assets/theme.js"></script>
 
+  <!-- Lógica de Autenticação -->
   <script>
     // Elementos do DOM
-    const formLogin = document.getElementById('formLogin');
-    const formCadastro = document.getElementById('formCadastro');
-    const formEsqueciSenha = document.getElementById('formEsqueciSenha');
-    const mensagem = document.getElementById('mensagem');
-    const tabLogin = document.getElementById('tabLogin');
-    const tabCadastro = document.getElementById('tabCadastro');
+    const emailInput = document.getElementById('email');
+    const senhaInput = document.getElementById('senha');
+    const msgElement = document.getElementById('msg');
 
-    // Mostrar/Ocultar tabs
-    function mostrarTab(tab) {
-      if (tab === 'login') {
-        formLogin.classList.remove('hidden');
-        formCadastro.classList.add('hidden');
-        formEsqueciSenha.classList.add('hidden');
-        tabLogin.style.borderBottom = '3px solid var(--primary-color)';
-        tabCadastro.style.borderBottom = 'none';
-      } else {
-        formLogin.classList.add('hidden');
-        formCadastro.classList.remove('hidden');
-        formEsqueciSenha.classList.add('hidden');
-        tabLogin.style.borderBottom = 'none';
-        tabCadastro.style.borderBottom = '3px solid var(--primary-color)';
-      }
-      limparMensagem();
-    }
-
-    function mostrarEsqueciSenha() {
-      formLogin.classList.add('hidden');
-      formCadastro.classList.add('hidden');
-      formEsqueciSenha.classList.remove('hidden');
-      tabLogin.style.borderBottom = 'none';
-      tabCadastro.style.borderBottom = 'none';
-      limparMensagem();
-    }
-
-    function voltarParaLogin() {
-      mostrarTab('login');
-    }
-
-    // Máscara de telefone
-    document.getElementById('cadTelefone').addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, '');
-      if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-        e.target.value = value;
-      }
-    });
-
-    // Mostrar mensagem
-    function mostrarMensagem(texto, tipo) {
-      mensagem.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
-      mensagem.textContent = texto;
-      mensagem.classList.remove('hidden');
-    }
-
-    function limparMensagem() {
-      mensagem.className = '';
-      mensagem.textContent = '';
-      mensagem.classList.add('hidden');
-    }
-
-    // Login
-    formLogin.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const email = document.getElementById('loginEmail').value;
-      const senha = document.getElementById('loginSenha').value;
-      
-      try {
-        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, senha);
-        mostrarMensagem('✅ Login realizado com sucesso!', 'sucesso');
-        
-        // Obter perfil do usuário
-        const perfil = await obterPerfilUsuario(userCredential.user.uid);
-        
-        // Redirecionar baseado no role
-        setTimeout(() => {
-          if (perfil && perfil.role === 'admin') {
-            window.location.href = 'admin.html';
-          } else {
-            window.location.href = 'cliente.html';
-          }
-        }, 1000);
-      } catch (error) {
-        let mensagemErro = 'Erro ao fazer login';
-        if (error.code === 'auth/user-not-found') {
-          mensagemErro = 'Usuário não encontrado';
-        } else if (error.code === 'auth/wrong-password') {
-          mensagemErro = 'Senha incorreta';
-        } else if (error.code === 'auth/invalid-email') {
-          mensagemErro = 'E-mail inválido';
-        }
-        mostrarMensagem('❌ ' + mensagemErro, 'erro');
-      }
-    });
-
-    // Cadastro
-    formCadastro.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const nome = document.getElementById('cadNome').value;
-      const telefone = document.getElementById('cadTelefone').value;
-      const email = document.getElementById('cadEmail').value;
-      const senha = document.getElementById('cadSenha').value;
-      const senhaConfirm = document.getElementById('cadSenhaConfirm').value;
-      
-      // Validar senhas
-      if (senha !== senhaConfirm) {
-        mostrarMensagem('❌ As senhas não coincidem', 'erro');
+    // Função de Login
+    function login() {
+      // Validação básica
+      if (!emailInput.value || !senhaInput.value) {
+        mostrarMensagem('Por favor, preencha todos os campos', 'error');
         return;
       }
-      
-      try {
-        // Criar conta no Firebase Auth
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
-        
-        // Salvar perfil no database
-        await salvarPerfilUsuario(userCredential.user.uid, {
-          nome,
-          telefone,
-          email,
-          role: 'cliente',
-          criadoEm: new Date().toISOString()
+
+      // Desabilitar botões durante processamento
+      desabilitarFormulario(true);
+      mostrarMensagem('Processando login...', 'info');
+
+      // Autenticar com Firebase
+      firebase.auth().signInWithEmailAndPassword(emailInput.value, senhaInput.value)
+        .then((userCredential) => {
+          mostrarMensagem('✅ Login realizado com sucesso! Redirecionando...', 'success');
+          setTimeout(() => {
+            window.location.href = "agendar.html";
+          }, 1500);
+        })
+        .catch((error) => {
+          desabilitarFormulario(false);
+          tratarErro(error);
         });
-        
-        // Atualizar displayName
-        await userCredential.user.updateProfile({ displayName: nome });
-        
-        mostrarMensagem('✅ Conta criada com sucesso! Redirecionando...', 'sucesso');
-        
-        setTimeout(() => {
-          window.location.href = 'cliente.html';
-        }, 1500);
-      } catch (error) {
-        let mensagemErro = 'Erro ao criar conta';
-        if (error.code === 'auth/email-already-in-use') {
-          mensagemErro = 'Este e-mail já está em uso';
-        } else if (error.code === 'auth/invalid-email') {
-          mensagemErro = 'E-mail inválido';
-        } else if (error.code === 'auth/weak-password') {
-          mensagemErro = 'Senha muito fraca';
-        }
-        mostrarMensagem('❌ ' + mensagemErro, 'erro');
-      }
-    });
+    }
 
-    // Esqueci senha
-    formEsqueciSenha.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const email = document.getElementById('resetEmail').value;
-      
-      try {
-        await firebase.auth().sendPasswordResetEmail(email);
-        mostrarMensagem('✅ E-mail de recuperação enviado! Verifique sua caixa de entrada.', 'sucesso');
-        
-        setTimeout(() => {
-          voltarParaLogin();
-        }, 3000);
-      } catch (error) {
-        let mensagemErro = 'Erro ao enviar e-mail';
-        if (error.code === 'auth/user-not-found') {
-          mensagemErro = 'E-mail não cadastrado';
-        } else if (error.code === 'auth/invalid-email') {
-          mensagemErro = 'E-mail inválido';
-        }
-        mostrarMensagem('❌ ' + mensagemErro, 'erro');
+    // Função de Criar Conta
+    function criarConta() {
+      // Validação básica
+      if (!emailInput.value || !senhaInput.value) {
+        mostrarMensagem('Por favor, preencha todos os campos', 'error');
+        return;
       }
-    });
 
-    // Verificar se já está logado
-    firebase.auth().onAuthStateChanged(async (user) => {
+      // Validar senha
+      if (senhaInput.value.length < 6) {
+        mostrarMensagem('A senha deve ter no mínimo 6 caracteres', 'error');
+        return;
+      }
+
+      // Desabilitar botões durante processamento
+      desabilitarFormulario(true);
+      mostrarMensagem('Criando conta...', 'info');
+
+      // Criar conta com Firebase
+      firebase.auth().createUserWithEmailAndPassword(emailInput.value, senhaInput.value)
+        .then((userCredential) => {
+          mostrarMensagem('✅ Conta criada com sucesso! Agora você pode fazer login.', 'success');
+          senhaInput.value = ''; // Limpar senha
+          desabilitarFormulario(false);
+        })
+        .catch((error) => {
+          desabilitarFormulario(false);
+          tratarErro(error);
+        });
+    }
+
+    // Função para mostrar mensagens
+    function mostrarMensagem(mensagem, tipo) {
+      msgElement.textContent = mensagem;
+      msgElement.className = tipo === 'error' ? 'msg-error' : tipo === 'success' ? 'msg-success' : 'msg-info';
+      msgElement.style.display = 'block';
+    }
+
+    // Função para tratar erros do Firebase
+    function tratarErro(error) {
+      console.error('Erro:', error);
+      
+      let mensagem = '';
+      switch (error.code) {
+        case 'auth/invalid-email':
+          mensagem = '❌ E-mail inválido';
+          break;
+        case 'auth/user-disabled':
+          mensagem = '❌ Usuário desabilitado';
+          break;
+        case 'auth/user-not-found':
+          mensagem = '❌ Usuário não encontrado';
+          break;
+        case 'auth/wrong-password':
+          mensagem = '❌ Senha incorreta';
+          break;
+        case 'auth/email-already-in-use':
+          mensagem = '❌ Este e-mail já está em uso';
+          break;
+        case 'auth/weak-password':
+          mensagem = '❌ Senha muito fraca. Use no mínimo 6 caracteres';
+          break;
+        case 'auth/network-request-failed':
+          mensagem = '❌ Erro de conexão. Verifique sua internet';
+          break;
+        default:
+          mensagem = `❌ Erro: ${error.message}`;
+      }
+      
+      mostrarMensagem(mensagem, 'error');
+    }
+
+    // Função para desabilitar/habilitar formulário
+    function desabilitarFormulario(desabilitar) {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(btn => btn.disabled = desabilitar);
+      emailInput.disabled = desabilitar;
+      senhaInput.disabled = desabilitar;
+    }
+
+    // Verificar se já está autenticado
+    firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-        const perfil = await obterPerfilUsuario(user.uid);
-        if (perfil && perfil.role === 'admin') {
-          window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'cliente.html';
-        }
+        console.log('✅ Usuário já autenticado:', user.email);
+        mostrarMensagem('Você já está autenticado. Redirecionando...', 'info');
+        setTimeout(() => {
+          window.location.href = "agendar.html";
+        }, 2000);
+      }
+    });
+
+    // Enter para submit
+    senhaInput.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        login();
       }
     });
   </script>
+
+  <!-- Estilos adicionais para acessibilidade -->
+  <style>
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    small {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 4px;
+      display: block;
+    }
+  </style>
 </body>
 </html>
