@@ -1,7 +1,7 @@
 // Este arquivo assume que 'firebase-config.js' e 'services-config.js' 
 // foram carregados antes dele e tornaram 'firebase' e 'servicesConfig' globais.
 
-const db = firebase.database();
+// const db = firebase.database();
 
 // =============================================
 // I. GESTÃO DE PERFIL E CONFIGURAÇÕES

@@ -182,7 +182,7 @@
 
       try {
         await firebase.auth().signInWithEmailAndPassword(email, senha);
-        // O redirecionamento será feito no listener onAuthStateChanged
+        
       } catch (error) {
         let mensagemErro = 'Erro ao fazer login';
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
