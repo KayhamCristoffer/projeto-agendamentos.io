@@ -101,7 +101,7 @@ const SERVICES = {
     descricao: 'Maquiagem profissional para eventos'
   }
 };
-
+const DIAS_SEMANA_NOME = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 // Horário de funcionamento
 const BUSINESS_HOURS = {
   inicio: '08:00',
@@ -109,7 +109,9 @@ const BUSINESS_HOURS = {
   intervalo_inicio: '12:00',
   intervalo_fim: '13:00',
   dias_funcionamento: [1, 2, 3, 4, 5, 6], // Segunda a Sábado (0 = Domingo)
-  slot_duracao: 15 // minutos por slot base
+  slot_duracao: 15, // minutos por slot base
+  // Adicionando o array de nomes de dias aqui para que o admin.html possa desestruturar
+  dias_semana_nome: DIAS_SEMANA_NOME
 };
 
 // Função para obter todos os serviços
@@ -145,25 +147,25 @@ function gerarSlotsHorario(data) {
   const [horaFim, minFim] = BUSINESS_HOURS.fim.split(':').map(Number);
   const [horaIntervaloInicio, minIntervaloInicio] = BUSINESS_HOURS.intervalo_inicio.split(':').map(Number);
   const [horaIntervaloFim, minIntervaloFim] = BUSINESS_HOURS.intervalo_fim.split(':').map(Number);
-  
+
   let horaAtual = horaInicio;
   let minAtual = minInicio;
-  
+
   while (horaAtual < horaFim || (horaAtual === horaFim && minAtual < minFim)) {
     // Verificar se não está no horário de intervalo
     const isIntervalo = (
       horaAtual > horaIntervaloInicio ||
       (horaAtual === horaIntervaloInicio && minAtual >= minIntervaloInicio)
     ) && (
-      horaAtual < horaIntervaloFim ||
-      (horaAtual === horaIntervaloFim && minAtual < minIntervaloFim)
-    );
-    
+        horaAtual < horaIntervaloFim ||
+        (horaAtual === horaIntervaloFim && minAtual < minIntervaloFim)
+      );
+
     if (!isIntervalo) {
       const horarioFormatado = `${String(horaAtual).padStart(2, '0')}:${String(minAtual).padStart(2, '0')}`;
       slots.push(horarioFormatado);
     }
-    
+
     // Avançar para próximo slot
     minAtual += BUSINESS_HOURS.slot_duracao;
     if (minAtual >= 60) {
@@ -171,7 +173,7 @@ function gerarSlotsHorario(data) {
       minAtual = minAtual % 60;
     }
   }
-  
+
   return slots;
 }
 
@@ -211,6 +213,7 @@ if (typeof window !== 'undefined') {
   window.isDiaDisponivel = isDiaDisponivel;
   window.formatarPreco = formatarPreco;
   window.formatarDuracao = formatarDuracao;
+  window.DIAS_SEMANA_NOME = DIAS_SEMANA_NOME;
 }
 
 console.log('✅ Configuração de serviços carregada');

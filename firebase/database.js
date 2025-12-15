@@ -282,3 +282,37 @@ function listarAgendamentos(callback) {
 
     return agendamentosRef; // Retorna a referência (útil para desligar o listener, se necessário)
 }
+
+// ...
+// IV. CHAT / MENSAGENS
+// =============================================
+
+/**
+ * 💾 Salva as configurações de horário de funcionamento do negócio.
+ * Nota: As configurações globais são salvas no nó 'configuracoes/horarios'.
+ * @param {object} dadosHorarios - Objeto contendo as configurações de horário (slot_duracao, dias_funcionamento, etc.).
+ */
+async function salvarConfiguracaoHorarios(dadosHorarios) {
+    try {
+        // Usa 'configuracoes/horarios' como nó específico
+        await db.ref('configuracoes/horarios').set(dadosHorarios);
+        console.log("Configurações de horários salvas com sucesso!");
+    } catch (error) {
+        console.error("Erro ao salvar configurações de horários:", error);
+        throw error;
+    }
+}
+
+/**
+ * 🔍 Obtém as configurações de horário de funcionamento do negócio.
+ * @returns {Promise<object | null>} Configurações de horário ou null.
+ */
+async function obterConfiguracaoHorarios() {
+    try {
+        const snapshot = await db.ref('configuracoes/horarios').once('value');
+        return snapshot.val();
+    } catch (error) {
+        console.error("Erro ao obter configurações de horários:", error);
+        return null;
+    }
+}

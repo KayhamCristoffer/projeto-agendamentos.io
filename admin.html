@@ -421,9 +421,14 @@
     // Injeta a tabela de horários
     function carregarConfiguracoesHorario() {
       // BUSINESS_HOURS vem de services-config.js
-      const { dias_semana_nome, horario_inicio, horario_fim, slot_duracao, dias_funcionamento } = BUSINESS_HOURS;      const body = document.getElementById('horariosBody');
-      body.innerHTML = '';
-
+      // admin.html, linha ~419
+      const {
+        dias_semana_nome,
+        slot_duracao,
+        dias_funcionamento,
+        inicio: horario_inicio, // Renomeado
+        fim: horario_fim // Renomeado
+      } = BUSINESS_HOURS;
       // Preenche duração do slot
       document.getElementById('slotDuracao').value = slot_duracao;
 
@@ -473,12 +478,6 @@
 
       // SalvarHorariosFuncionamento (a ser implementado em database.js)
       try {
-        // Em vez de salvar diretamente, o ideal é salvar a nova configuração no Firebase
-        // Para este passo, vamos simular o salvamento e pedir a implementação no database.js
-
-        // Aqui precisaremos de uma função em database.js como:
-        // await salvarConfiguracaoHorarios(dados); 
-
         // Por enquanto, apenas atualizamos a variável global (não persiste)
         Object.assign(BUSINESS_HOURS, dados);
 
