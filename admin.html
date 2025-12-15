@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin - Sistema de Agendamentos</title>
   <link rel="stylesheet" href="assets/style.css">
-  
+
 
 </head>
 
@@ -21,37 +22,42 @@
   </nav>
 
   <div class="container container-wide" style="margin-top: 20px;">
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-        <div class="dashboard-stat" style="border-left: 5px solid var(--primary-color);">
-            <div class="stat-number" id="totalAgendamentos">0</div>
-            <div class="stat-label">Total de Agendamentos</div>
-        </div>
-        <div class="dashboard-stat" style="border-left: 5px solid var(--warning);">
-            <div class="stat-number" id="pendentesHoje">0</div>
-            <div class="stat-label">Agendamentos Pendentes (Hoje)</div>
-        </div>
-        <div class="dashboard-stat" style="border-left: 5px solid var(--success);">
-            <div class="stat-number" id="confirmadosHoje">0</div>
-            <div class="stat-label">Agendamentos Confirmados (Hoje)</div>
-        </div>
-        <div class="dashboard-stat" style="border-left: 5px solid var(--danger);">
-            <div class="stat-number" id="naoLidas">0</div>
-            <div class="stat-label">Mensagens Não Lidas</div>
-        </div>
+
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <div class="dashboard-stat" style="border-left: 5px solid var(--primary-color);">
+        <div class="stat-number" id="totalAgendamentos">0</div>
+        <div class="stat-label">Total de Agendamentos</div>
+      </div>
+      <div class="dashboard-stat" style="border-left: 5px solid var(--warning);">
+        <div class="stat-number" id="pendentesHoje">0</div>
+        <div class="stat-label">Agendamentos Pendentes (Hoje)</div>
+      </div>
+      <div class="dashboard-stat" style="border-left: 5px solid var(--success);">
+        <div class="stat-number" id="confirmadosHoje">0</div>
+        <div class="stat-label">Agendamentos Confirmados (Hoje)</div>
+      </div>
+      <div class="dashboard-stat" style="border-left: 5px solid var(--danger);">
+        <div class="stat-number" id="naoLidas">0</div>
+        <div class="stat-label">Mensagens Não Lidas</div>
+      </div>
     </div>
 
     <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color); overflow-x: auto;">
-      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarSecao('pendentes')" style="border-radius: 0; border-bottom: 3px solid var(--warning); white-space: nowrap;">
+      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarSecao('pendentes')"
+        style="border-radius: 0; border-bottom: 3px solid var(--warning); white-space: nowrap;">
         ⏳ Pendentes
       </button>
-      <button class="btn btn-ghost" id="tabConfirmados" onclick="mostrarSecao('confirmados')" style="border-radius: 0; white-space: nowrap;">
+      <button class="btn btn-ghost" id="tabConfirmados" onclick="mostrarSecao('confirmados')"
+        style="border-radius: 0; white-space: nowrap;">
         ✅ Confirmados
       </button>
-      <button class="btn btn-ghost" id="tabHistorico" onclick="mostrarSecao('historico')" style="border-radius: 0; white-space: nowrap;">
+      <button class="btn btn-ghost" id="tabHistorico" onclick="mostrarSecao('historico')"
+        style="border-radius: 0; white-space: nowrap;">
         📜 Histórico
       </button>
-      <button class="btn btn-ghost" id="tabConfig" onclick="mostrarSecao('config')" style="border-radius: 0; white-space: nowrap;">
+      <button class="btn btn-ghost" id="tabConfig" onclick="mostrarSecao('config')"
+        style="border-radius: 0; white-space: nowrap;">
         ⚙️ Configurações
       </button>
     </div>
@@ -78,49 +84,53 @@
     </div>
 
     <div id="secaoConfig" class="hidden">
-        <h3>⚙️ Configurações de Funcionamento</h3>
-        
-        <div class="card mt-3">
-            <h4>Horários da Semana</h4>
-            <p style="color: var(--text-secondary); font-size: 14px;">Defina os horários de início, fim e a duração dos slots de agendamento.</p>
+      <h3>⚙️ Configurações de Funcionamento</h3>
 
-            <form id="formHorarios" class="mt-3">
-                <div class="form-group">
-                    <label class="form-label">Duração Padrão do Slot (minutos)</label>
-                    <input class="form-input" type="number" id="slotDuracao" required min="5" max="60" step="5">
-                </div>
-                
-                <table class="horarios-table">
-                    <thead>
-                        <tr>
-                            <th>Dia da Semana</th>
-                            <th>Abre às</th>
-                            <th>Fecha às</th>
-                            <th>Funcionando</th>
-                        </tr>
-                    </thead>
-                    <tbody id="horariosBody">
-                        </tbody>
-                </table>
-                <button type="submit" class="btn btn-primary mt-3">
-                    💾 Salvar Configurações
-                </button>
-                <div id="mensagemConfig" class="mt-2" style="display: none;"></div>
-            </form>
-        </div>
+      <div class="card mt-3">
+        <h4>Horários da Semana</h4>
+        <p style="color: var(--text-secondary); font-size: 14px;">Defina os horários de início, fim e a duração dos
+          slots de agendamento.</p>
+
+        <form id="formHorarios" class="mt-3">
+          <div class="form-group">
+            <label class="form-label">Duração Padrão do Slot (minutos)</label>
+            <input class="form-input" type="number" id="slotDuracao" required min="5" max="60" step="5">
+          </div>
+
+          <table class="horarios-table">
+            <thead>
+              <tr>
+                <th>Dia da Semana</th>
+                <th>Abre às</th>
+                <th>Fecha às</th>
+                <th>Funcionando</th>
+              </tr>
+            </thead>
+            <tbody id="horariosBody">
+            </tbody>
+          </table>
+          <button type="submit" class="btn btn-primary mt-3">
+            💾 Salvar Configurações
+          </button>
+          <div id="mensagemConfig" class="mt-2" style="display: none;"></div>
+        </form>
+      </div>
     </div>
   </div>
 
-  <div id="modalChat" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+  <div id="modalChat" class="hidden"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
     <div style="width: 90%; max-width: 600px;">
       <div class="chat-container">
         <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
           <span>💬 Chat com <strong id="chatNomeCliente">Cliente</strong></span>
-          <button onclick="fecharChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+          <button onclick="fecharChat()"
+            style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-container">
-          <input type="text" class="chat-input form-input" id="chatInput" placeholder="Digite sua mensagem..." style="margin: 0;">
+          <input type="text" class="chat-input form-input" id="chatInput" placeholder="Digite sua mensagem..."
+            style="margin: 0;">
           <button class="btn btn-primary" onclick="enviarMensagemChat()">📤</button>
         </div>
       </div>
@@ -137,7 +147,7 @@
 
   <script>
     let usuarioAtual = null;
-    let perfilAdmin = {}; 
+    let perfilAdmin = {};
     let agendamentoAtualChat = null;
     let agendamentosCache = {}; // Cache para todos os agendamentos
 
@@ -146,121 +156,121 @@
     // ===============================================
 
     firebase.auth().onAuthStateChanged(async (user) => {
-        if (!user) {
-            window.location.href = 'login.html';
-            return;
-        }
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
 
-        usuarioAtual = user;
-        
-        // 1. Verificar se é admin
-        const perfil = await obterPerfilUsuario(user.uid);
-        if (!perfil || perfil.role !== 'admin') {
-            alert('Acesso negado. Você não é um administrador.');
-            window.location.href = 'cliente.html';
-            return;
-        }
+      usuarioAtual = user;
 
-        perfilAdmin = perfil;
-        document.getElementById('nomeAdmin').textContent = perfil.nomeCompleto || perfil.email;
-        
-        // 2. Configurar o listener de agendamentos para manter a lista atualizada
-        // O listarAgendamentos é uma função em database.js que mantém a conexão em tempo real
-        listarAgendamentos((dados) => {
-            agendamentosCache = dados || {};
-            renderizarTodasSecoes();
-            atualizarDashboard();
-        });
+      // 1. Verificar se é admin
+      const perfil = await obterPerfilUsuario(user.uid);
+      if (!perfil || perfil.role !== 'admin') {
+        alert('Acesso negado. Você não é um administrador.');
+        window.location.href = 'cliente.html';
+        return;
+      }
 
-        // 3. Inicializar configurações e seção principal
-        carregarConfiguracoesHorario();
-        mostrarSecao('pendentes');
+      perfilAdmin = perfil;
+      document.getElementById('nomeAdmin').textContent = perfil.nomeCompleto || perfil.email;
+
+      // 2. Configurar o listener de agendamentos para manter a lista atualizada
+      // O listarAgendamentos é uma função em database.js que mantém a conexão em tempo real
+      listarAgendamentos((dados) => {
+        agendamentosCache = dados || {};
+        renderizarTodasSecoes();
+        atualizarDashboard();
+      });
+
+      // 3. Inicializar configurações e seção principal
+      carregarConfiguracoesHorario();
+      mostrarSecao('pendentes');
     });
 
     // ===============================================
     // FUNÇÕES DE EXIBIÇÃO E RENDERIZAÇÃO
     // ===============================================
-    
+
     // Navegação entre seções
     function mostrarSecao(secao) {
-        // Ocultar todas
-        document.getElementById('secaoPendentes').classList.add('hidden');
-        document.getElementById('secaoConfirmados').classList.add('hidden');
-        document.getElementById('secaoHistorico').classList.add('hidden');
-        document.getElementById('secaoConfig').classList.add('hidden');
+      // Ocultar todas
+      document.getElementById('secaoPendentes').classList.add('hidden');
+      document.getElementById('secaoConfirmados').classList.add('hidden');
+      document.getElementById('secaoHistorico').classList.add('hidden');
+      document.getElementById('secaoConfig').classList.add('hidden');
 
-        // Remover destaque dos tabs
-        document.querySelectorAll('[id^="tab"]').forEach(tab => {
-            tab.style.borderBottom = 'none';
-        });
+      // Remover destaque dos tabs
+      document.querySelectorAll('[id^="tab"]').forEach(tab => {
+        tab.style.borderBottom = 'none';
+      });
 
-        // Mostrar seção selecionada
-        const secaoElement = document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
-        const tabElement = document.getElementById(`tab${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
-        
-        if (secaoElement) secaoElement.classList.remove('hidden');
-        if (tabElement) tabElement.style.borderBottom = '3px solid var(--primary-color)';
+      // Mostrar seção selecionada
+      const secaoElement = document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
+      const tabElement = document.getElementById(`tab${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
 
-        // Corrigir cor da tab de pendentes
-        if (secao === 'pendentes') tabElement.style.borderBottom = '3px solid var(--warning)';
-        if (secao === 'confirmados') tabElement.style.borderBottom = '3px solid var(--success)';
-        if (secao === 'historico') tabElement.style.borderBottom = '3px solid var(--info)';
-        if (secao === 'config') tabElement.style.borderBottom = '3px solid var(--danger)'; // Cor aleatória para config
+      if (secaoElement) secaoElement.classList.remove('hidden');
+      if (tabElement) tabElement.style.borderBottom = '3px solid var(--primary-color)';
+
+      // Corrigir cor da tab de pendentes
+      if (secao === 'pendentes') tabElement.style.borderBottom = '3px solid var(--warning)';
+      if (secao === 'confirmados') tabElement.style.borderBottom = '3px solid var(--success)';
+      if (secao === 'historico') tabElement.style.borderBottom = '3px solid var(--info)';
+      if (secao === 'config') tabElement.style.borderBottom = '3px solid var(--danger)'; // Cor aleatória para config
     }
 
     // Renderizar todas as seções (chamada pelo listener do Firebase)
     function renderizarTodasSecoes() {
-        const agendamentosArray = Object.entries(agendamentosCache)
-            .map(([id, ag]) => ({ id, ...ag }))
-            .sort((a, b) => new Date(a.dataHora) - new Date(b.dataHora));
+      const agendamentosArray = Object.entries(agendamentosCache)
+        .map(([id, ag]) => ({ id, ...ag }))
+        .sort((a, b) => new Date(a.dataHora) - new Date(b.dataHora));
 
-        const pendentes = agendamentosArray.filter(ag => ag.status === 'pendente');
-        const confirmados = agendamentosArray.filter(ag => ag.status === 'confirmado');
-        const historico = agendamentosArray.filter(ag => ag.status === 'concluido' || ag.status === 'cancelado');
-        
-        renderizarLista(document.getElementById('listaPendentes'), pendentes, true);
-        renderizarLista(document.getElementById('listaConfirmados'), confirmados, true);
-        renderizarLista(document.getElementById('listaHistorico'), historico, false);
+      const pendentes = agendamentosArray.filter(ag => ag.status === 'pendente');
+      const confirmados = agendamentosArray.filter(ag => ag.status === 'confirmado');
+      const historico = agendamentosArray.filter(ag => ag.status === 'concluido' || ag.status === 'cancelado');
+
+      renderizarLista(document.getElementById('listaPendentes'), pendentes, true);
+      renderizarLista(document.getElementById('listaConfirmados'), confirmados, true);
+      renderizarLista(document.getElementById('listaHistorico'), historico, false);
     }
 
     // Renderizar a lista de agendamentos em uma seção
     function renderizarLista(container, lista, showActions) {
-        container.innerHTML = '';
-        if (lista.length === 0) {
-            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento nesta lista.</p>';
-            return;
-        }
+      container.innerHTML = '';
+      if (lista.length === 0) {
+        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento nesta lista.</p>';
+        return;
+      }
 
-        lista.forEach(ag => {
-            const card = criarCardAgendamentoAdmin(ag, showActions);
-            container.appendChild(card);
-        });
+      lista.forEach(ag => {
+        const card = criarCardAgendamentoAdmin(ag, showActions);
+        container.appendChild(card);
+      });
     }
-    
+
     // Criar o card de agendamento para o Admin (Atualizado para multi-serviço)
     function criarCardAgendamentoAdmin(ag, showActions) {
-        const card = document.createElement('div');
-        card.className = `agendamento-card ${ag.status}`;
-        
-        const data = new Date(ag.dataHora);
-        const dataFormatada = data.toLocaleDateString('pt-BR');
-        const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        
-        // Mapeia o array de serviços para uma lista bonita (usando a nova estrutura)
-        const listaServicos = (ag.servicos || [{ nome: ag.servico || 'Serviço Indefinido' }]) 
-                                .map(s => `<li>${s.nome} (${formatarPreco(s.preco)})</li>`)
-                                .join('');
-        
-        const precoDisplay = formatarPreco(ag.precoTotal || ag.preco || 0);
-        const duracaoDisplay = formatarDuracao(ag.duracaoTotal || ag.duracao || 0);
-        
-        let statusBadge = '';
-        if (ag.status === 'pendente') statusBadge = `<span class="badge badge-warning">⏳ Pendente</span>`;
-        if (ag.status === 'confirmado') statusBadge = `<span class="badge badge-success">✅ Confirmado</span>`;
-        if (ag.status === 'concluido') statusBadge = `<span class="badge badge-info">✅ Concluído</span>`;
-        if (ag.status === 'cancelado') statusBadge = `<span class="badge badge-danger">❌ Cancelado</span>`;
+      const card = document.createElement('div');
+      card.className = `agendamento-card ${ag.status}`;
 
-        card.innerHTML = `
+      const data = new Date(ag.dataHora);
+      const dataFormatada = data.toLocaleDateString('pt-BR');
+      const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+      // Mapeia o array de serviços para uma lista bonita (usando a nova estrutura)
+      const listaServicos = (ag.servicos || [{ nome: ag.servico || 'Serviço Indefinido' }])
+        .map(s => `<li>${s.nome} (${formatarPreco(s.preco)})</li>`)
+        .join('');
+
+      const precoDisplay = formatarPreco(ag.precoTotal || ag.preco || 0);
+      const duracaoDisplay = formatarDuracao(ag.duracaoTotal || ag.duracao || 0);
+
+      let statusBadge = '';
+      if (ag.status === 'pendente') statusBadge = `<span class="badge badge-warning">⏳ Pendente</span>`;
+      if (ag.status === 'confirmado') statusBadge = `<span class="badge badge-success">✅ Confirmado</span>`;
+      if (ag.status === 'concluido') statusBadge = `<span class="badge badge-info">✅ Concluído</span>`;
+      if (ag.status === 'cancelado') statusBadge = `<span class="badge badge-danger">❌ Cancelado</span>`;
+
+      card.innerHTML = `
             <div class="agendamento-header">
                 <h4 style="margin: 0; display: flex; align-items: center; gap: 10px;">
                     ${ag.nomeCompleto || ag.email}
@@ -298,29 +308,29 @@
                 ${ag.observacoes && ag.observacoes !== 'Nenhuma' ? `<p style="margin-top: 10px;"><strong>💬 Obs:</strong> ${ag.observacoes}</p>` : ''}
             </div>
         `;
-        
-        return card;
+
+      return card;
     }
-    
+
     // Atualizar o Dashboard
     async function atualizarDashboard() {
-        // As contagens são fáceis com o cache de agendamentos
-        const agendamentosArray = Object.entries(agendamentosCache)
-            .map(([id, ag]) => ({ id, ...ag }));
+      // As contagens são fáceis com o cache de agendamentos
+      const agendamentosArray = Object.entries(agendamentosCache)
+        .map(([id, ag]) => ({ id, ...ag }));
 
-        const hoje = new Date().toISOString().split('T')[0];
-        
-        const total = agendamentosArray.length;
-        const pendentesHoje = agendamentosArray.filter(ag => ag.status === 'pendente' && ag.dataHora.startsWith(hoje)).length;
-        const confirmadosHoje = agendamentosArray.filter(ag => ag.status === 'confirmado' && ag.dataHora.startsWith(hoje)).length;
-        
-        // Chamada assíncrona para mensagens não lidas
-        const naoLidas = await contarMensagensNaoLidas();
+      const hoje = new Date().toISOString().split('T')[0];
 
-        document.getElementById('totalAgendamentos').textContent = total;
-        document.getElementById('pendentesHoje').textContent = pendentesHoje;
-        document.getElementById('confirmadosHoje').textContent = confirmadosHoje;
-        document.getElementById('naoLidas').textContent = naoLidas;
+      const total = agendamentosArray.length;
+      const pendentesHoje = agendamentosArray.filter(ag => ag.status === 'pendente' && ag.dataHora.startsWith(hoje)).length;
+      const confirmadosHoje = agendamentosArray.filter(ag => ag.status === 'confirmado' && ag.dataHora.startsWith(hoje)).length;
+
+      // Chamada assíncrona para mensagens não lidas
+      const naoLidas = await contarMensagensNaoLidas();
+
+      document.getElementById('totalAgendamentos').textContent = total;
+      document.getElementById('pendentesHoje').textContent = pendentesHoje;
+      document.getElementById('confirmadosHoje').textContent = confirmadosHoje;
+      document.getElementById('naoLidas').textContent = naoLidas;
     }
 
     // ===============================================
@@ -329,100 +339,99 @@
 
     // Função para alterar o status do agendamento
     async function alterarStatusAgendamentoAdmin(id, novoStatus) {
-        if (!confirm(`Tem certeza que deseja alterar o status do agendamento ${id} para '${novoStatus}'?`)) return;
+      if (!confirm(`Tem certeza que deseja alterar o status do agendamento ${id} para '${novoStatus}'?`)) return;
 
-        try {
-            await alterarStatusAgendamento(id, novoStatus); // função em database.js
-            alert(`✅ Agendamento ${id} alterado para ${novoStatus}!`);
-            // O listener do Firebase se encarrega de chamar o renderizarTodasSecoes
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('❌ Erro ao alterar status do agendamento');
-        }
+      try {
+        await alterarStatusAgendamento(id, novoStatus); // função em database.js
+        alert(`✅ Agendamento ${id} alterado para ${novoStatus}!`);
+        // O listener do Firebase se encarrega de chamar o renderizarTodasSecoes
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('❌ Erro ao alterar status do agendamento');
+      }
     }
 
     // ===============================================
     // FUNÇÕES DE CHAT
     // ===============================================
-    
+
     function abrirChat(agendamentoId, clienteNome) {
-        agendamentoAtualChat = agendamentoId;
-        document.getElementById('chatNomeCliente').textContent = clienteNome;
-        document.getElementById('modalChat').classList.remove('hidden');
-        marcarComoLido(agendamentoId); // Marcar como lido ao abrir
-        carregarMensagensChat();
+      agendamentoAtualChat = agendamentoId;
+      document.getElementById('chatNomeCliente').textContent = clienteNome;
+      document.getElementById('modalChat').classList.remove('hidden');
+      marcarComoLido(agendamentoId); // Marcar como lido ao abrir
+      carregarMensagensChat();
     }
 
     function fecharChat() {
-        document.getElementById('modalChat').classList.add('hidden');
-        agendamentoAtualChat = null;
-        atualizarDashboard(); // Atualiza a contagem de não lidas
+      document.getElementById('modalChat').classList.add('hidden');
+      agendamentoAtualChat = null;
+      atualizarDashboard(); // Atualiza a contagem de não lidas
     }
 
     function carregarMensagensChat() {
-        const container = document.getElementById('chatMessages');
-        container.innerHTML = '';
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
 
-        // listarMensagens (em database.js)
-        listarMensagens(agendamentoAtualChat, (mensagens) => {
-            container.innerHTML = '';
-            mensagens.forEach(msg => {
-                const div = document.createElement('div');
-                // Se o userId for o do Admin (usuarioAtual.uid), é "sent", senão é "received"
-                div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
-                div.innerHTML = `
+      // listarMensagens (em database.js)
+      listarMensagens(agendamentoAtualChat, (mensagens) => {
+        container.innerHTML = '';
+        mensagens.forEach(msg => {
+          const div = document.createElement('div');
+          // Se o userId for o do Admin (usuarioAtual.uid), é "sent", senão é "received"
+          div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
+          div.innerHTML = `
                     <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">${msg.userNome}</div>
                     <div>${msg.mensagem}</div>
                     <div style="font-size: 10px; opacity: 0.6; margin-top: 4px;">
                         ${new Date(msg.timestamp).toLocaleTimeString('pt-BR')}
                     </div>
                 `;
-                container.appendChild(div);
-            });
-            container.scrollTop = container.scrollHeight;
+          container.appendChild(div);
         });
+        container.scrollTop = container.scrollHeight;
+      });
     }
 
     async function enviarMensagemChat() {
-        const input = document.getElementById('chatInput');
-        const mensagem = input.value.trim();
-        
-        if (!mensagem) return;
+      const input = document.getElementById('chatInput');
+      const mensagem = input.value.trim();
 
-        await enviarMensagem(agendamentoAtualChat, {
-            userId: usuarioAtual.uid,
-            userNome: perfilAdmin.nomeCompleto || 'Admin', // Usar nome do Admin
-            mensagem
-        });
+      if (!mensagem) return;
 
-        input.value = '';
+      await enviarMensagem(agendamentoAtualChat, {
+        userId: usuarioAtual.uid,
+        userNome: perfilAdmin.nomeCompleto || 'Admin', // Usar nome do Admin
+        mensagem
+      });
+
+      input.value = '';
     }
 
     document.getElementById('chatInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            enviarMensagemChat();
-        }
+      if (e.key === 'Enter') {
+        enviarMensagemChat();
+      }
     });
 
     // ===============================================
     // FUNÇÕES DE CONFIGURAÇÃO (Horários)
     // ===============================================
-    
+
     // Injeta a tabela de horários
     function carregarConfiguracoesHorario() {
-        // BUSINESS_HOURS vem de services-config.js
-        const { dias_semana_nome, horario_inicio, horario_fim, slot_duracao, dias_funcionamento } = BUSINESS_HOURS;
-        const body = document.getElementById('horariosBody');
-        body.innerHTML = '';
+      // BUSINESS_HOURS vem de services-config.js
+      const { dias_semana_nome, horario_inicio, horario_fim, slot_duracao, dias_funcionamento } = BUSINESS_HOURS;      const body = document.getElementById('horariosBody');
+      body.innerHTML = '';
 
-        // Preenche duração do slot
-        document.getElementById('slotDuracao').value = slot_duracao;
+      // Preenche duração do slot
+      document.getElementById('slotDuracao').value = slot_duracao;
 
-        dias_semana_nome.forEach((dia, index) => {
-            const tr = document.createElement('tr');
-            const isFunciona = dias_funcionamento.includes(index);
-            
-            tr.innerHTML = `
+      dias_semana_nome.forEach((dia, index) => {
+        const tr = document.createElement('tr');
+        const isFunciona = dias_funcionamento.includes(index);
+
+        tr.innerHTML = `
                 <td>${dia}</td>
                 <td><input type="time" class="form-input" name="inicio_${index}" value="${horario_inicio}" ${!isFunciona ? 'disabled' : ''}></td>
                 <td><input type="time" class="form-input" name="fim_${index}" value="${horario_fim}" ${!isFunciona ? 'disabled' : ''}></td>
@@ -430,74 +439,75 @@
                     <input type="checkbox" data-dia="${index}" onchange="toggleHorarios(this, ${index})" ${isFunciona ? 'checked' : ''}>
                 </td>
             `;
-            body.appendChild(tr);
-        });
+        body.appendChild(tr);
+      });
     }
-    
+
     // Habilita/Desabilita os campos de horário
     function toggleHorarios(checkbox, diaIndex) {
-        const inputs = document.querySelectorAll(`input[name$="_${diaIndex}"]`);
-        inputs.forEach(input => {
-            if (input.type === 'time') {
-                input.disabled = !checkbox.checked;
-            }
-        });
+      const inputs = document.querySelectorAll(`input[name$="_${diaIndex}"]`);
+      inputs.forEach(input => {
+        if (input.type === 'time') {
+          input.disabled = !checkbox.checked;
+        }
+      });
     }
 
     // Salvar configurações de horário
     document.getElementById('formHorarios').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const dados = {};
-        
-        dados.slot_duracao = parseInt(document.getElementById('slotDuracao').value);
-        dados.horario_inicio = form.querySelector('input[name="inicio_1"]').value; // Assume segunda
-        dados.horario_fim = form.querySelector('input[name="fim_1"]').value; // Assume segunda
-        dados.dias_funcionamento = [];
+      e.preventDefault();
+      const form = e.target;
+      const dados = {};
 
-        // Coleta os dias selecionados
-        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            if (checkbox.checked) {
-                dados.dias_funcionamento.push(parseInt(checkbox.dataset.dia));
-            }
-        });
-        
-        // SalvarHorariosFuncionamento (a ser implementado em database.js)
-        try {
-            // Em vez de salvar diretamente, o ideal é salvar a nova configuração no Firebase
-            // Para este passo, vamos simular o salvamento e pedir a implementação no database.js
-            
-            // Aqui precisaremos de uma função em database.js como:
-            // await salvarConfiguracaoHorarios(dados); 
-            
-            // Por enquanto, apenas atualizamos a variável global (não persiste)
-            Object.assign(BUSINESS_HOURS, dados);
-            
-            // Chamamos a função de persistência (que precisará ser criada)
-            await salvarConfiguracaoHorarios(dados); // <<-- Esta função deve ser criada em database.js
+      dados.slot_duracao = parseInt(document.getElementById('slotDuracao').value);
+      dados.horario_inicio = form.querySelector('input[name="inicio_1"]').value; // Assume segunda
+      dados.horario_fim = form.querySelector('input[name="fim_1"]').value; // Assume segunda
+      dados.dias_funcionamento = [];
 
-            mostrarMensagemConfig('✅ Horários de funcionamento atualizados com sucesso!', 'sucesso');
-            carregarConfiguracoesHorario(); // Recarrega
-        } catch (error) {
-            console.error('Erro ao salvar horários:', error);
-            mostrarMensagemConfig('❌ Erro ao salvar horários: ' + error.message, 'erro');
+      // Coleta os dias selecionados
+      form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        if (checkbox.checked) {
+          dados.dias_funcionamento.push(parseInt(checkbox.dataset.dia));
         }
+      });
+
+      // SalvarHorariosFuncionamento (a ser implementado em database.js)
+      try {
+        // Em vez de salvar diretamente, o ideal é salvar a nova configuração no Firebase
+        // Para este passo, vamos simular o salvamento e pedir a implementação no database.js
+
+        // Aqui precisaremos de uma função em database.js como:
+        // await salvarConfiguracaoHorarios(dados); 
+
+        // Por enquanto, apenas atualizamos a variável global (não persiste)
+        Object.assign(BUSINESS_HOURS, dados);
+
+        // Chamamos a função de persistência (que precisará ser criada)
+        await salvarConfiguracaoHorarios(dados); // <<-- Esta função deve ser criada em database.js
+
+        mostrarMensagemConfig('✅ Horários de funcionamento atualizados com sucesso!', 'sucesso');
+        carregarConfiguracoesHorario(); // Recarrega
+      } catch (error) {
+        console.error('Erro ao salvar horários:', error);
+        mostrarMensagemConfig('❌ Erro ao salvar horários: ' + error.message, 'erro');
+      }
     });
 
     function mostrarMensagemConfig(texto, tipo) {
-        const msg = document.getElementById('mensagemConfig');
-        msg.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
-        msg.textContent = texto;
-        msg.style.display = 'block';
-        setTimeout(() => msg.style.display = 'none', 5000);
+      const msg = document.getElementById('mensagemConfig');
+      msg.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
+      msg.textContent = texto;
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 5000);
     }
-    
+
     // Logout
     function logout() {
-        firebase.auth().signOut().then(() => {
-            window.location.href = 'index.html';
-        });
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'index.html';
+      });
     }
   </script>
 </body>
+
 </html>
