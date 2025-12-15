@@ -5,21 +5,34 @@
 
 /**
  * Função para salvar um novo agendamento
- * @param {Object} dados - Dados do agendamento
+ * @param {Object} dados - Dados do agendamento (deve incluir clienteId, clienteNome, dataHora, servicos: Array<{id: string, nome: string, preco: number, duracao: number}>)
  * @returns {Promise}
  */
 function salvarAgendamento(dados) {
-  // Validar dados obrigatórios
-  if (!dados.nome || !dados.servico || !dados.dataHora) {
-    return Promise.reject(new Error('Dados obrigatórios não fornecidos'));
+  // CORREÇÃO 1: Validar campos da nova estrutura
+  if (!dados.clienteId || !dados.servicos || !dados.dataHora || dados.servicos.length === 0) {
+    return Promise.reject(new Error('Dados obrigatórios (cliente, serviços e data/hora) não fornecidos.'));
   }
 
-  // Adicionar metadados
+  // CORREÇÃO 2: Calcular duração total e preço total
+  const duracaoTotal = dados.servicos.reduce((total, servico) => total + (servico.duracao || 0), 0);
+  const precoTotal = dados.servicos.reduce((total, servico) => total + (servico.preco || 0), 0);
+
   const agendamento = {
-    ...dados,
+    // Campos da nova estrutura
+    clienteId: dados.clienteId,
+    clienteNome: dados.clienteNome || 'Cliente', 
+    dataHora: dados.dataHora, // Esperado no formato ISO: YYYY-MM-DDTHH:MM:SS.sssZ
+    duracaoTotal: duracaoTotal,
+    precoTotal: precoTotal,
+    servicos: dados.servicos, // Array de serviços
+    status: dados.status || 'pendente',
+    observacoes: dados.observacoes || '',
+
+    // Metadados
     criadoEm: new Date().toISOString(),
-    timestamp: Date.now(),
-    status: dados.status || 'pendente'
+    timestamp: new Date(dados.dataHora).getTime(), // Timestamp útil para ordenação
+    atualizadoEm: new Date().toISOString()
   };
 
   // Salvar no Firebase
@@ -105,7 +118,8 @@ function alterarStatusAgendamento(id, novoStatus) {
  */
 function listarAgendamentosPorUsuario(userId) {
   return db.ref('agendamentos')
-    .orderByChild('userId')
+    // CORREÇÃO 3: Mudar 'userId' para 'clienteId' (novo padrão do banco)
+    .orderByChild('clienteId')
     .equalTo(userId)
     .once('value')
     .then((snapshot) => {
@@ -119,10 +133,11 @@ function listarAgendamentosPorUsuario(userId) {
  * @returns {Promise}
  */
 function listarAgendamentosPorData(data) {
+  // CORREÇÃO 4: Usar prefixo ISO string para buscar todos daquele dia
   return db.ref('agendamentos')
     .orderByChild('dataHora')
-    .startAt(data)
-    .endAt(data + '\uf8ff')
+    .startAt(data + 'T00:00:00.000Z')
+    .endAt(data + 'T23:59:59.999Z')
     .once('value')
     .then((snapshot) => {
       return snapshot.val();
@@ -156,20 +171,87 @@ function contarAgendamentos() {
 }
 
 /**
- * Função para verificar disponibilidade de horário
- * @param {string} dataHora - Data e hora no formato ISO
+ * Função para verificar disponibilidade de horário com duração
+ * @param {string} data - Data no formato YYYY-MM-DD
+ * @param {string} horario - Horário no formato HH:MM
+ * @param {number} duracao - Duração em minutos (total dos serviços)
  * @returns {Promise<boolean>}
  */
-function verificarDisponibilidade(dataHora) {
+function verificarDisponibilidadeComDuracao(data, horario, duracao) {
+  
+  // Converter para minutos para cálculo de sobreposição
+  const [novoInicioHora, novoInicioMin] = horario.split(':').map(Number);
+  const novoInicioMinTotal = novoInicioHora * 60 + novoInicioMin;
+  const novoFimMinTotal = novoInicioMinTotal + duracao;
+  
+  // Buscar agendamentos que caem no mesmo dia (usando a busca de data ajustada)
   return db.ref('agendamentos')
     .orderByChild('dataHora')
-    .equalTo(dataHora)
+    .startAt(data + 'T00:00:00.000Z') 
+    .endAt(data + 'T23:59:59.999Z')
     .once('value')
     .then((snapshot) => {
-      // Se não existe nenhum agendamento nesse horário, está disponível
-      return !snapshot.exists();
+      let disponivel = true;
+      snapshot.forEach((child) => {
+        const agendamento = child.val();
+        
+        // Ignorar agendamentos cancelados
+        if (agendamento.status === 'cancelado') {
+          return;
+        }
+        
+        // CORREÇÃO 5: Usar duracaoTotal do agendamento existente
+        const agendDuracao = agendamento.duracaoTotal || agendamento.duracao || 30; // Garante fallback
+        const agendDataHoraStr = agendamento.dataHora; 
+
+        // Extrair o horário do agendamento existente
+        const agendHorarioStr = agendDataHoraStr.split('T')[1].substring(0, 5); // Pega HH:MM
+        
+        const [agendHora, agendMin] = agendHorarioStr.split(':').map(Number);
+        const agendInicioMinTotal = agendHora * 60 + agendMin;
+        const agendFimMinTotal = agendInicioMinTotal + agendDuracao;
+        
+        // Verificar sobreposição: Não se sobrepõem se o novo_fim <= agendamento_inicio OU novo_inicio >= agendamento_fim
+        if (!(novoFimMinTotal <= agendInicioMinTotal || novoInicioMinTotal >= agendFimMinTotal)) {
+          disponivel = false;
+        }
+      });
+      return disponivel;
     });
 }
+
+/**
+ * Função para verificar disponibilidade (função original removida/simplificada, usar a com duração)
+ * MANTIDA POR COMPATIBILIDADE, mas DEPRECADA.
+ */
+function verificarDisponibilidade(dataHora) {
+  // A função original era muito simples. Mantenho a assinatura, mas chamo a função mais robusta
+  const [data, horario] = dataHora.split('T');
+  // Assumindo uma duração padrão de 30 minutos se esta função for chamada
+  return verificarDisponibilidadeComDuracao(data, horario.substring(0,5), 30); 
+}
+
+
+/**
+ * Obter horários disponíveis para uma data
+ * @param {string} data - Data no formato YYYY-MM-DD
+ * @param {number} duracao - Duração do serviço em minutos
+ * @returns {Promise<Array>}
+ */
+function obterHorariosDisponiveis(data, duracao = 30) {
+  // Gerar todos os slots possíveis
+  const slots = window.gerarSlotsHorario ? window.gerarSlotsHorario(data) : [];
+  
+  // Verificar disponibilidade de cada slot
+  const promises = slots.map(horario => 
+    verificarDisponibilidadeComDuracao(data, horario, duracao)
+      .then(disponivel => ({ horario, disponivel }))
+  );
+  
+  return Promise.all(promises)
+    .then(results => results.filter(r => r.disponivel).map(r => r.horario));
+}
+
 
 // ============================================
 // FUNÇÕES DE PERFIL DE USUÁRIO
@@ -178,7 +260,7 @@ function verificarDisponibilidade(dataHora) {
 /**
  * Criar/Atualizar perfil de usuário
  * @param {string} userId - ID do usuário
- * @param {Object} dados - Dados do perfil
+ * @param {Object} dados - Dados do perfil. Espera 'nomeCompleto' e não 'nome'.
  * @returns {Promise}
  */
 function salvarPerfilUsuario(userId, dados) {
@@ -298,75 +380,8 @@ function contarMensagensNaoLidas(agendamentoId, userId, ultimaLeitura) {
 
 // ============================================
 // FUNÇÕES DE HORÁRIOS DISPONÍVEIS
+// (A lógica de sobreposição e busca foi atualizada acima)
 // ============================================
-
-/**
- * Verificar disponibilidade de horário com duração
- * @param {string} data - Data no formato YYYY-MM-DD
- * @param {string} horario - Horário no formato HH:MM
- * @param {number} duracao - Duração em minutos
- * @returns {Promise<boolean>}
- */
-function verificarDisponibilidadeComDuracao(data, horario, duracao) {
-  const dataHoraInicio = `${data}T${horario}`;
-  const [hora, min] = horario.split(':').map(Number);
-  
-  // Calcular horário de fim
-  const totalMin = hora * 60 + min + duracao;
-  const horaFim = Math.floor(totalMin / 60);
-  const minFim = totalMin % 60;
-  const horarioFim = `${String(horaFim).padStart(2, '0')}:${String(minFim).padStart(2, '0')}`;
-  const dataHoraFim = `${data}T${horarioFim}`;
-  
-  // Buscar agendamentos na faixa de horário
-  return db.ref('agendamentos')
-    .orderByChild('dataHora')
-    .startAt(data)
-    .endAt(data + 'T23:59')
-    .once('value')
-    .then((snapshot) => {
-      let disponivel = true;
-      snapshot.forEach((child) => {
-        const agendamento = child.val();
-        if (agendamento.status !== 'cancelado') {
-          const agendHorario = agendamento.dataHora.split('T')[1];
-          const agendDuracao = agendamento.duracao || 30;
-          const [agendHora, agendMin] = agendHorario.split(':').map(Number);
-          const agendTotalMin = agendHora * 60 + agendMin;
-          const agendFimMin = agendTotalMin + agendDuracao;
-          
-          const novoInicioMin = hora * 60 + min;
-          const novoFimMin = novoInicioMin + duracao;
-          
-          // Verificar sobreposição
-          if (!(novoFimMin <= agendTotalMin || novoInicioMin >= agendFimMin)) {
-            disponivel = false;
-          }
-        }
-      });
-      return disponivel;
-    });
-}
-
-/**
- * Obter horários disponíveis para uma data
- * @param {string} data - Data no formato YYYY-MM-DD
- * @param {number} duracao - Duração do serviço em minutos
- * @returns {Promise<Array>}
- */
-function obterHorariosDisponiveis(data, duracao = 30) {
-  // Gerar todos os slots possíveis
-  const slots = window.gerarSlotsHorario ? window.gerarSlotsHorario(data) : [];
-  
-  // Verificar disponibilidade de cada slot
-  const promises = slots.map(horario => 
-    verificarDisponibilidadeComDuracao(data, horario, duracao)
-      .then(disponivel => ({ horario, disponivel }))
-  );
-  
-  return Promise.all(promises)
-    .then(results => results.filter(r => r.disponivel).map(r => r.horario));
-}
 
 // ============================================
 // Exportar funções para uso global
@@ -404,4 +419,4 @@ if (typeof window !== 'undefined') {
   window.obterHorariosDisponiveis = obterHorariosDisponiveis;
 }
 
-console.log('✅ Funções de banco de dados carregadas');
+console.log('✅ Funções de banco de dados carregadas e atualizadas');

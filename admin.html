@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin - Sistema de Agendamentos</title>
   <link rel="stylesheet" href="assets/style.css">
+  
+
 </head>
 
 <body>
-  <!-- Navegação -->
   <nav class="nav-bar">
     <div class="nav-container">
       <a href="#" class="nav-logo">🛠️ Painel Admin</a>
@@ -19,120 +20,102 @@
     </div>
   </nav>
 
-  <!-- Container Principal -->
   <div class="container container-wide" style="margin-top: 20px;">
     
-    <!-- Estatísticas -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-      <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalAgendamentos">0</div>
-        <div>Total de Agendamentos</div>
-      </div>
-      <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalPendentes">0</div>
-        <div>Pendentes</div>
-      </div>
-      <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalConfirmados">0</div>
-        <div>Confirmados</div>
-      </div>
-      <div class="card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalConcluidos">0</div>
-        <div>Concluídos</div>
-      </div>
+        <div class="dashboard-stat" style="border-left: 5px solid var(--primary-color);">
+            <div class="stat-number" id="totalAgendamentos">0</div>
+            <div class="stat-label">Total de Agendamentos</div>
+        </div>
+        <div class="dashboard-stat" style="border-left: 5px solid var(--warning);">
+            <div class="stat-number" id="pendentesHoje">0</div>
+            <div class="stat-label">Agendamentos Pendentes (Hoje)</div>
+        </div>
+        <div class="dashboard-stat" style="border-left: 5px solid var(--success);">
+            <div class="stat-number" id="confirmadosHoje">0</div>
+            <div class="stat-label">Agendamentos Confirmados (Hoje)</div>
+        </div>
+        <div class="dashboard-stat" style="border-left: 5px solid var(--danger);">
+            <div class="stat-number" id="naoLidas">0</div>
+            <div class="stat-label">Mensagens Não Lidas</div>
+        </div>
     </div>
 
-    <!-- Tabs de Filtro -->
-    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color);">
-      <button class="btn btn-ghost" id="tabCalendario" onclick="mostrarTab('calendario')" style="border-radius: 0; border-bottom: 3px solid var(--primary-color);">
-        📅 Calendário
-      </button>
-      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarTab('pendentes')" style="border-radius: 0;">
+    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color); overflow-x: auto;">
+      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarSecao('pendentes')" style="border-radius: 0; border-bottom: 3px solid var(--warning); white-space: nowrap;">
         ⏳ Pendentes
       </button>
-      <button class="btn btn-ghost" id="tabConfirmados" onclick="mostrarTab('confirmados')" style="border-radius: 0;">
+      <button class="btn btn-ghost" id="tabConfirmados" onclick="mostrarSecao('confirmados')" style="border-radius: 0; white-space: nowrap;">
         ✅ Confirmados
       </button>
-      <button class="btn btn-ghost" id="tabConcluidos" onclick="mostrarTab('concluidos')" style="border-radius: 0;">
-        🎉 Concluídos
+      <button class="btn btn-ghost" id="tabHistorico" onclick="mostrarSecao('historico')" style="border-radius: 0; white-space: nowrap;">
+        📜 Histórico
+      </button>
+      <button class="btn btn-ghost" id="tabConfig" onclick="mostrarSecao('config')" style="border-radius: 0; white-space: nowrap;">
+        ⚙️ Configurações
       </button>
     </div>
 
-    <!-- Seção: Calendário -->
-    <div id="secaoCalendario">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-        <!-- Calendário -->
-        <div class="card">
-          <h3>📅 Calendário de Agendamentos</h3>
-          <div id="calendario" class="mt-2">
-            <div class="calendar-header">
-              <button class="btn btn-sm btn-ghost" onclick="mesAnterior()">←</button>
-              <h4 id="mesAno" style="margin: 0;"></h4>
-              <button class="btn btn-sm btn-ghost" onclick="proximoMes()">→</button>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 16px; text-align: center; font-weight: 600; font-size: 12px;">
-              <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-            </div>
-            <div id="diasCalendario" class="calendar-grid mt-1"></div>
-          </div>
-        </div>
-
-        <!-- Agendamentos do Dia Selecionado -->
-        <div class="card">
-          <h3 id="tituloAgendamentosDia">📋 Selecione uma data</h3>
-          <div id="agendamentosDia" class="mt-2">
-            <p style="color: var(--text-secondary); text-align: center;">Clique em uma data no calendário</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seção: Pendentes -->
-    <div id="secaoPendentes" class="hidden">
-      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>⏳ Agendamentos Pendentes</h3>
-        <button class="btn btn-sm btn-primary" onclick="carregarPendentes()">
-          🔄 Atualizar
-        </button>
-      </div>
-      <div id="listaPendentes">
+    <div id="secaoPendentes" class="fade-in">
+      <h3>⏳ Agendamentos Pendentes (Aguardando Confirmação)</h3>
+      <div id="listaPendentes" class="mt-3">
         <div class="spinner"></div>
       </div>
     </div>
 
-    <!-- Seção: Confirmados -->
     <div id="secaoConfirmados" class="hidden">
-      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>✅ Agendamentos Confirmados</h3>
-        <button class="btn btn-sm btn-primary" onclick="carregarConfirmados()">
-          🔄 Atualizar
-        </button>
-      </div>
-      <div id="listaConfirmados">
+      <h3>✅ Agendamentos Confirmados</h3>
+      <div id="listaConfirmados" class="mt-3">
         <div class="spinner"></div>
       </div>
     </div>
 
-    <!-- Seção: Concluídos -->
-    <div id="secaoConcluidos" class="hidden">
-      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>🎉 Agendamentos Concluídos</h3>
-        <button class="btn btn-sm btn-primary" onclick="carregarConcluidos()">
-          🔄 Atualizar
-        </button>
-      </div>
-      <div id="listaConcluidos">
+    <div id="secaoHistorico" class="hidden">
+      <h3>📜 Histórico de Agendamentos (Concluídos/Cancelados)</h3>
+      <div id="listaHistorico" class="mt-3">
         <div class="spinner"></div>
       </div>
+    </div>
+
+    <div id="secaoConfig" class="hidden">
+        <h3>⚙️ Configurações de Funcionamento</h3>
+        
+        <div class="card mt-3">
+            <h4>Horários da Semana</h4>
+            <p style="color: var(--text-secondary); font-size: 14px;">Defina os horários de início, fim e a duração dos slots de agendamento.</p>
+
+            <form id="formHorarios" class="mt-3">
+                <div class="form-group">
+                    <label class="form-label">Duração Padrão do Slot (minutos)</label>
+                    <input class="form-input" type="number" id="slotDuracao" required min="5" max="60" step="5">
+                </div>
+                
+                <table class="horarios-table">
+                    <thead>
+                        <tr>
+                            <th>Dia da Semana</th>
+                            <th>Abre às</th>
+                            <th>Fecha às</th>
+                            <th>Funcionando</th>
+                        </tr>
+                    </thead>
+                    <tbody id="horariosBody">
+                        </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary mt-3">
+                    💾 Salvar Configurações
+                </button>
+                <div id="mensagemConfig" class="mt-2" style="display: none;"></div>
+            </form>
+        </div>
     </div>
   </div>
 
-  <!-- Modal de Chat -->
   <div id="modalChat" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
     <div style="width: 90%; max-width: 600px;">
       <div class="chat-container">
         <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <span id="chatTitulo">💬 Chat</span>
+          <span>💬 Chat com <strong id="chatNomeCliente">Cliente</strong></span>
           <button onclick="fecharChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -144,28 +127,6 @@
     </div>
   </div>
 
-  <!-- Modal de Confirmar Agendamento -->
-  <div id="modalConfirmar" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-    <div class="card" style="width: 90%; max-width: 400px;">
-      <h3>✅ Confirmar Agendamento</h3>
-      <form id="formConfirmar">
-        <div class="form-group">
-          <label class="form-label">Preço Final (R$)</label>
-          <input class="form-input" type="number" id="precoFinal" step="0.01" min="0" required>
-        </div>
-        <div class="flex gap-2">
-          <button type="submit" class="btn btn-success" style="flex: 1;">
-            ✅ Confirmar
-          </button>
-          <button type="button" class="btn btn-ghost" onclick="fecharModalConfirmar()" style="flex: 1;">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -176,459 +137,367 @@
 
   <script>
     let usuarioAtual = null;
+    let perfilAdmin = {}; 
     let agendamentoAtualChat = null;
-    let agendamentoParaConfirmar = null;
-    let mesAtual = new Date().getMonth();
-    let anoAtual = new Date().getFullYear();
-    let dataSelecionada = null;
-    let todosAgendamentos = [];
+    let agendamentosCache = {}; // Cache para todos os agendamentos
 
-    // Inicializar
+    // ===============================================
+    // AUTENTICAÇÃO E INICIALIZAÇÃO
+    // ===============================================
+
     firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) {
-        window.location.href = 'login.html';
-        return;
-      }
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
 
-      usuarioAtual = user;
-      
-      // Verificar se é admin
-      const isAdminUser = await isAdmin(user.uid);
-      if (!isAdminUser) {
-        alert('❌ Acesso negado! Esta área é exclusiva para administradores.');
-        window.location.href = 'cliente.html';
-        return;
-      }
-
-      const perfil = await obterPerfilUsuario(user.uid);
-      document.getElementById('nomeAdmin').textContent = perfil?.nome || user.email;
-
-      carregarTodosAgendamentos();
-      renderizarCalendario();
-    });
-
-    // Carregar todos os agendamentos
-    async function carregarTodosAgendamentos() {
-      try {
-        const agendamentos = await listarAgendamentosOnce();
-        todosAgendamentos = Object.entries(agendamentos || {}).map(([id, ag]) => ({ id, ...ag }));
-        atualizarEstatisticas();
-        renderizarCalendario();
-      } catch (error) {
-        console.error('Erro ao carregar agendamentos:', error);
-      }
-    }
-
-    // Atualizar estatísticas
-    function atualizarEstatisticas() {
-      const total = todosAgendamentos.length;
-      const pendentes = todosAgendamentos.filter(ag => ag.status === 'pendente').length;
-      const confirmados = todosAgendamentos.filter(ag => ag.status === 'confirmado').length;
-      const concluidos = todosAgendamentos.filter(ag => ag.status === 'concluido').length;
-
-      document.getElementById('totalAgendamentos').textContent = total;
-      document.getElementById('totalPendentes').textContent = pendentes;
-      document.getElementById('totalConfirmados').textContent = confirmados;
-      document.getElementById('totalConcluidos').textContent = concluidos;
-    }
-
-    // Navegação entre tabs
-    function mostrarTab(tab) {
-      // Ocultar todas
-      document.getElementById('secaoCalendario').classList.add('hidden');
-      document.getElementById('secaoPendentes').classList.add('hidden');
-      document.getElementById('secaoConfirmados').classList.add('hidden');
-      document.getElementById('secaoConcluidos').classList.add('hidden');
-
-      // Remover destaque
-      document.querySelectorAll('[id^="tab"]').forEach(t => {
-        t.style.borderBottom = 'none';
-      });
-
-      // Mostrar seção
-      if (tab === 'calendario') {
-        document.getElementById('secaoCalendario').classList.remove('hidden');
-        document.getElementById('tabCalendario').style.borderBottom = '3px solid var(--primary-color)';
-      } else if (tab === 'pendentes') {
-        document.getElementById('secaoPendentes').classList.remove('hidden');
-        document.getElementById('tabPendentes').style.borderBottom = '3px solid var(--primary-color)';
-        carregarPendentes();
-      } else if (tab === 'confirmados') {
-        document.getElementById('secaoConfirmados').classList.remove('hidden');
-        document.getElementById('tabConfirmados').style.borderBottom = '3px solid var(--primary-color)';
-        carregarConfirmados();
-      } else if (tab === 'concluidos') {
-        document.getElementById('secaoConcluidos').classList.remove('hidden');
-        document.getElementById('tabConcluidos').style.borderBottom = '3px solid var(--primary-color)';
-        carregarConcluidos();
-      }
-    }
-
-    // Calendário
-    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-
-    function renderizarCalendario() {
-      document.getElementById('mesAno').textContent = `${meses[mesAtual]} ${anoAtual}`;
-
-      const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
-      const ultimoDia = new Date(anoAtual, mesAtual + 1, 0).getDate();
-
-      const container = document.getElementById('diasCalendario');
-      container.innerHTML = '';
-
-      // Dias vazios
-      for (let i = 0; i < primeiroDia; i++) {
-        const vazio = document.createElement('div');
-        vazio.className = 'calendar-day disabled';
-        container.appendChild(vazio);
-      }
-
-      // Dias do mês
-      for (let dia = 1; dia <= ultimoDia; dia++) {
-        const divDia = document.createElement('div');
-        divDia.className = 'calendar-day';
-        divDia.textContent = dia;
-
-        const dataAtual = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        usuarioAtual = user;
         
-        // Verificar se tem agendamentos neste dia
-        const temAgendamento = todosAgendamentos.some(ag => ag.dataHora.startsWith(dataAtual));
-        if (temAgendamento) {
-          divDia.classList.add('has-booking');
+        // 1. Verificar se é admin
+        const perfil = await obterPerfilUsuario(user.uid);
+        if (!perfil || perfil.role !== 'admin') {
+            alert('Acesso negado. Você não é um administrador.');
+            window.location.href = 'cliente.html';
+            return;
         }
 
-        // Marcar se é hoje
-        const hoje = new Date();
-        if (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) {
-          divDia.style.border = '2px solid var(--primary-color)';
-        }
-
-        divDia.onclick = () => selecionarDia(dataAtual, divDia);
-        container.appendChild(divDia);
-      }
-    }
-
-    function mesAnterior() {
-      mesAtual--;
-      if (mesAtual < 0) {
-        mesAtual = 11;
-        anoAtual--;
-      }
-      renderizarCalendario();
-    }
-
-    function proximoMes() {
-      mesAtual++;
-      if (mesAtual > 11) {
-        mesAtual = 0;
-        anoAtual++;
-      }
-      renderizarCalendario();
-    }
-
-    function selecionarDia(data, elemento) {
-      // Remover seleção anterior
-      document.querySelectorAll('.calendar-day').forEach(d => {
-        d.classList.remove('selected');
-      });
-
-      elemento.classList.add('selected');
-      dataSelecionada = data;
-
-      // Mostrar agendamentos do dia
-      const agendamentosDia = todosAgendamentos.filter(ag => ag.dataHora.startsWith(data));
-      
-      const dataFormatada = new Date(data + 'T00:00').toLocaleDateString('pt-BR', { 
-        weekday: 'long', 
-        day: '2-digit', 
-        month: 'long' 
-      });
-
-      document.getElementById('tituloAgendamentosDia').textContent = `📋 ${dataFormatada}`;
-      
-      const container = document.getElementById('agendamentosDia');
-      
-      if (agendamentosDia.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Nenhum agendamento nesta data</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      agendamentosDia.sort((a, b) => a.dataHora.localeCompare(b.dataHora));
-      
-      agendamentosDia.forEach(ag => {
-        const hora = ag.dataHora.split('T')[1];
-        const card = document.createElement('div');
-        card.className = 'card mb-2';
-        card.style.padding = '12px';
-        card.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <div style="font-weight: 600; margin-bottom: 4px;">🕐 ${hora} - ${ag.servico}</div>
-              <div style="font-size: 13px; color: var(--text-secondary);">👤 ${ag.nome}</div>
-              <div style="font-size: 13px; color: var(--text-secondary);">💰 ${formatarPreco(ag.preco)}</div>
-            </div>
-            <span class="badge badge-${ag.status === 'pendente' ? 'warning' : ag.status === 'confirmado' ? 'primary' : 'success'}">
-              ${ag.status === 'pendente' ? '⏳' : ag.status === 'confirmado' ? '✅' : '🎉'} ${ag.status}
-            </span>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // Carregar pendentes
-    async function carregarPendentes() {
-      const container = document.getElementById('listaPendentes');
-      container.innerHTML = '<div class="spinner"></div>';
-
-      await carregarTodosAgendamentos();
-      
-      const pendentes = todosAgendamentos.filter(ag => ag.status === 'pendente');
-
-      if (pendentes.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento pendente</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      pendentes.forEach(ag => {
-        const card = criarCardAgendamento(ag, 'pendente');
-        container.appendChild(card);
-      });
-    }
-
-    // Carregar confirmados
-    async function carregarConfirmados() {
-      const container = document.getElementById('listaConfirmados');
-      container.innerHTML = '<div class="spinner"></div>';
-
-      await carregarTodosAgendamentos();
-      
-      const confirmados = todosAgendamentos.filter(ag => ag.status === 'confirmado');
-
-      if (confirmados.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento confirmado</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      confirmados.forEach(ag => {
-        const card = criarCardAgendamento(ag, 'confirmado');
-        container.appendChild(card);
-      });
-    }
-
-    // Carregar concluídos
-    async function carregarConcluidos() {
-      const container = document.getElementById('listaConcluidos');
-      container.innerHTML = '<div class="spinner"></div>';
-
-      await carregarTodosAgendamentos();
-      
-      const concluidos = todosAgendamentos.filter(ag => ag.status === 'concluido');
-
-      if (concluidos.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento concluído</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      concluidos.forEach(ag => {
-        const card = criarCardAgendamento(ag, 'concluido');
-        container.appendChild(card);
-      });
-    }
-
-    // Criar card de agendamento
-    function criarCardAgendamento(ag, status) {
-      const card = document.createElement('div');
-      card.className = 'card mb-2';
-      
-      const data = new Date(ag.dataHora);
-      const dataFormatada = data.toLocaleDateString('pt-BR');
-      const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-      let acoes = '';
-      if (status === 'pendente') {
-        acoes = `
-          <button class="btn btn-sm btn-success" onclick="abrirModalConfirmar('${ag.id}', ${ag.preco})">
-            ✅ Confirmar
-          </button>
-          <button class="btn btn-sm btn-danger" onclick="cancelarAgendamento('${ag.id}')">
-            ❌ Cancelar
-          </button>
-        `;
-      } else if (status === 'confirmado') {
-        acoes = `
-          <button class="btn btn-sm btn-success" onclick="concluirAgendamento('${ag.id}')">
-            🎉 Concluir
-          </button>
-        `;
-      }
-
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; gap: 16px;">
-          <div style="flex: 1;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span class="badge badge-${status === 'pendente' ? 'warning' : status === 'confirmado' ? 'primary' : 'success'}">
-                ${status === 'pendente' ? '⏳ Pendente' : status === 'confirmado' ? '✅ Confirmado' : '🎉 Concluído'}
-              </span>
-            </div>
-            <h4 style="margin: 8px 0;">${ag.servico}</h4>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-              👤 ${ag.nome} | 📞 ${ag.telefone}
-            </p>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-              📅 ${dataFormatada} às ${horaFormatada} | ⏱️ ${formatarDuracao(ag.duracao)}
-            </p>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-              💰 ${formatarPreco(ag.precoFinal || ag.preco)}
-            </p>
-            ${ag.observacoes !== 'Nenhuma' ? `<p style="font-size: 13px; color: var(--text-tertiary); margin-top: 8px;">💬 ${ag.observacoes}</p>` : ''}
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            ${acoes}
-            <button class="btn btn-sm btn-primary" onclick="abrirChat('${ag.id}', '${ag.nome}')">
-              💬 Chat
-            </button>
-          </div>
-        </div>
-      `;
-      
-      return card;
-    }
-
-    // Modal confirmar
-    function abrirModalConfirmar(id, precoSugerido) {
-      agendamentoParaConfirmar = id;
-      document.getElementById('precoFinal').value = precoSugerido;
-      document.getElementById('modalConfirmar').classList.remove('hidden');
-    }
-
-    function fecharModalConfirmar() {
-      document.getElementById('modalConfirmar').classList.add('hidden');
-      agendamentoParaConfirmar = null;
-    }
-
-    document.getElementById('formConfirmar').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const precoFinal = parseFloat(document.getElementById('precoFinal').value);
-      
-      try {
-        await atualizarAgendamento(agendamentoParaConfirmar, {
-          status: 'confirmado',
-          precoFinal
+        perfilAdmin = perfil;
+        document.getElementById('nomeAdmin').textContent = perfil.nomeCompleto || perfil.email;
+        
+        // 2. Configurar o listener de agendamentos para manter a lista atualizada
+        // O listarAgendamentos é uma função em database.js que mantém a conexão em tempo real
+        listarAgendamentos((dados) => {
+            agendamentosCache = dados || {};
+            renderizarTodasSecoes();
+            atualizarDashboard();
         });
-        
-        fecharModalConfirmar();
-        alert('✅ Agendamento confirmado com sucesso!');
-        carregarTodosAgendamentos();
-        carregarPendentes();
-      } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao confirmar agendamento');
-      }
+
+        // 3. Inicializar configurações e seção principal
+        carregarConfiguracoesHorario();
+        mostrarSecao('pendentes');
     });
 
-    // Concluir agendamento
-    async function concluirAgendamento(id) {
-      if (!confirm('Confirmar conclusão deste agendamento?')) return;
+    // ===============================================
+    // FUNÇÕES DE EXIBIÇÃO E RENDERIZAÇÃO
+    // ===============================================
+    
+    // Navegação entre seções
+    function mostrarSecao(secao) {
+        // Ocultar todas
+        document.getElementById('secaoPendentes').classList.add('hidden');
+        document.getElementById('secaoConfirmados').classList.add('hidden');
+        document.getElementById('secaoHistorico').classList.add('hidden');
+        document.getElementById('secaoConfig').classList.add('hidden');
 
-      try {
-        await alterarStatusAgendamento(id, 'concluido');
-        alert('✅ Agendamento concluído!');
-        carregarTodosAgendamentos();
-        carregarConfirmados();
-      } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao concluir agendamento');
-      }
+        // Remover destaque dos tabs
+        document.querySelectorAll('[id^="tab"]').forEach(tab => {
+            tab.style.borderBottom = 'none';
+        });
+
+        // Mostrar seção selecionada
+        const secaoElement = document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
+        const tabElement = document.getElementById(`tab${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
+        
+        if (secaoElement) secaoElement.classList.remove('hidden');
+        if (tabElement) tabElement.style.borderBottom = '3px solid var(--primary-color)';
+
+        // Corrigir cor da tab de pendentes
+        if (secao === 'pendentes') tabElement.style.borderBottom = '3px solid var(--warning)';
+        if (secao === 'confirmados') tabElement.style.borderBottom = '3px solid var(--success)';
+        if (secao === 'historico') tabElement.style.borderBottom = '3px solid var(--info)';
+        if (secao === 'config') tabElement.style.borderBottom = '3px solid var(--danger)'; // Cor aleatória para config
     }
 
-    // Cancelar agendamento
-    async function cancelarAgendamento(id) {
-      if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
+    // Renderizar todas as seções (chamada pelo listener do Firebase)
+    function renderizarTodasSecoes() {
+        const agendamentosArray = Object.entries(agendamentosCache)
+            .map(([id, ag]) => ({ id, ...ag }))
+            .sort((a, b) => new Date(a.dataHora) - new Date(b.dataHora));
 
-      try {
-        await alterarStatusAgendamento(id, 'cancelado');
-        alert('✅ Agendamento cancelado');
-        carregarTodosAgendamentos();
-        carregarPendentes();
-      } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao cancelar agendamento');
-      }
+        const pendentes = agendamentosArray.filter(ag => ag.status === 'pendente');
+        const confirmados = agendamentosArray.filter(ag => ag.status === 'confirmado');
+        const historico = agendamentosArray.filter(ag => ag.status === 'concluido' || ag.status === 'cancelado');
+        
+        renderizarLista(document.getElementById('listaPendentes'), pendentes, true);
+        renderizarLista(document.getElementById('listaConfirmados'), confirmados, true);
+        renderizarLista(document.getElementById('listaHistorico'), historico, false);
     }
 
-    // Chat
-    function abrirChat(agendamentoId, nomeCliente) {
-      agendamentoAtualChat = agendamentoId;
-      document.getElementById('chatTitulo').textContent = `💬 Chat com ${nomeCliente}`;
-      document.getElementById('modalChat').classList.remove('hidden');
-      carregarMensagensChat();
+    // Renderizar a lista de agendamentos em uma seção
+    function renderizarLista(container, lista, showActions) {
+        container.innerHTML = '';
+        if (lista.length === 0) {
+            container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento nesta lista.</p>';
+            return;
+        }
+
+        lista.forEach(ag => {
+            const card = criarCardAgendamentoAdmin(ag, showActions);
+            container.appendChild(card);
+        });
+    }
+    
+    // Criar o card de agendamento para o Admin (Atualizado para multi-serviço)
+    function criarCardAgendamentoAdmin(ag, showActions) {
+        const card = document.createElement('div');
+        card.className = `agendamento-card ${ag.status}`;
+        
+        const data = new Date(ag.dataHora);
+        const dataFormatada = data.toLocaleDateString('pt-BR');
+        const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        
+        // Mapeia o array de serviços para uma lista bonita (usando a nova estrutura)
+        const listaServicos = (ag.servicos || [{ nome: ag.servico || 'Serviço Indefinido' }]) 
+                                .map(s => `<li>${s.nome} (${formatarPreco(s.preco)})</li>`)
+                                .join('');
+        
+        const precoDisplay = formatarPreco(ag.precoTotal || ag.preco || 0);
+        const duracaoDisplay = formatarDuracao(ag.duracaoTotal || ag.duracao || 0);
+        
+        let statusBadge = '';
+        if (ag.status === 'pendente') statusBadge = `<span class="badge badge-warning">⏳ Pendente</span>`;
+        if (ag.status === 'confirmado') statusBadge = `<span class="badge badge-success">✅ Confirmado</span>`;
+        if (ag.status === 'concluido') statusBadge = `<span class="badge badge-info">✅ Concluído</span>`;
+        if (ag.status === 'cancelado') statusBadge = `<span class="badge badge-danger">❌ Cancelado</span>`;
+
+        card.innerHTML = `
+            <div class="agendamento-header">
+                <h4 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                    ${ag.nomeCompleto || ag.email}
+                    ${statusBadge}
+                </h4>
+                <div class="agendamento-actions">
+                    <button class="btn btn-sm btn-primary" onclick="abrirChat('${ag.id}', '${ag.nomeCompleto || ag.email}')">
+                        💬 Chat
+                    </button>
+                    ${showActions && ag.status === 'pendente' ? `
+                        <button class="btn btn-sm btn-success" onclick="alterarStatusAgendamentoAdmin('${ag.id}', 'confirmado')">
+                            ✅ Confirmar
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="alterarStatusAgendamentoAdmin('${ag.id}', 'cancelado')">
+                            ❌ Recusar
+                        </button>
+                    ` : ''}
+                    ${showActions && ag.status === 'confirmado' ? `
+                        <button class="btn btn-sm btn-info" onclick="alterarStatusAgendamentoAdmin('${ag.id}', 'concluido')">
+                            👍 Concluir
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="alterarStatusAgendamentoAdmin('${ag.id}', 'cancelado')">
+                            ❌ Cancelar
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+            <div class="agendamento-details">
+                <p><strong>📅 Data/Hora:</strong> ${dataFormatada} às ${horaFormatada}</p>
+                <p><strong>📞 Cliente:</strong> ${ag.telefone || 'N/A'}</p>
+                <p><strong>💰 Preço Total:</strong> ${precoDisplay}</p>
+                <p><strong>⏱️ Duração Total:</strong> ${duracaoDisplay}</p>
+                <p><strong>Serviços:</strong></p>
+                <ul style="margin-top: 5px;">${listaServicos}</ul>
+                ${ag.observacoes && ag.observacoes !== 'Nenhuma' ? `<p style="margin-top: 10px;"><strong>💬 Obs:</strong> ${ag.observacoes}</p>` : ''}
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    // Atualizar o Dashboard
+    async function atualizarDashboard() {
+        // As contagens são fáceis com o cache de agendamentos
+        const agendamentosArray = Object.entries(agendamentosCache)
+            .map(([id, ag]) => ({ id, ...ag }));
+
+        const hoje = new Date().toISOString().split('T')[0];
+        
+        const total = agendamentosArray.length;
+        const pendentesHoje = agendamentosArray.filter(ag => ag.status === 'pendente' && ag.dataHora.startsWith(hoje)).length;
+        const confirmadosHoje = agendamentosArray.filter(ag => ag.status === 'confirmado' && ag.dataHora.startsWith(hoje)).length;
+        
+        // Chamada assíncrona para mensagens não lidas
+        const naoLidas = await contarMensagensNaoLidas();
+
+        document.getElementById('totalAgendamentos').textContent = total;
+        document.getElementById('pendentesHoje').textContent = pendentesHoje;
+        document.getElementById('confirmadosHoje').textContent = confirmadosHoje;
+        document.getElementById('naoLidas').textContent = naoLidas;
+    }
+
+    // ===============================================
+    // FUNÇÕES DE AÇÃO DO ADMIN
+    // ===============================================
+
+    // Função para alterar o status do agendamento
+    async function alterarStatusAgendamentoAdmin(id, novoStatus) {
+        if (!confirm(`Tem certeza que deseja alterar o status do agendamento ${id} para '${novoStatus}'?`)) return;
+
+        try {
+            await alterarStatusAgendamento(id, novoStatus); // função em database.js
+            alert(`✅ Agendamento ${id} alterado para ${novoStatus}!`);
+            // O listener do Firebase se encarrega de chamar o renderizarTodasSecoes
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao alterar status do agendamento');
+        }
+    }
+
+    // ===============================================
+    // FUNÇÕES DE CHAT
+    // ===============================================
+    
+    function abrirChat(agendamentoId, clienteNome) {
+        agendamentoAtualChat = agendamentoId;
+        document.getElementById('chatNomeCliente').textContent = clienteNome;
+        document.getElementById('modalChat').classList.remove('hidden');
+        marcarComoLido(agendamentoId); // Marcar como lido ao abrir
+        carregarMensagensChat();
     }
 
     function fecharChat() {
-      document.getElementById('modalChat').classList.add('hidden');
-      agendamentoAtualChat = null;
+        document.getElementById('modalChat').classList.add('hidden');
+        agendamentoAtualChat = null;
+        atualizarDashboard(); // Atualiza a contagem de não lidas
     }
 
     function carregarMensagensChat() {
-      const container = document.getElementById('chatMessages');
-      container.innerHTML = '';
-
-      listarMensagens(agendamentoAtualChat, (mensagens) => {
+        const container = document.getElementById('chatMessages');
         container.innerHTML = '';
-        mensagens.forEach(msg => {
-          const div = document.createElement('div');
-          div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
-          div.innerHTML = `
-            <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">${msg.userNome}</div>
-            <div>${msg.mensagem}</div>
-            <div style="font-size: 10px; opacity: 0.6; margin-top: 4px;">
-              ${new Date(msg.timestamp).toLocaleTimeString('pt-BR')}
-            </div>
-          `;
-          container.appendChild(div);
+
+        // listarMensagens (em database.js)
+        listarMensagens(agendamentoAtualChat, (mensagens) => {
+            container.innerHTML = '';
+            mensagens.forEach(msg => {
+                const div = document.createElement('div');
+                // Se o userId for o do Admin (usuarioAtual.uid), é "sent", senão é "received"
+                div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
+                div.innerHTML = `
+                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">${msg.userNome}</div>
+                    <div>${msg.mensagem}</div>
+                    <div style="font-size: 10px; opacity: 0.6; margin-top: 4px;">
+                        ${new Date(msg.timestamp).toLocaleTimeString('pt-BR')}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
         });
-        container.scrollTop = container.scrollHeight;
-      });
     }
 
     async function enviarMensagemChat() {
-      const input = document.getElementById('chatInput');
-      const mensagem = input.value.trim();
-      
-      if (!mensagem) return;
+        const input = document.getElementById('chatInput');
+        const mensagem = input.value.trim();
+        
+        if (!mensagem) return;
 
-      const perfil = await obterPerfilUsuario(usuarioAtual.uid);
-      
-      await enviarMensagem(agendamentoAtualChat, {
-        userId: usuarioAtual.uid,
-        userNome: perfil.nome || 'Admin',
-        mensagem
-      });
+        await enviarMensagem(agendamentoAtualChat, {
+            userId: usuarioAtual.uid,
+            userNome: perfilAdmin.nomeCompleto || 'Admin', // Usar nome do Admin
+            mensagem
+        });
 
-      input.value = '';
+        input.value = '';
     }
 
     document.getElementById('chatInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        enviarMensagemChat();
-      }
+        if (e.key === 'Enter') {
+            enviarMensagemChat();
+        }
     });
 
-    // Logout
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = 'index.html';
-      });
+    // ===============================================
+    // FUNÇÕES DE CONFIGURAÇÃO (Horários)
+    // ===============================================
+    
+    // Injeta a tabela de horários
+    function carregarConfiguracoesHorario() {
+        // BUSINESS_HOURS vem de services-config.js
+        const { dias_semana_nome, horario_inicio, horario_fim, slot_duracao, dias_funcionamento } = BUSINESS_HOURS;
+        const body = document.getElementById('horariosBody');
+        body.innerHTML = '';
+
+        // Preenche duração do slot
+        document.getElementById('slotDuracao').value = slot_duracao;
+
+        dias_semana_nome.forEach((dia, index) => {
+            const tr = document.createElement('tr');
+            const isFunciona = dias_funcionamento.includes(index);
+            
+            tr.innerHTML = `
+                <td>${dia}</td>
+                <td><input type="time" class="form-input" name="inicio_${index}" value="${horario_inicio}" ${!isFunciona ? 'disabled' : ''}></td>
+                <td><input type="time" class="form-input" name="fim_${index}" value="${horario_fim}" ${!isFunciona ? 'disabled' : ''}></td>
+                <td>
+                    <input type="checkbox" data-dia="${index}" onchange="toggleHorarios(this, ${index})" ${isFunciona ? 'checked' : ''}>
+                </td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+    
+    // Habilita/Desabilita os campos de horário
+    function toggleHorarios(checkbox, diaIndex) {
+        const inputs = document.querySelectorAll(`input[name$="_${diaIndex}"]`);
+        inputs.forEach(input => {
+            if (input.type === 'time') {
+                input.disabled = !checkbox.checked;
+            }
+        });
     }
 
-    // Atualização automática a cada 30 segundos
-    setInterval(carregarTodosAgendamentos, 30000);
+    // Salvar configurações de horário
+    document.getElementById('formHorarios').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const dados = {};
+        
+        dados.slot_duracao = parseInt(document.getElementById('slotDuracao').value);
+        dados.horario_inicio = form.querySelector('input[name="inicio_1"]').value; // Assume segunda
+        dados.horario_fim = form.querySelector('input[name="fim_1"]').value; // Assume segunda
+        dados.dias_funcionamento = [];
+
+        // Coleta os dias selecionados
+        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            if (checkbox.checked) {
+                dados.dias_funcionamento.push(parseInt(checkbox.dataset.dia));
+            }
+        });
+        
+        // SalvarHorariosFuncionamento (a ser implementado em database.js)
+        try {
+            // Em vez de salvar diretamente, o ideal é salvar a nova configuração no Firebase
+            // Para este passo, vamos simular o salvamento e pedir a implementação no database.js
+            
+            // Aqui precisaremos de uma função em database.js como:
+            // await salvarConfiguracaoHorarios(dados); 
+            
+            // Por enquanto, apenas atualizamos a variável global (não persiste)
+            Object.assign(BUSINESS_HOURS, dados);
+            
+            // Chamamos a função de persistência (que precisará ser criada)
+            await salvarConfiguracaoHorarios(dados); // <<-- Esta função deve ser criada em database.js
+
+            mostrarMensagemConfig('✅ Horários de funcionamento atualizados com sucesso!', 'sucesso');
+            carregarConfiguracoesHorario(); // Recarrega
+        } catch (error) {
+            console.error('Erro ao salvar horários:', error);
+            mostrarMensagemConfig('❌ Erro ao salvar horários: ' + error.message, 'erro');
+        }
+    });
+
+    function mostrarMensagemConfig(texto, tipo) {
+        const msg = document.getElementById('mensagemConfig');
+        msg.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
+        msg.textContent = texto;
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 5000);
+    }
+    
+    // Logout
+    function logout() {
+        firebase.auth().signOut().then(() => {
+            window.location.href = 'index.html';
+        });
+    }
   </script>
 </body>
 </html>
