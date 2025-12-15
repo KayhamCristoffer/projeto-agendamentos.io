@@ -1,345 +1,634 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Meta Tags Essenciais -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  
-  <!-- SEO -->
-  <meta name="description" content="Painel administrativo - Gerenciar agendamentos">
-  <meta name="robots" content="noindex, nofollow">
-  
-  <!-- Título -->
   <title>Painel Admin - Sistema de Agendamentos</title>
-  
-  <!-- Estilos -->
   <link rel="stylesheet" href="assets/style.css">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
 </head>
 
 <body>
+  <!-- Navegação -->
+  <nav class="nav-bar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">🛠️ Painel Admin</a>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span id="nomeAdmin" style="color: var(--text-secondary); font-size: 14px;"></span>
+        <button class="btn btn-sm btn-ghost" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </nav>
+
   <!-- Container Principal -->
-  <main class="container" role="main" style="max-width: 800px;">
-    <!-- Cabeçalho -->
-    <header>
-      <h2>🛠️ Painel Administrativo</h2>
-      <p>Gerencie todos os agendamentos do sistema</p>
-    </header>
-
+  <div class="container container-wide" style="margin-top: 20px;">
+    
     <!-- Estatísticas -->
-    <div id="stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px;">
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;" id="totalAgendamentos">0</div>
-        <div style="font-size: 14px; opacity: 0.9;">Total</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
+        <div style="font-size: 36px; font-weight: bold;" id="totalAgendamentos">0</div>
+        <div>Total de Agendamentos</div>
       </div>
-      <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;" id="pendentes">0</div>
-        <div style="font-size: 14px; opacity: 0.9;">Pendentes</div>
+      <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; text-align: center;">
+        <div style="font-size: 36px; font-weight: bold;" id="totalPendentes">0</div>
+        <div>Pendentes</div>
       </div>
-      <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div style="font-size: 32px; font-weight: bold;" id="hoje">0</div>
-        <div style="font-size: 14px; opacity: 0.9;">Hoje</div>
+      <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; text-align: center;">
+        <div style="font-size: 36px; font-weight: bold;" id="totalConfirmados">0</div>
+        <div>Confirmados</div>
+      </div>
+      <div class="card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; text-align: center;">
+        <div style="font-size: 36px; font-weight: bold;" id="totalConcluidos">0</div>
+        <div>Concluídos</div>
       </div>
     </div>
 
-    <!-- Controles -->
-    <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
-      <button onclick="carregar()" class="button" style="flex: 1; min-width: 150px;">
-        🔄 Atualizar Lista
+    <!-- Tabs de Filtro -->
+    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color);">
+      <button class="btn btn-ghost" id="tabCalendario" onclick="mostrarTab('calendario')" style="border-radius: 0; border-bottom: 3px solid var(--primary-color);">
+        📅 Calendário
       </button>
-      
-      <button onclick="filtrarPorStatus('pendente')" class="button button-outline" style="flex: 1; min-width: 150px;">
-        📋 Pendentes
+      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarTab('pendentes')" style="border-radius: 0;">
+        ⏳ Pendentes
       </button>
-      
-      <button onclick="filtrarPorStatus('todos')" class="button button-outline" style="flex: 1; min-width: 150px;">
-        📊 Todos
+      <button class="btn btn-ghost" id="tabConfirmados" onclick="mostrarTab('confirmados')" style="border-radius: 0;">
+        ✅ Confirmados
+      </button>
+      <button class="btn btn-ghost" id="tabConcluidos" onclick="mostrarTab('concluidos')" style="border-radius: 0;">
+        🎉 Concluídos
       </button>
     </div>
 
-    <!-- Filtros -->
-    <div style="margin-bottom: 24px;">
-      <input 
-        type="text" 
-        id="buscar" 
-        placeholder="🔍 Buscar por nome, serviço ou e-mail..." 
-        style="margin-bottom: 8px;"
-      />
+    <!-- Seção: Calendário -->
+    <div id="secaoCalendario">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- Calendário -->
+        <div class="card">
+          <h3>📅 Calendário de Agendamentos</h3>
+          <div id="calendario" class="mt-2">
+            <div class="calendar-header">
+              <button class="btn btn-sm btn-ghost" onclick="mesAnterior()">←</button>
+              <h4 id="mesAno" style="margin: 0;"></h4>
+              <button class="btn btn-sm btn-ghost" onclick="proximoMes()">→</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 16px; text-align: center; font-weight: 600; font-size: 12px;">
+              <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div id="diasCalendario" class="calendar-grid mt-1"></div>
+          </div>
+        </div>
+
+        <!-- Agendamentos do Dia Selecionado -->
+        <div class="card">
+          <h3 id="tituloAgendamentosDia">📋 Selecione uma data</h3>
+          <div id="agendamentosDia" class="mt-2">
+            <p style="color: var(--text-secondary); text-align: center;">Clique em uma data no calendário</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Lista de Agendamentos -->
-    <div id="listaContainer">
-      <div id="loading" style="text-align: center; padding: 40px;">
+    <!-- Seção: Pendentes -->
+    <div id="secaoPendentes" class="hidden">
+      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>⏳ Agendamentos Pendentes</h3>
+        <button class="btn btn-sm btn-primary" onclick="carregarPendentes()">
+          🔄 Atualizar
+        </button>
+      </div>
+      <div id="listaPendentes">
         <div class="spinner"></div>
-        <p>Carregando agendamentos...</p>
-      </div>
-      <ul id="lista" style="display: none;"></ul>
-      <div id="vazio" style="display: none; text-align: center; padding: 40px; color: #6c757d;">
-        <p style="font-size: 48px; margin-bottom: 16px;">📭</p>
-        <p>Nenhum agendamento encontrado</p>
       </div>
     </div>
 
-    <!-- Links de Navegação -->
-    <a href="index.html" style="text-align: center; margin-top: 24px;">
-      ← Voltar para página inicial
-    </a>
-  </main>
+    <!-- Seção: Confirmados -->
+    <div id="secaoConfirmados" class="hidden">
+      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>✅ Agendamentos Confirmados</h3>
+        <button class="btn btn-sm btn-primary" onclick="carregarConfirmados()">
+          🔄 Atualizar
+        </button>
+      </div>
+      <div id="listaConfirmados">
+        <div class="spinner"></div>
+      </div>
+    </div>
 
-  <!-- Firebase SDK (versão 9 - compatibilidade) -->
+    <!-- Seção: Concluídos -->
+    <div id="secaoConcluidos" class="hidden">
+      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>🎉 Agendamentos Concluídos</h3>
+        <button class="btn btn-sm btn-primary" onclick="carregarConcluidos()">
+          🔄 Atualizar
+        </button>
+      </div>
+      <div id="listaConcluidos">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Chat -->
+  <div id="modalChat" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+    <div style="width: 90%; max-width: 600px;">
+      <div class="chat-container">
+        <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <span id="chatTitulo">💬 Chat</span>
+          <button onclick="fecharChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-container">
+          <input type="text" class="chat-input form-input" id="chatInput" placeholder="Digite sua mensagem..." style="margin: 0;">
+          <button class="btn btn-primary" onclick="enviarMensagemChat()">📤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmar Agendamento -->
+  <div id="modalConfirmar" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+    <div class="card" style="width: 90%; max-width: 400px;">
+      <h3>✅ Confirmar Agendamento</h3>
+      <form id="formConfirmar">
+        <div class="form-group">
+          <label class="form-label">Preço Final (R$)</label>
+          <input class="form-input" type="number" id="precoFinal" step="0.01" min="0" required>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" class="btn btn-success" style="flex: 1;">
+            ✅ Confirmar
+          </button>
+          <button type="button" class="btn btn-ghost" onclick="fecharModalConfirmar()" style="flex: 1;">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  
-  <!-- Configuração Firebase -->
   <script src="firebase/firebase-config.js"></script>
+  <script src="firebase/services-config.js"></script>
+  <script src="firebase/database.js"></script>
+  <script src="assets/theme.js"></script>
 
-  <!-- Lógica do Painel Admin -->
   <script>
-    // Elementos do DOM
-    const listaElement = document.getElementById('lista');
-    const loadingElement = document.getElementById('loading');
-    const vazioElement = document.getElementById('vazio');
-    const buscarInput = document.getElementById('buscar');
-    const totalElement = document.getElementById('totalAgendamentos');
-    const pendentesElement = document.getElementById('pendentes');
-    const hojeElement = document.getElementById('hoje');
-
-    // Variáveis globais
+    let usuarioAtual = null;
+    let agendamentoAtualChat = null;
+    let agendamentoParaConfirmar = null;
+    let mesAtual = new Date().getMonth();
+    let anoAtual = new Date().getFullYear();
+    let dataSelecionada = null;
     let todosAgendamentos = [];
-    let filtroAtual = 'todos';
 
-    // Função principal para carregar agendamentos
-    function carregar() {
-      loadingElement.style.display = 'block';
-      listaElement.style.display = 'none';
-      vazioElement.style.display = 'none';
-
-      firebase.database().ref("agendamentos").once("value")
-        .then(snapshot => {
-          todosAgendamentos = [];
-          
-          snapshot.forEach(item => {
-            const dados = item.val();
-            todosAgendamentos.push({
-              id: item.key,
-              ...dados
-            });
-          });
-
-          // Ordenar por data/hora (mais recentes primeiro)
-          todosAgendamentos.sort((a, b) => {
-            return new Date(b.dataHora) - new Date(a.dataHora);
-          });
-
-          atualizarEstatisticas();
-          renderizarLista(todosAgendamentos);
-          loadingElement.style.display = 'none';
-        })
-        .catch(error => {
-          console.error('Erro ao carregar:', error);
-          loadingElement.innerHTML = `<p style="color: #dc3545;">❌ Erro ao carregar agendamentos</p>`;
-        });
-    }
-
-    // Função para renderizar lista
-    function renderizarLista(agendamentos) {
-      listaElement.innerHTML = '';
-
-      if (agendamentos.length === 0) {
-        listaElement.style.display = 'none';
-        vazioElement.style.display = 'block';
+    // Inicializar
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
         return;
       }
 
-      listaElement.style.display = 'block';
-      vazioElement.style.display = 'none';
-
-      agendamentos.forEach(item => {
-        const li = document.createElement('li');
-        li.style.borderLeft = `4px solid ${item.status === 'pendente' ? '#ffc107' : '#28a745'}`;
-        li.style.position = 'relative';
-        
-        // Formatar data
-        const data = new Date(item.dataHora);
-        const dataFormatada = data.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-        });
-        const horaFormatada = data.toLocaleTimeString('pt-BR', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        // Verificar se é hoje
-        const hoje = new Date();
-        const ehHoje = data.toDateString() === hoje.toDateString();
-
-        li.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-            <div style="flex: 1;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <strong style="font-size: 16px; color: #212529;">👤 ${item.nome}</strong>
-                ${ehHoje ? '<span style="background: #ffc107; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">HOJE</span>' : ''}
-              </div>
-              
-              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
-                📞 ${item.telefone || 'Não informado'}
-              </div>
-              
-              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
-                ✂️ <strong>${item.servico}</strong>
-              </div>
-              
-              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
-                📅 ${dataFormatada} às ${horaFormatada}
-              </div>
-              
-              <div style="font-size: 14px; color: #6c757d; margin-bottom: 4px;">
-                📧 ${item.userEmail || 'visitante'}
-              </div>
-              
-              ${item.observacoes && item.observacoes !== 'Nenhuma' ? `
-                <div style="font-size: 13px; color: #495057; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px;">
-                  💬 <em>${item.observacoes}</em>
-                </div>
-              ` : ''}
-              
-              <div style="font-size: 12px; color: #adb5bd; margin-top: 8px;">
-                🕐 Criado em: ${new Date(item.criadoEm).toLocaleString('pt-BR')}
-              </div>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <button 
-                onclick="alterarStatus('${item.id}', '${item.status === 'pendente' ? 'confirmado' : 'pendente'}')"
-                style="padding: 8px 16px; font-size: 12px; white-space: nowrap; min-width: 100px;"
-                class="button ${item.status === 'pendente' ? 'button-success' : 'button-secondary'}"
-              >
-                ${item.status === 'pendente' ? '✅ Confirmar' : '🔄 Pendente'}
-              </button>
-              
-              <button 
-                onclick="confirmarExclusao('${item.id}', '${item.nome}')"
-                style="padding: 8px 16px; font-size: 12px; white-space: nowrap;"
-                class="button button-danger"
-              >
-                🗑️ Excluir
-              </button>
-            </div>
-          </div>
-        `;
-        
-        listaElement.appendChild(li);
-      });
-    }
-
-    // Função para atualizar estatísticas
-    function atualizarEstatisticas() {
-      const total = todosAgendamentos.length;
-      const pendentes = todosAgendamentos.filter(a => a.status === 'pendente').length;
+      usuarioAtual = user;
       
-      const hoje = new Date();
-      const hojeCount = todosAgendamentos.filter(a => {
-        const dataAgenda = new Date(a.dataHora);
-        return dataAgenda.toDateString() === hoje.toDateString();
-      }).length;
-
-      totalElement.textContent = total;
-      pendentesElement.textContent = pendentes;
-      hojeElement.textContent = hojeCount;
-    }
-
-    // Função para filtrar por status
-    function filtrarPorStatus(status) {
-      filtroAtual = status;
-      
-      let filtrados = todosAgendamentos;
-      if (status !== 'todos') {
-        filtrados = todosAgendamentos.filter(a => a.status === status);
+      // Verificar se é admin
+      const isAdminUser = await isAdmin(user.uid);
+      if (!isAdminUser) {
+        alert('❌ Acesso negado! Esta área é exclusiva para administradores.');
+        window.location.href = 'cliente.html';
+        return;
       }
-      
-      renderizarLista(filtrados);
-    }
 
-    // Função para alterar status
-    function alterarStatus(id, novoStatus) {
-      firebase.database().ref(`agendamentos/${id}`).update({
-        status: novoStatus,
-        atualizadoEm: new Date().toISOString()
-      })
-      .then(() => {
-        console.log('✅ Status atualizado');
-        carregar(); // Recarregar lista
-      })
-      .catch(error => {
-        console.error('❌ Erro ao atualizar status:', error);
-        alert('Erro ao atualizar status: ' + error.message);
-      });
-    }
+      const perfil = await obterPerfilUsuario(user.uid);
+      document.getElementById('nomeAdmin').textContent = perfil?.nome || user.email;
 
-    // Função para confirmar exclusão
-    function confirmarExclusao(id, nome) {
-      if (confirm(`⚠️ Deseja realmente excluir o agendamento de "${nome}"?\n\nEsta ação não pode ser desfeita!`)) {
-        excluirAgendamento(id);
-      }
-    }
-
-    // Função para excluir agendamento
-    function excluirAgendamento(id) {
-      firebase.database().ref(`agendamentos/${id}`).remove()
-        .then(() => {
-          console.log('✅ Agendamento excluído');
-          carregar(); // Recarregar lista
-        })
-        .catch(error => {
-          console.error('❌ Erro ao excluir:', error);
-          alert('Erro ao excluir agendamento: ' + error.message);
-        });
-    }
-
-    // Função de busca
-    buscarInput.addEventListener('input', function(e) {
-      const termo = e.target.value.toLowerCase();
-      
-      const filtrados = todosAgendamentos.filter(item => {
-        return (
-          item.nome.toLowerCase().includes(termo) ||
-          item.servico.toLowerCase().includes(termo) ||
-          (item.userEmail && item.userEmail.toLowerCase().includes(termo)) ||
-          (item.telefone && item.telefone.includes(termo))
-        );
-      });
-      
-      renderizarLista(filtrados);
+      carregarTodosAgendamentos();
+      renderizarCalendario();
     });
 
-    // Carregar automaticamente ao abrir a página
-    window.addEventListener('load', carregar);
-
-    // Atualizar automaticamente a cada 30 segundos
-    setInterval(carregar, 30000);
-  </script>
-
-  <!-- Estilos adicionais -->
-  <style>
-    @media (max-width: 768px) {
-      #stats {
-        grid-template-columns: 1fr;
-      }
-      
-      li > div {
-        flex-direction: column !important;
-      }
-      
-      li button {
-        width: 100%;
-        min-width: auto !important;
+    // Carregar todos os agendamentos
+    async function carregarTodosAgendamentos() {
+      try {
+        const agendamentos = await listarAgendamentosOnce();
+        todosAgendamentos = Object.entries(agendamentos || {}).map(([id, ag]) => ({ id, ...ag }));
+        atualizarEstatisticas();
+        renderizarCalendario();
+      } catch (error) {
+        console.error('Erro ao carregar agendamentos:', error);
       }
     }
-  </style>
+
+    // Atualizar estatísticas
+    function atualizarEstatisticas() {
+      const total = todosAgendamentos.length;
+      const pendentes = todosAgendamentos.filter(ag => ag.status === 'pendente').length;
+      const confirmados = todosAgendamentos.filter(ag => ag.status === 'confirmado').length;
+      const concluidos = todosAgendamentos.filter(ag => ag.status === 'concluido').length;
+
+      document.getElementById('totalAgendamentos').textContent = total;
+      document.getElementById('totalPendentes').textContent = pendentes;
+      document.getElementById('totalConfirmados').textContent = confirmados;
+      document.getElementById('totalConcluidos').textContent = concluidos;
+    }
+
+    // Navegação entre tabs
+    function mostrarTab(tab) {
+      // Ocultar todas
+      document.getElementById('secaoCalendario').classList.add('hidden');
+      document.getElementById('secaoPendentes').classList.add('hidden');
+      document.getElementById('secaoConfirmados').classList.add('hidden');
+      document.getElementById('secaoConcluidos').classList.add('hidden');
+
+      // Remover destaque
+      document.querySelectorAll('[id^="tab"]').forEach(t => {
+        t.style.borderBottom = 'none';
+      });
+
+      // Mostrar seção
+      if (tab === 'calendario') {
+        document.getElementById('secaoCalendario').classList.remove('hidden');
+        document.getElementById('tabCalendario').style.borderBottom = '3px solid var(--primary-color)';
+      } else if (tab === 'pendentes') {
+        document.getElementById('secaoPendentes').classList.remove('hidden');
+        document.getElementById('tabPendentes').style.borderBottom = '3px solid var(--primary-color)';
+        carregarPendentes();
+      } else if (tab === 'confirmados') {
+        document.getElementById('secaoConfirmados').classList.remove('hidden');
+        document.getElementById('tabConfirmados').style.borderBottom = '3px solid var(--primary-color)';
+        carregarConfirmados();
+      } else if (tab === 'concluidos') {
+        document.getElementById('secaoConcluidos').classList.remove('hidden');
+        document.getElementById('tabConcluidos').style.borderBottom = '3px solid var(--primary-color)';
+        carregarConcluidos();
+      }
+    }
+
+    // Calendário
+    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+    function renderizarCalendario() {
+      document.getElementById('mesAno').textContent = `${meses[mesAtual]} ${anoAtual}`;
+
+      const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
+      const ultimoDia = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+      const container = document.getElementById('diasCalendario');
+      container.innerHTML = '';
+
+      // Dias vazios
+      for (let i = 0; i < primeiroDia; i++) {
+        const vazio = document.createElement('div');
+        vazio.className = 'calendar-day disabled';
+        container.appendChild(vazio);
+      }
+
+      // Dias do mês
+      for (let dia = 1; dia <= ultimoDia; dia++) {
+        const divDia = document.createElement('div');
+        divDia.className = 'calendar-day';
+        divDia.textContent = dia;
+
+        const dataAtual = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        
+        // Verificar se tem agendamentos neste dia
+        const temAgendamento = todosAgendamentos.some(ag => ag.dataHora.startsWith(dataAtual));
+        if (temAgendamento) {
+          divDia.classList.add('has-booking');
+        }
+
+        // Marcar se é hoje
+        const hoje = new Date();
+        if (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) {
+          divDia.style.border = '2px solid var(--primary-color)';
+        }
+
+        divDia.onclick = () => selecionarDia(dataAtual, divDia);
+        container.appendChild(divDia);
+      }
+    }
+
+    function mesAnterior() {
+      mesAtual--;
+      if (mesAtual < 0) {
+        mesAtual = 11;
+        anoAtual--;
+      }
+      renderizarCalendario();
+    }
+
+    function proximoMes() {
+      mesAtual++;
+      if (mesAtual > 11) {
+        mesAtual = 0;
+        anoAtual++;
+      }
+      renderizarCalendario();
+    }
+
+    function selecionarDia(data, elemento) {
+      // Remover seleção anterior
+      document.querySelectorAll('.calendar-day').forEach(d => {
+        d.classList.remove('selected');
+      });
+
+      elemento.classList.add('selected');
+      dataSelecionada = data;
+
+      // Mostrar agendamentos do dia
+      const agendamentosDia = todosAgendamentos.filter(ag => ag.dataHora.startsWith(data));
+      
+      const dataFormatada = new Date(data + 'T00:00').toLocaleDateString('pt-BR', { 
+        weekday: 'long', 
+        day: '2-digit', 
+        month: 'long' 
+      });
+
+      document.getElementById('tituloAgendamentosDia').textContent = `📋 ${dataFormatada}`;
+      
+      const container = document.getElementById('agendamentosDia');
+      
+      if (agendamentosDia.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Nenhum agendamento nesta data</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      agendamentosDia.sort((a, b) => a.dataHora.localeCompare(b.dataHora));
+      
+      agendamentosDia.forEach(ag => {
+        const hora = ag.dataHora.split('T')[1];
+        const card = document.createElement('div');
+        card.className = 'card mb-2';
+        card.style.padding = '12px';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px;">🕐 ${hora} - ${ag.servico}</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">👤 ${ag.nome}</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">💰 ${formatarPreco(ag.preco)}</div>
+            </div>
+            <span class="badge badge-${ag.status === 'pendente' ? 'warning' : ag.status === 'confirmado' ? 'primary' : 'success'}">
+              ${ag.status === 'pendente' ? '⏳' : ag.status === 'confirmado' ? '✅' : '🎉'} ${ag.status}
+            </span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Carregar pendentes
+    async function carregarPendentes() {
+      const container = document.getElementById('listaPendentes');
+      container.innerHTML = '<div class="spinner"></div>';
+
+      await carregarTodosAgendamentos();
+      
+      const pendentes = todosAgendamentos.filter(ag => ag.status === 'pendente');
+
+      if (pendentes.length === 0) {
+        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento pendente</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      pendentes.forEach(ag => {
+        const card = criarCardAgendamento(ag, 'pendente');
+        container.appendChild(card);
+      });
+    }
+
+    // Carregar confirmados
+    async function carregarConfirmados() {
+      const container = document.getElementById('listaConfirmados');
+      container.innerHTML = '<div class="spinner"></div>';
+
+      await carregarTodosAgendamentos();
+      
+      const confirmados = todosAgendamentos.filter(ag => ag.status === 'confirmado');
+
+      if (confirmados.length === 0) {
+        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento confirmado</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      confirmados.forEach(ag => {
+        const card = criarCardAgendamento(ag, 'confirmado');
+        container.appendChild(card);
+      });
+    }
+
+    // Carregar concluídos
+    async function carregarConcluidos() {
+      const container = document.getElementById('listaConcluidos');
+      container.innerHTML = '<div class="spinner"></div>';
+
+      await carregarTodosAgendamentos();
+      
+      const concluidos = todosAgendamentos.filter(ag => ag.status === 'concluido');
+
+      if (concluidos.length === 0) {
+        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento concluído</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      concluidos.forEach(ag => {
+        const card = criarCardAgendamento(ag, 'concluido');
+        container.appendChild(card);
+      });
+    }
+
+    // Criar card de agendamento
+    function criarCardAgendamento(ag, status) {
+      const card = document.createElement('div');
+      card.className = 'card mb-2';
+      
+      const data = new Date(ag.dataHora);
+      const dataFormatada = data.toLocaleDateString('pt-BR');
+      const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+      let acoes = '';
+      if (status === 'pendente') {
+        acoes = `
+          <button class="btn btn-sm btn-success" onclick="abrirModalConfirmar('${ag.id}', ${ag.preco})">
+            ✅ Confirmar
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="cancelarAgendamento('${ag.id}')">
+            ❌ Cancelar
+          </button>
+        `;
+      } else if (status === 'confirmado') {
+        acoes = `
+          <button class="btn btn-sm btn-success" onclick="concluirAgendamento('${ag.id}')">
+            🎉 Concluir
+          </button>
+        `;
+      }
+
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; gap: 16px;">
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span class="badge badge-${status === 'pendente' ? 'warning' : status === 'confirmado' ? 'primary' : 'success'}">
+                ${status === 'pendente' ? '⏳ Pendente' : status === 'confirmado' ? '✅ Confirmado' : '🎉 Concluído'}
+              </span>
+            </div>
+            <h4 style="margin: 8px 0;">${ag.servico}</h4>
+            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
+              👤 ${ag.nome} | 📞 ${ag.telefone}
+            </p>
+            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
+              📅 ${dataFormatada} às ${horaFormatada} | ⏱️ ${formatarDuracao(ag.duracao)}
+            </p>
+            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
+              💰 ${formatarPreco(ag.precoFinal || ag.preco)}
+            </p>
+            ${ag.observacoes !== 'Nenhuma' ? `<p style="font-size: 13px; color: var(--text-tertiary); margin-top: 8px;">💬 ${ag.observacoes}</p>` : ''}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${acoes}
+            <button class="btn btn-sm btn-primary" onclick="abrirChat('${ag.id}', '${ag.nome}')">
+              💬 Chat
+            </button>
+          </div>
+        </div>
+      `;
+      
+      return card;
+    }
+
+    // Modal confirmar
+    function abrirModalConfirmar(id, precoSugerido) {
+      agendamentoParaConfirmar = id;
+      document.getElementById('precoFinal').value = precoSugerido;
+      document.getElementById('modalConfirmar').classList.remove('hidden');
+    }
+
+    function fecharModalConfirmar() {
+      document.getElementById('modalConfirmar').classList.add('hidden');
+      agendamentoParaConfirmar = null;
+    }
+
+    document.getElementById('formConfirmar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const precoFinal = parseFloat(document.getElementById('precoFinal').value);
+      
+      try {
+        await atualizarAgendamento(agendamentoParaConfirmar, {
+          status: 'confirmado',
+          precoFinal
+        });
+        
+        fecharModalConfirmar();
+        alert('✅ Agendamento confirmado com sucesso!');
+        carregarTodosAgendamentos();
+        carregarPendentes();
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('❌ Erro ao confirmar agendamento');
+      }
+    });
+
+    // Concluir agendamento
+    async function concluirAgendamento(id) {
+      if (!confirm('Confirmar conclusão deste agendamento?')) return;
+
+      try {
+        await alterarStatusAgendamento(id, 'concluido');
+        alert('✅ Agendamento concluído!');
+        carregarTodosAgendamentos();
+        carregarConfirmados();
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('❌ Erro ao concluir agendamento');
+      }
+    }
+
+    // Cancelar agendamento
+    async function cancelarAgendamento(id) {
+      if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
+
+      try {
+        await alterarStatusAgendamento(id, 'cancelado');
+        alert('✅ Agendamento cancelado');
+        carregarTodosAgendamentos();
+        carregarPendentes();
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('❌ Erro ao cancelar agendamento');
+      }
+    }
+
+    // Chat
+    function abrirChat(agendamentoId, nomeCliente) {
+      agendamentoAtualChat = agendamentoId;
+      document.getElementById('chatTitulo').textContent = `💬 Chat com ${nomeCliente}`;
+      document.getElementById('modalChat').classList.remove('hidden');
+      carregarMensagensChat();
+    }
+
+    function fecharChat() {
+      document.getElementById('modalChat').classList.add('hidden');
+      agendamentoAtualChat = null;
+    }
+
+    function carregarMensagensChat() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+
+      listarMensagens(agendamentoAtualChat, (mensagens) => {
+        container.innerHTML = '';
+        mensagens.forEach(msg => {
+          const div = document.createElement('div');
+          div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
+          div.innerHTML = `
+            <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">${msg.userNome}</div>
+            <div>${msg.mensagem}</div>
+            <div style="font-size: 10px; opacity: 0.6; margin-top: 4px;">
+              ${new Date(msg.timestamp).toLocaleTimeString('pt-BR')}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+      });
+    }
+
+    async function enviarMensagemChat() {
+      const input = document.getElementById('chatInput');
+      const mensagem = input.value.trim();
+      
+      if (!mensagem) return;
+
+      const perfil = await obterPerfilUsuario(usuarioAtual.uid);
+      
+      await enviarMensagem(agendamentoAtualChat, {
+        userId: usuarioAtual.uid,
+        userNome: perfil.nome || 'Admin',
+        mensagem
+      });
+
+      input.value = '';
+    }
+
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        enviarMensagemChat();
+      }
+    });
+
+    // Logout
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    }
+
+    // Atualização automática a cada 30 segundos
+    setInterval(carregarTodosAgendamentos, 30000);
+  </script>
 </body>
 </html>
