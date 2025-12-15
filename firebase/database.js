@@ -260,3 +260,25 @@ function escutarMensagens(agendamentoId, callback) {
 
     return chatRef; // Retorna a referência para que o listener possa ser removido
 }
+
+/**
+ * 📢 Escuta todos os agendamentos em tempo real (usado pelo Admin).
+ * Chama o callback sempre que houver uma alteração nos dados.
+ * @param {function} callback - Função chamada com os dados atualizados { [id]: agendamentoData, ... }.
+ * @returns {firebase.database.Reference} Referência para o listener.
+ */
+function listarAgendamentos(callback) {
+    const agendamentosRef = db.ref('agendamentos');
+
+    // Usa .on('value') para escutar alterações em tempo real
+    agendamentosRef.on('value', (snapshot) => {
+        // O método .val() retorna os dados como um objeto JavaScript
+        const dadosAgendamentos = snapshot.val();
+        
+        // Chama a função de callback do admin.html com os dados
+        // (Será o { [id]: agendamentoData, ... } esperado pelo cache)
+        callback(dadosAgendamentos);
+    });
+
+    return agendamentosRef; // Retorna a referência (útil para desligar o listener, se necessário)
+}
