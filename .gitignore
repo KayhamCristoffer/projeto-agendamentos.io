@@ -1,0 +1,160 @@
+# Sistema de Agendamentos Online - .gitignore
+
+# ===================================
+# Arquivos do Sistema Operacional
+# ===================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ===================================
+# IDEs e Editores
+# ===================================
+
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# JetBrains IDEs (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# ===================================
+# Node.js (se usar futuramente)
+# ===================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ===================================
+# Logs e Temporários
+# ===================================
+
+logs/
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# ===================================
+# Firebase (Configuração Local)
+# ===================================
+
+# Firebase cache
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+pubsub-debug.log
+
+# Firebase hosting
+.firebase/hosting.*/
+
+# Firebase config (CUIDADO: não commitar se contiver credenciais sensíveis)
+# Descomente a linha abaixo se quiser ignorar o config do Firebase
+# firebase/firebase-config.js
+
+# ===================================
+# Ambiente e Credenciais
+# ===================================
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+
+# Credenciais
+credentials.json
+service-account.json
+*.pem
+*.key
+
+# ===================================
+# Build e Distribuição
+# ===================================
+
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# ===================================
+# Backup e Versões Antigas
+# ===================================
+
+*.bak
+*.backup
+*.old
+*-old.*
+*-backup.*
+
+# ===================================
+# Arquivos de Teste
+# ===================================
+
+coverage/
+.nyc_output/
+test-results/
+*.test.js.snap
+
+# ===================================
+# Documentação Temporária
+# ===================================
+
+*.draft
+*.wip
+
+# ===================================
+# Arquivos Específicos do Projeto
+# ===================================
+
+# Uploads de usuários (se houver no futuro)
+uploads/
+user-content/
+
+# Cache de imagens
+image-cache/
+
+# ===================================
+# Outros
+# ===================================
+
+# Arquivos de lock do sistema
+*.lock
+
+# Arquivos de debug
+debug.log
+error.log
