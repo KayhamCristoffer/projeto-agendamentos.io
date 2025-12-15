@@ -1,88 +1,114 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Meta Tags Essenciais -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  
-  <!-- SEO -->
   <meta name="description" content="Sistema de agendamentos online para pequenos negócios - Simples, rápido e eficiente">
-  <meta name="keywords" content="agendamentos, serviços, pequenos negócios, salão, barbearia">
-  <meta name="author" content="Kayham Cristoffer">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Sistema de Agendamentos Online">
-  <meta property="og:description" content="Gerencie seus agendamentos de forma simples e eficiente">
-  
-  <!-- Título -->
   <title>Agendamentos Online - Página Inicial</title>
-  
-  <!-- Estilos -->
   <link rel="stylesheet" href="assets/style.css">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
 </head>
 
 <body>
-  <!-- Container Principal -->
-  <main class="container" role="main">
-    <!-- Cabeçalho -->
-    <header>
-      <h2>📅 Agendamentos Online</h2>
-      <p>Bem-vindo! Escolha uma opção para começar:</p>
-    </header>
+  <div class="container text-center slide-up">
+    <div style="font-size: 64px; margin-bottom: 16px;">📅</div>
+    <h2>Sistema de Agendamentos Online</h2>
+    <p>Gerencie seus agendamentos de forma simples e profissional</p>
 
-    <!-- Navegação -->
-    <nav aria-label="Menu principal">
-      <a href="login.html" class="button" role="button">
-        🔐 Login / Criar Conta
+    <div style="max-width: 400px; margin: 32px auto; display: flex; flex-direction: column; gap: 12px;">
+      <a href="login.html" class="btn btn-primary btn-full btn-lg">
+        🔐 Entrar / Cadastrar
       </a>
       
-      <a href="agendar.html" class="button" role="button">
-        📆 Agendar Serviço
+      <div style="margin: 16px 0; color: var(--text-tertiary); font-size: 14px;">
+        OU
+      </div>
+
+      <a href="cliente.html" class="btn btn-outline btn-full">
+        📅 Área do Cliente
       </a>
-      
-      <a href="admin.html" class="button" role="button">
+
+      <a href="admin.html" class="btn btn-outline btn-full">
         🛠️ Painel Administrativo
       </a>
-    </nav>
+    </div>
 
-    <!-- Informações -->
-    <footer style="margin-top: 24px;">
-      <p style="font-size: 14px; color: #6c757d;">
-        Sistema desenvolvido para pequenos negócios<br>
-        <strong>Simples • Rápido • Eficiente</strong>
+    <div class="card" style="margin-top: 48px; text-align: left;">
+      <h3 style="text-align: center; margin-bottom: 24px;">✨ Recursos</h3>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">📆</div>
+          <strong>Agendamento Fácil</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Escolha data, horário e serviço em poucos cliques</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">💰</div>
+          <strong>Preços Transparentes</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Veja o valor de cada serviço antes de agendar</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">💬</div>
+          <strong>Chat Integrado</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Tire dúvidas direto com a empresa</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+          <strong>Histórico Completo</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Acesse todos seus agendamentos anteriores</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
+          <strong>Seguro e Confiável</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Seus dados protegidos com Firebase</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">🌓</div>
+          <strong>Tema Escuro/Claro</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Escolha o tema de sua preferência</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+      <p style="font-size: 14px; color: var(--text-tertiary);">
+        Desenvolvido com 💙 para pequenos negócios
       </p>
-    </footer>
-  </main>
+    </div>
+  </div>
 
-  <!-- Firebase SDK (versão 9 - compatibilidade) -->
+  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-  <!-- Configuração Firebase -->
   <script src="firebase/firebase-config.js"></script>
-  <script src="firebase/database.js"></script>
-  
-  <!-- Analytics (opcional) -->
+  <script src="assets/theme.js"></script>
+
   <script>
-    // Log de acesso à página inicial
-    console.log('✅ Sistema de Agendamentos Online carregado com sucesso');
-    
-    // Verificar status de autenticação
-    if (typeof firebase !== 'undefined') {
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          console.log('✅ Usuário autenticado:', user.email);
-        } else {
-          console.log('ℹ️ Nenhum usuário autenticado');
-        }
-      });
-    }
+    // Verificar se já está logado e redirecionar
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        // Usuário está logado, verificar se é admin
+        const perfil = await obterPerfilUsuario(user.uid);
+        
+        // Mostrar opção de ir direto para área logada
+        const container = document.querySelector('.container');
+        const aviso = document.createElement('div');
+        aviso.className = 'alert alert-info';
+        aviso.style.marginTop = '24px';
+        aviso.innerHTML = `
+          ✅ Você já está logado como <strong>${perfil?.nome || user.email}</strong>
+          <br><br>
+          <a href="${perfil?.role === 'admin' ? 'admin.html' : 'cliente.html'}" class="btn btn-sm btn-primary">
+            Ir para ${perfil?.role === 'admin' ? 'Painel Admin' : 'Área do Cliente'}
+          </a>
+        `;
+        container.appendChild(aviso);
+      }
+    });
   </script>
 </body>
 </html>
