@@ -5,92 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sistema de agendamentos online para pequenos negócios - Simples, rápido e eficiente">
   <title>Agendamentos Online - Página Inicial</title>
-  
   <link rel="stylesheet" href="assets/style.css">
-
 </head>
 
 <body>
-  <div class="container slide-up" style="max-width: 900px; margin-top: 50px;">
-    
-    <div class="hero-section">
-        <div style="font-size: 64px; margin-bottom: 16px;">📅</div>
-        <h1>Sistema de Agendamentos Online</h1>
-        <p>Gerencie seus serviços de forma simples, profissional e moderna.</p>
+  <div class="container text-center slide-up">
+    <div style="font-size: 64px; margin-bottom: 16px;">📅</div>
+    <h2>Sistema de Agendamentos Online</h2>
+    <p>Gerencie seus agendamentos de forma simples e profissional</p>
 
-        <div style="max-width: 400px; margin: 32px auto 0; display: flex; flex-direction: column; gap: 12px;">
-            <a href="login.html" class="btn btn-primary btn-full btn-lg">
-                🔐 Entrar ou Cadastrar
-            </a>
-            
-            <div style="margin: 16px 0; color: var(--text-tertiary); font-size: 14px;">
-                OU
-            </div>
+    <div style="max-width: 400px; margin: 32px auto; display: flex; flex-direction: column; gap: 12px;">
+      <a href="login.html" class="btn btn-primary btn-full btn-lg">
+        🔐 Entrar / Cadastrar
+      </a>
+      
+      <div style="margin: 16px 0; color: var(--text-tertiary); font-size: 14px;">
+        OU
+      </div>
 
-            <a href="cliente.html" class="btn btn-outline btn-full">
-                📅 Ver Agendamentos (Área do Cliente)
-            </a>
+      <a href="cliente.html" class="btn btn-outline btn-full">
+        📅 Área do Cliente
+      </a>
 
-            <a href="admin.html" class="btn btn-outline btn-full">
-                🛠️ Painel Administrativo
-            </a>
-        </div>
-    </div>
-    
-    <div id="avisoLogado" class="mt-3">
-        </div>
-
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h4 style="color: var(--primary-color);">✅ Facilidade</h4>
-            <p style="font-size: 14px; color: var(--text-secondary);">Agendamentos rápidos sem precisar de ligações ou mensagens.</p>
-        </div>
-        <div class="feature-card">
-            <h4 style="color: var(--primary-color);">⏱️ Controle Total</h4>
-            <p style="font-size: 14px; color: var(--text-secondary);">Admin gerencia horários e confirma agendamentos pendentes.</p>
-        </div>
-        <div class="feature-card">
-            <h4 style="color: var(--primary-color);">💬 Chat Integrado</h4>
-            <p style="font-size: 14px; color: var(--text-secondary);">Comunicação direta entre cliente e administrador para tirar dúvidas.</p>
-        </div>
+      <a href="admin.html" class="btn btn-outline btn-full">
+        🛠️ Painel Administrativo
+      </a>
     </div>
 
-    <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-color); text-align: center;">
+    <div class="card" style="margin-top: 48px; text-align: left;">
+      <h3 style="text-align: center; margin-bottom: 24px;">✨ Recursos</h3>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">📆</div>
+          <strong>Agendamento Fácil</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Escolha data, horário e serviço em poucos cliques</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">💰</div>
+          <strong>Preços Transparentes</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Veja o valor de cada serviço antes de agendar</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">💬</div>
+          <strong>Chat Integrado</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Tire dúvidas direto com a empresa</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+          <strong>Histórico Completo</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Acesse todos seus agendamentos anteriores</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">🔒</div>
+          <strong>Seguro e Confiável</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Seus dados protegidos com Firebase</p>
+        </div>
+
+        <div>
+          <div style="font-size: 32px; margin-bottom: 8px;">🌓</div>
+          <strong>Tema Escuro/Claro</strong>
+          <p style="font-size: 14px; margin-top: 4px;">Escolha o tema de sua preferência</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-color);">
       <p style="font-size: 14px; color: var(--text-tertiary);">
-        Desenvolvido com 💙 para pequenos negócios - Powered by Firebase
+        Desenvolvido com 💙 para pequenos negócios
       </p>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="firebase/firebase-config.js"></script>
-  <script src="firebase/database.js"></script> <script src="assets/theme.js"></script>
+  <script src="assets/theme.js"></script>
 
   <script>
-    // Verificar se já está logado e redirecionar/avisar
+    // Verificar se já está logado e redirecionar
     firebase.auth().onAuthStateChanged(async (user) => {
-      const avisoContainer = document.getElementById('avisoLogado');
-      
       if (user) {
         // Usuário está logado, verificar se é admin
         const perfil = await obterPerfilUsuario(user.uid);
         
-        const nomeUsuario = perfil?.nomeCompleto || user.email;
-        const targetPage = perfil?.role === 'admin' ? 'admin.html' : 'cliente.html';
-        const targetRole = perfil?.role === 'admin' ? 'Admin' : 'Cliente';
-        
         // Mostrar opção de ir direto para área logada
-        avisoContainer.innerHTML = `
-          <div class="alert alert-info">
-            ✅ Você já está logado como <strong>${nomeUsuario}</strong>
-            <br>
-            <a href="${targetPage}" class="btn btn-sm btn-info mt-2">
-                Ir para Área do ${targetRole}
-            </a>
-          </div>
+        const container = document.querySelector('.container');
+        const aviso = document.createElement('div');
+        aviso.className = 'alert alert-info';
+        aviso.style.marginTop = '24px';
+        aviso.innerHTML = `
+          ✅ Você já está logado como <strong>${perfil?.nome || user.email}</strong>
+          <br><br>
+          <a href="${perfil?.role === 'admin' ? 'admin.html' : 'cliente.html'}" class="btn btn-sm btn-primary">
+            Ir para ${perfil?.role === 'admin' ? 'Painel Admin' : 'Área do Cliente'}
+          </a>
         `;
+        container.appendChild(aviso);
       }
     });
   </script>

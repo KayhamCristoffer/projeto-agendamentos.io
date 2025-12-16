@@ -3,105 +3,119 @@
 // Preços, Durações e Descrições
 // ============================================
 
-const SERVICES = {
-  corte_cabelo: {
-    id: 'corte_cabelo',
-    nome: 'Corte de Cabelo',
-    icon: '💇',
-    preco: 35.00,
-    duracao: 30, // minutos
-    descricao: 'Corte de cabelo masculino ou feminino'
+const SERVICOS = [
+  {
+    id: 'corte_cabelo_masc',
+    icon: '✂️',
+    nome: 'Corte de Cabelo Masculino',
+    descricao: 'Corte moderno e profissional',
+    preco: 50,
+    duracao: 30
   },
-  barba: {
+  {
+    id: 'corte_cabelo_fem',
+    icon: '✂️',
+    nome: 'Corte de Cabelo Feminino',
+    descricao: 'Corte e finalização',
+    preco: 80,
+    duracao: 45
+  },
+  {
     id: 'barba',
-    nome: 'Barba',
     icon: '🧔',
-    preco: 25.00,
-    duracao: 20,
-    descricao: 'Barba completa com acabamento'
+    nome: 'Barba',
+    descricao: 'Aparar e modelar',
+    preco: 40,
+    duracao: 20
   },
-  corte_barba: {
+  {
     id: 'corte_barba',
+    icon: '✂️🧔',
     nome: 'Corte + Barba',
-    icon: '💇‍♂️',
-    preco: 50.00,
-    duracao: 45,
-    descricao: 'Pacote completo: corte de cabelo e barba'
+    descricao: 'Combo completo',
+    preco: 85,
+    duracao: 50
   },
-  manicure: {
+  {
     id: 'manicure',
-    nome: 'Manicure',
     icon: '💅',
-    preco: 30.00,
-    duracao: 40,
-    descricao: 'Manicure completa com esmaltação'
+    nome: 'Manicure',
+    descricao: 'Unhas das mãos',
+    preco: 60,
+    duracao: 40
   },
-  pedicure: {
+  {
     id: 'pedicure',
-    nome: 'Pedicure',
     icon: '🦶',
-    preco: 35.00,
-    duracao: 50,
-    descricao: 'Pedicure completa com esmaltação'
+    nome: 'Pedicure',
+    descricao: 'Unhas dos pés',
+    preco: 70,
+    duracao: 50
   },
-  mani_pedi: {
+  {
     id: 'mani_pedi',
-    nome: 'Mani + Pedi',
     icon: '💅🦶',
-    preco: 60.00,
-    duracao: 90,
-    descricao: 'Pacote manicure e pedicure'
+    nome: 'Manicure + Pedicure',
+    descricao: 'Pacote completo',
+    preco: 120,
+    duracao: 90
   },
-  depilacao: {
-    id: 'depilacao',
-    nome: 'Depilação',
-    icon: '✨',
-    preco: 40.00,
-    duracao: 45,
-    descricao: 'Depilação com cera'
+  {
+    id: 'depilacao_facial',
+    icon: '👩',
+    nome: 'Depilação Facial',
+    descricao: 'Depilação facial completa',
+    preco: 50,
+    duracao: 30
   },
-  massagem: {
+  {
+    id: 'depilacao_corporal',
+    icon: '🧖',
+    nome: 'Depilação Corporal',
+    descricao: 'Depilação corpo inteiro',
+    preco: 150,
+    duracao: 90
+  },
+  {
     id: 'massagem',
-    nome: 'Massagem',
     icon: '💆',
-    preco: 80.00,
-    duracao: 60,
-    descricao: 'Massagem relaxante'
+    nome: 'Massagem Relaxante',
+    descricao: 'Massagem terapêutica',
+    preco: 200,
+    duracao: 60
   },
-  hidratacao: {
-    id: 'hidratacao',
-    nome: 'Hidratação Capilar',
-    icon: '💧',
-    preco: 55.00,
-    duracao: 60,
-    descricao: 'Hidratação profunda para cabelos'
+  {
+    id: 'limpeza_pele',
+    icon: '✨',
+    nome: 'Limpeza de Pele',
+    descricao: 'Tratamento facial completo',
+    preco: 180,
+    duracao: 90
   },
-  coloracao: {
-    id: 'coloracao',
-    nome: 'Coloração',
-    icon: '🎨',
-    preco: 120.00,
-    duracao: 120,
-    descricao: 'Coloração completa do cabelo'
-  },
-  escova: {
-    id: 'escova',
-    nome: 'Escova',
-    icon: '🌸',
-    preco: 45.00,
-    duracao: 40,
-    descricao: 'Escova progressiva ou modeladora'
-  },
-  maquiagem: {
-    id: 'maquiagem',
-    nome: 'Maquiagem',
-    icon: '💄',
-    preco: 70.00,
-    duracao: 45,
-    descricao: 'Maquiagem profissional para eventos'
+  {
+    id: 'design_sobrancelha',
+    icon: '👁️',
+    nome: 'Design de Sobrancelhas',
+    descricao: 'Modelagem de sobrancelhas',
+    preco: 60,
+    duracao: 30
   }
-};
-const DIAS_SEMANA_NOME = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+];
+
+function getTodosServicos() {
+  return SERVICOS;
+}
+
+function getServicoPorId(id) {
+  return SERVICOS.find(s => s.id === id);
+}
+
+if (typeof window !== 'undefined') {
+  window.SERVICOS = SERVICOS;
+  window.getTodosServicos = getTodosServicos;
+  window.getServicoPorId = getServicoPorId;
+}
+
 // Horário de funcionamento
 const BUSINESS_HOURS = {
   inicio: '08:00',
@@ -109,9 +123,7 @@ const BUSINESS_HOURS = {
   intervalo_inicio: '12:00',
   intervalo_fim: '13:00',
   dias_funcionamento: [1, 2, 3, 4, 5, 6], // Segunda a Sábado (0 = Domingo)
-  slot_duracao: 15, // minutos por slot base
-  // Adicionando o array de nomes de dias aqui para que o admin.html possa desestruturar
-  dias_semana_nome: DIAS_SEMANA_NOME
+  slot_duracao: 15 // minutos por slot base
 };
 
 // Função para obter todos os serviços
@@ -147,25 +159,25 @@ function gerarSlotsHorario(data) {
   const [horaFim, minFim] = BUSINESS_HOURS.fim.split(':').map(Number);
   const [horaIntervaloInicio, minIntervaloInicio] = BUSINESS_HOURS.intervalo_inicio.split(':').map(Number);
   const [horaIntervaloFim, minIntervaloFim] = BUSINESS_HOURS.intervalo_fim.split(':').map(Number);
-
+  
   let horaAtual = horaInicio;
   let minAtual = minInicio;
-
+  
   while (horaAtual < horaFim || (horaAtual === horaFim && minAtual < minFim)) {
     // Verificar se não está no horário de intervalo
     const isIntervalo = (
       horaAtual > horaIntervaloInicio ||
       (horaAtual === horaIntervaloInicio && minAtual >= minIntervaloInicio)
     ) && (
-        horaAtual < horaIntervaloFim ||
-        (horaAtual === horaIntervaloFim && minAtual < minIntervaloFim)
-      );
-
+      horaAtual < horaIntervaloFim ||
+      (horaAtual === horaIntervaloFim && minAtual < minIntervaloFim)
+    );
+    
     if (!isIntervalo) {
       const horarioFormatado = `${String(horaAtual).padStart(2, '0')}:${String(minAtual).padStart(2, '0')}`;
       slots.push(horarioFormatado);
     }
-
+    
     // Avançar para próximo slot
     minAtual += BUSINESS_HOURS.slot_duracao;
     if (minAtual >= 60) {
@@ -173,7 +185,7 @@ function gerarSlotsHorario(data) {
       minAtual = minAtual % 60;
     }
   }
-
+  
   return slots;
 }
 
@@ -213,7 +225,6 @@ if (typeof window !== 'undefined') {
   window.isDiaDisponivel = isDiaDisponivel;
   window.formatarPreco = formatarPreco;
   window.formatarDuracao = formatarDuracao;
-  window.DIAS_SEMANA_NOME = DIAS_SEMANA_NOME;
 }
 
 console.log('✅ Configuração de serviços carregada');

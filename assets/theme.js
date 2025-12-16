@@ -7,6 +7,11 @@ function initTheme() {
   // Verificar se há tema salvo no localStorage
   const savedTheme = localStorage.getItem('theme') || 'light';
   setTheme(savedTheme);
+  
+  // Criar botão de toggle se não existir
+  if (!document.querySelector('.theme-toggle')) {
+    createThemeToggle();
+  }
 }
 
 // Definir tema

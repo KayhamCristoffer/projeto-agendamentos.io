@@ -34,7 +34,7 @@ if (!firebase.apps.length) {
 
 // Exportar referências para uso global (modo compatibilidade)
 const auth = firebase.auth();
-// const db = firebase.database();
+const db = firebase.database();
 
 // Configurações adicionais de autenticação
 auth.useDeviceLanguage(); // Usar idioma do dispositivo
@@ -49,15 +49,15 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   });
 
 // Log de status de conexão com o database
-const connectedRef = firebase.database().ref('.info/connected'); // Usando a referência direta aqui
+const connectedRef = db.ref('.info/connected');
 connectedRef.on('value', (snapshot) => {
-    if (snapshot.val() === true) {
-        console.log('✅ Conectado ao Firebase Realtime Database');
-    } else {
-        console.log('⚠️ Desconectado do Firebase Realtime Database');
-    }
+  if (snapshot.val() === true) {
+    console.log('✅ Conectado ao Firebase Realtime Database');
+  } else {
+    console.log('⚠️ Desconectado do Firebase Realtime Database');
+  }
 });
 
 // Exportar para uso global
 window.auth = auth;
-window.db = firebase.database(); // Isso garante que o database esteja no escopo global
+window.db = db;
