@@ -1,0 +1,258 @@
+{
+  "agendamentos": {
+    "-N9Z0_AbcDeFg1hIjKl": {
+      "nome": "João da Silva",
+      "telefone": "(11) 99999-9999",
+      "email": "joao@exemplo.com",
+      "servico": "Corte + Barba",
+      "servicoId": "corte_barba",
+      "dataHora": "2025-12-20T10:30",
+      "duracao": 45,
+      "preco": 50.00,
+      "precoFinal": 50.00,
+      "observacoes": "Cliente preferencial",
+      "userId": "JdhBfj837hDkfL29Jp1s",
+      "status": "confirmado",
+      "criadoEm": "2025-12-15T14:30:00.000Z",
+      "timestamp": 1734277800000,
+      "atualizadoEm": "2025-12-15T14:31:00.000Z"
+    },
+    "-O3A1_XyzWvU0tSrQp9o": {
+      "nome": "Maria de Souza",
+      "telefone": "(11) 98888-8888",
+      "email": "maria@exemplo.com",
+      "servico": "Mani + Pedi",
+      "servicoId": "mani_pedi",
+      "dataHora": "2025-12-20T16:00",
+      "duracao": 90,
+      "preco": 60.00,
+      "observacoes": "Nenhuma",
+      "userId": "KldBfi837hDkfL29Jp2s",
+      "status": "pendente",
+      "criadoEm": "2025-12-15T15:00:00.000Z",
+      "timestamp": 1734280800000
+    },
+    "-O3A2_PqrStuV1wXyZ3a": {
+      "nome": "Pedro Santos",
+      "telefone": "(11) 97777-7777",
+      "email": "pedro@exemplo.com",
+      "servico": "Barba",
+      "servicoId": "barba",
+      "dataHora": "2025-12-21T14:00",
+      "duracao": 20,
+      "preco": 25.00,
+      "precoFinal": 25.00,
+      "observacoes": "Nenhuma",
+      "userId": "PedroUserId12345",
+      "status": "concluido",
+      "criadoEm": "2025-12-14T10:00:00.000Z",
+      "timestamp": 1734192000000,
+      "atualizadoEm": "2025-12-14T15:00:00.000Z"
+    }
+  },
+  "usuarios": {
+    "JdhBfj837hDkfL29Jp1s": {
+      "nomeCompleto": "João da Silva",
+      "nome": "João da Silva",
+      "email": "joao@exemplo.com",
+      "telefone": "(11) 99999-9999",
+      "role": "cliente",
+      "criadoEm": "2025-12-01T00:00:00.000Z",
+      "atualizadoEm": "2025-12-15T14:31:00.000Z"
+    },
+    "KldBfi837hDkfL29Jp2s": {
+      "nomeCompleto": "Maria de Souza",
+      "nome": "Maria de Souza",
+      "email": "maria@exemplo.com",
+      "telefone": "(11) 98888-8888",
+      "role": "cliente",
+      "criadoEm": "2025-12-05T00:00:00.000Z",
+      "atualizadoEm": "2025-12-10T00:00:00.000Z"
+    },
+    "AbC1dEfg2HiJkL3mNoP4rS5t": {
+      "nomeCompleto": "Kayham Oliveira",
+      "nome": "Kayham Oliveira",
+      "email": "kayhamoliveira98@gmail.com",
+      "telefone": "(11) 96666-6666",
+      "role": "admin",
+      "criadoEm": "2025-12-01T00:00:00.000Z",
+      "atualizadoEm": "2025-12-15T00:00:00.000Z"
+    },
+    "PedroUserId12345": {
+      "nomeCompleto": "Pedro Santos",
+      "nome": "Pedro Santos",
+      "email": "pedro@exemplo.com",
+      "telefone": "(11) 97777-7777",
+      "role": "cliente",
+      "criadoEm": "2025-12-03T00:00:00.000Z",
+      "atualizadoEm": "2025-12-14T10:00:00.000Z"
+    }
+  },
+  "chats": {
+    "-N9Z0_AbcDeFg1hIjKl": {
+      "mensagens": {
+        "-N9Z1_QxYq7wZb8p0Lw": {
+          "userId": "JdhBfj837hDkfL29Jp1s",
+          "userNome": "João da Silva",
+          "mensagem": "Posso chegar 10 minutos mais cedo?",
+          "texto": "Posso chegar 10 minutos mais cedo?",
+          "timestamp": 1734277900000,
+          "criadoEm": "2025-12-15T14:31:40.000Z"
+        },
+        "-N9Z2_RtSj3vHaC2m9Vd": {
+          "userId": "AbC1dEfg2HiJkL3mNoP4rS5t",
+          "userNome": "Admin",
+          "mensagem": "Sim, sem problemas!",
+          "texto": "Sim, sem problemas!",
+          "timestamp": 1734278000000,
+          "criadoEm": "2025-12-15T14:33:20.000Z"
+        }
+      },
+      "lido": {
+        "JdhBfj837hDkfL29Jp1s": 1734278000000,
+        "AbC1dEfg2HiJkL3mNoP4rS5t": 1734278000000
+      }
+    },
+    "-O3A1_XyzWvU0tSrQp9o": {
+      "mensagens": {
+        "-O3A1_MsgId001": {
+          "userId": "KldBfi837hDkfL29Jp2s",
+          "userNome": "Maria de Souza",
+          "mensagem": "Pode fazer unhas decoradas?",
+          "texto": "Pode fazer unhas decoradas?",
+          "timestamp": 1734281000000,
+          "criadoEm": "2025-12-15T15:03:20.000Z"
+        }
+      },
+      "lido": {
+        "KldBfi837hDkfL29Jp2s": 1734281000000
+      }
+    }
+  },
+  "servicos": {
+    "corte_cabelo": {
+      "id": "corte_cabelo",
+      "nome": "Corte de Cabelo",
+      "icon": "💇",
+      "preco": 35.00,
+      "duracao": 30,
+      "descricao": "Corte de cabelo masculino ou feminino",
+      "ativo": true
+    },
+    "barba": {
+      "id": "barba",
+      "nome": "Barba",
+      "icon": "🧔",
+      "preco": 25.00,
+      "duracao": 20,
+      "descricao": "Barba completa com acabamento",
+      "ativo": true
+    },
+    "corte_barba": {
+      "id": "corte_barba",
+      "nome": "Corte + Barba",
+      "icon": "💇‍♂️",
+      "preco": 50.00,
+      "duracao": 45,
+      "descricao": "Pacote completo: corte de cabelo e barba",
+      "ativo": true
+    },
+    "manicure": {
+      "id": "manicure",
+      "nome": "Manicure",
+      "icon": "💅",
+      "preco": 30.00,
+      "duracao": 40,
+      "descricao": "Manicure completa com esmaltação",
+      "ativo": true
+    },
+    "pedicure": {
+      "id": "pedicure",
+      "nome": "Pedicure",
+      "icon": "🦶",
+      "preco": 35.00,
+      "duracao": 50,
+      "descricao": "Pedicure completa com esmaltação",
+      "ativo": true
+    },
+    "mani_pedi": {
+      "id": "mani_pedi",
+      "nome": "Mani + Pedi",
+      "icon": "💅🦶",
+      "preco": 60.00,
+      "duracao": 90,
+      "descricao": "Pacote manicure e pedicure",
+      "ativo": true
+    },
+    "depilacao": {
+      "id": "depilacao",
+      "nome": "Depilação",
+      "icon": "✨",
+      "preco": 40.00,
+      "duracao": 45,
+      "descricao": "Depilação com cera",
+      "ativo": true
+    },
+    "massagem": {
+      "id": "massagem",
+      "nome": "Massagem",
+      "icon": "💆",
+      "preco": 80.00,
+      "duracao": 60,
+      "descricao": "Massagem relaxante",
+      "ativo": true
+    },
+    "hidratacao": {
+      "id": "hidratacao",
+      "nome": "Hidratação Capilar",
+      "icon": "💧",
+      "preco": 55.00,
+      "duracao": 60,
+      "descricao": "Hidratação profunda para cabelos",
+      "ativo": true
+    },
+    "coloracao": {
+      "id": "coloracao",
+      "nome": "Coloração",
+      "icon": "🎨",
+      "preco": 120.00,
+      "duracao": 120,
+      "descricao": "Coloração completa do cabelo",
+      "ativo": true
+    },
+    "escova": {
+      "id": "escova",
+      "nome": "Escova",
+      "icon": "🌸",
+      "preco": 45.00,
+      "duracao": 40,
+      "descricao": "Escova progressiva ou modeladora",
+      "ativo": true
+    },
+    "maquiagem": {
+      "id": "maquiagem",
+      "nome": "Maquiagem",
+      "icon": "💄",
+      "preco": 70.00,
+      "duracao": 45,
+      "descricao": "Maquiagem profissional para eventos",
+      "ativo": true
+    }
+  },
+  "configuracoes": {
+    "horario_funcionamento": {
+      "inicio": "08:00",
+      "fim": "19:00",
+      "intervalo_inicio": "12:00",
+      "intervalo_fim": "13:00",
+      "dias_funcionamento": [1, 2, 3, 4, 5, 6],
+      "slot_duracao": 15
+    },
+    "empresa": {
+      "nome": "Sistema de Agendamentos",
+      "telefone": "(11) 99999-9999",
+      "email": "contato@agendamentos.com",
+      "endereco": "Rua Exemplo, 123 - São Paulo, SP"
+    }
+  }
+}
