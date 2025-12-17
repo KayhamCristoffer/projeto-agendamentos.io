@@ -1,442 +1,318 @@
-// ============================================
-// Funções de Banco de Dados
-// Sistema de Agendamentos Online
-// Compatível com a estrutura do Realtime Database fornecida
-// ============================================
+// Este arquivo assume que 'firebase-config.js' e 'services-config.js' 
+// foram carregados antes dele e tornaram 'firebase' e 'servicesConfig' globais.
+
+// const db = firebase.database();
+
+// =============================================
+// I. GESTÃO DE PERFIL E CONFIGURAÇÕES
+// =============================================
 
 /**
- * Função para salvar um novo agendamento
- * Estrutura: agendamentos/{id}/{clienteId, clienteNome, servicos[], dataHora, duracaoTotal, precoTotal, status, observacoes}
+ * 💾 Salva o perfil inicial do usuário no Realtime Database (usado no Cadastro).
+ * @param {string} uid - ID do usuário Firebase.
+ * @param {object} data - Dados do perfil (nomeCompleto, email, telefone, role).
  */
-async function salvarAgendamento(dados) {
-  try {
-    const agendamento = {
-      clienteId: dados.clienteId,
-      clienteNome: dados.clienteNome,
-      clienteTelefone: dados.clienteTelefone || '',
-      servicos: dados.servicos || [], // Array de {id, nome, preco, duracao}
-      dataHora: dados.dataHora, // ISO string
-      duracaoTotal: dados.duracaoTotal || 30,
-      precoTotal: dados.precoTotal || 0,
-      status: dados.status || 'pendente',
-      observacoes: dados.observacoes || '',
-      criadoEm: new Date().toISOString()
-    };
-
-    return await db.ref('agendamentos').push(agendamento);
-  } catch (error) {
-    console.error('Erro ao salvar agendamento:', error);
-    throw error;
-  }
+async function salvarPerfilUsuario(uid, data) {
+    try {
+        await db.ref('usuarios/' + uid).set(data);
+        console.log("Perfil de usuário salvo com sucesso!");
+    } catch (error) {
+        console.error("Erro ao salvar perfil:", error);
+        throw error;
+    }
 }
 
 /**
- * Listar todos os agendamentos (uma vez)
+ * 👤 Obtém o perfil completo do usuário (usado para verificar a role e redirecionar).
+ * @param {string} uid - ID do usuário Firebase.
+ * @returns {Promise<object | null>} Perfil do usuário ou null se não encontrado.
  */
-async function listarAgendamentosOnce() {
-  try {
-    const snapshot = await db.ref('agendamentos').once('value');
-    return snapshot.val() || {};
-  } catch (error) {
-    console.error('Erro ao listar agendamentos:', error);
-    return {};
-  }
+async function obterPerfilUsuario(uid) {
+    try {
+        const snapshot = await db.ref('usuarios/' + uid).once('value');
+        return snapshot.val();
+    } catch (error) {
+        console.error("Erro ao obter perfil:", error);
+        return null;
+    }
 }
 
 /**
- * Listar agendamentos com listener em tempo real
+ * ⚙️ Salva as configurações globais do negócio (horários de funcionamento, etc.).
+ * @param {object} configs - Objeto de configurações (geralmente usado pelo Admin).
+ */
+async function salvarConfiguracoes(configs) {
+    try {
+        await db.ref('configuracoes/geral').set(configs);
+        console.log("Configurações salvas com sucesso!");
+    } catch (error) {
+        console.error("Erro ao salvar configurações:", error);
+        throw error;
+    }
+}
+
+/**
+ * 🔍 Obtém as configurações globais do negócio.
+ * @returns {Promise<object | null>} Configurações ou null.
+ */
+async function obterConfiguracoes() {
+    try {
+        const snapshot = await db.ref('configuracoes/geral').once('value');
+        return snapshot.val();
+    } catch (error) {
+        console.error("Erro ao obter configurações:", error);
+        return null;
+    }
+}
+
+
+// =============================================
+// II. LÓGICA CENTRAL DE AGENDAMENTOS
+// =============================================
+
+/**
+ * 📅 Implementação da função crítica de verificação de disponibilidade.
+ * Verifica os slots livres para um dado dia, considerando a duração do serviço.
+ * @param {string} dataSelecionada - Data no formato 'YYYY-MM-DD'.
+ * @param {number} duracaoTotalMinutos - Duração total do agendamento (em minutos).
+ * @returns {Promise<string[]>} Array de horários disponíveis no formato 'HH:MM'.
+ */
+async function verificarDisponibilidadeComDuracao(dataSelecionada, duracaoTotalMinutos) {
+    // 1. EXTRAIR O DIA DA SEMANA
+    const date = new Date(dataSelecionada + 'T00:00:00'); // Garante que a data seja interpretada corretamente
+    const diasDaSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    const diaSemanaNome = diasDaSemana[date.getDay()];
+
+    // 2. OBTER HORÁRIOS DE FUNCIONAMENTO
+    const config = servicesConfig.BUSINESS_HOURS.find(d => d.dia === diaSemanaNome);
+    
+    if (!config || !config.funcionamento) {
+        return []; // Estabelecimento fechado neste dia
+    }
+
+    const [horaAbertura, minutoAbertura] = config.abertura.split(':').map(Number);
+    const [horaFechamento, minutoFechamento] = config.fechamento.split(':').map(Number);
+    
+    // Converte para minutos totais no dia
+    const totalMinutosAbertura = horaAbertura * 60 + minutoAbertura;
+    const totalMinutosFechamento = horaFechamento * 60 + minutoFechamento;
+    
+    // 3. GERAR TODOS OS SLOTS POSSÍVEIS (INTERVALOS DE 30 MINUTOS)
+    let todosSlots = [];
+    // O slot deve começar 30 minutos antes do tempo máximo, para que possa terminar no horário de fechamento
+    const tempoMaximoSlot = totalMinutosFechamento - (duracaoTotalMinutos - 1); 
+
+    for (let min = totalMinutosAbertura; min < tempoMaximoSlot; min += 30) {
+        const hora = Math.floor(min / 60);
+        const minuto = min % 60;
+        const slotHora = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
+        todosSlots.push(slotHora);
+    }
+    
+    // 4. BUSCAR AGENDAMENTOS CONFIRMADOS/PENDENTES NO BANCO
+    const agendamentosRef = db.ref('agendamentos').orderByChild('dataHoraInicio');
+    const snapshot = await agendamentosRef.once('value');
+    const agendamentosDoDia = [];
+    
+    snapshot.forEach(childSnapshot => {
+        const agendamento = childSnapshot.val();
+        const dataInicio = agendamento.dataHoraInicio.substring(0, 10);
+        
+        // Filtra apenas agendamentos para a data e com status ativo
+        if (dataInicio === dataSelecionada && 
+            (agendamento.status === 'pendente' || agendamento.status === 'confirmado')) {
+            
+            // Calcula o fim do agendamento existente
+            const [horaInicio, minutoInicio] = agendamento.horaInicio.split(':').map(Number);
+            const minutosInicioExistente = horaInicio * 60 + minutoInicio;
+            const minutosFimExistente = minutosInicioExistente + agendamento.duracaoTotalMinutos;
+
+            agendamentosDoDia.push({
+                inicio: minutosInicioExistente,
+                fim: minutosFimExistente
+            });
+        }
+    });
+
+    // 5. FILTRAR SLOTS QUE CONFLITAM COM AGENDAMENTOS EXISTENTES
+    const slotsDisponiveis = todosSlots.filter(slotHora => {
+        const [slotH, slotM] = slotHora.split(':').map(Number);
+        const slotInicioMinutos = slotH * 60 + slotM;
+        const slotFimMinutos = slotInicioMinutos + duracaoTotalMinutos;
+
+        // Verifica se o NOVO slot (com sua duração) se sobrepõe a QUALQUER agendamento existente
+        for (const agendamento of agendamentosDoDia) {
+            // Conflito: O novo slot começa antes do fim do existente E termina depois do início do existente
+            if (slotInicioMinutos < agendamento.fim && slotFimMinutos > agendamento.inicio) {
+                return false; // Slot conflita, não é disponível
+            }
+        }
+        return true; // Slot não conflita
+    });
+
+    return slotsDisponiveis;
+}
+
+
+// =============================================
+// III. CRUD DE AGENDAMENTOS
+// =============================================
+
+/**
+ * ➕ Cria um novo agendamento.
+ * @param {object} agendamentoData - Dados do agendamento a ser salvo.
+ */
+async function criarAgendamento(agendamentoData) {
+    try {
+        const novoAgendamentoRef = db.ref('agendamentos').push();
+        await novoAgendamentoRef.set({
+            ...agendamentoData,
+            agendamentoId: novoAgendamentoRef.key, // Salva a chave como ID
+            status: 'pendente', // Status inicial
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        return novoAgendamentoRef.key;
+    } catch (error) {
+        console.error("Erro ao criar agendamento:", error);
+        throw error;
+    }
+}
+
+/**
+ * 📝 Atualiza o status de um agendamento (usado pelo Admin).
+ * @param {string} agendamentoId - ID do agendamento.
+ * @param {string} novoStatus - Novo status ('confirmado', 'cancelado', 'concluido').
+ */
+async function atualizarStatusAgendamento(agendamentoId, novoStatus) {
+    try {
+        await db.ref('agendamentos/' + agendamentoId).update({
+            status: novoStatus,
+            updatedAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        console.log(`Status do agendamento ${agendamentoId} atualizado para ${novoStatus}`);
+    } catch (error) {
+        console.error("Erro ao atualizar status:", error);
+        throw error;
+    }
+}
+
+/**
+ * 👁️ Obtém agendamentos de um cliente específico.
+ * @param {string} uid - ID do cliente.
+ * @returns {firebase.database.Query} Query do Firebase para observação.
+ */
+function obterAgendamentosCliente(uid) {
+    // Retorna a query para ser observada (on('value')) no cliente.html
+    return db.ref('agendamentos').orderByChild('clienteId').equalTo(uid);
+}
+
+/**
+ * 📊 Obtém todos os agendamentos (usado pelo Admin).
+ * @returns {firebase.database.Query} Query do Firebase para observação.
+ */
+function obterTodosAgendamentos() {
+    // Retorna a query para ser observada (on('value')) no admin.html
+    return db.ref('agendamentos');
+}
+
+// =============================================
+// IV. CHAT / MENSAGENS
+// =============================================
+
+/**
+ * 💬 Envia uma mensagem para o chat do agendamento.
+ * @param {string} agendamentoId - ID do agendamento (sala de chat).
+ * @param {string} uid - ID do usuário que enviou a mensagem.
+ * @param {string} nome - Nome do usuário.
+ * @param {string} texto - Conteúdo da mensagem.
+ */
+async function enviarMensagem(agendamentoId, uid, nome, texto) {
+    try {
+        const novaMensagemRef = db.ref(`chats/${agendamentoId}/mensagens`).push();
+        await novaMensagemRef.set({
+            uid: uid,
+            nome: nome,
+            texto: texto,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+    } catch (error) {
+        console.error("Erro ao enviar mensagem:", error);
+    }
+}
+
+/**
+ * 👂 Escuta novas mensagens para um agendamento específico.
+ * @param {string} agendamentoId - ID do agendamento.
+ * @param {function} callback - Função chamada quando há novas mensagens.
+ * @returns {firebase.database.Reference} Referência para ser usada com .off().
+ */
+function escutarMensagens(agendamentoId, callback) {
+    const chatRef = db.ref(`chats/${agendamentoId}/mensagens`).orderByChild('timestamp');
+    
+    // Adiciona o listener
+    chatRef.on('value', (snapshot) => {
+        const mensagens = [];
+        snapshot.forEach(childSnapshot => {
+            mensagens.push({ ...childSnapshot.val(), id: childSnapshot.key });
+        });
+        callback(mensagens);
+    });
+
+    return chatRef; // Retorna a referência para que o listener possa ser removido
+}
+
+/**
+ * 📢 Escuta todos os agendamentos em tempo real (usado pelo Admin).
+ * Chama o callback sempre que houver uma alteração nos dados.
+ * @param {function} callback - Função chamada com os dados atualizados { [id]: agendamentoData, ... }.
+ * @returns {firebase.database.Reference} Referência para o listener.
  */
 function listarAgendamentos(callback) {
-  db.ref('agendamentos').on('value', (snapshot) => {
-    callback(snapshot.val() || {});
-  });
-}
+    const agendamentosRef = db.ref('agendamentos');
 
-/**
- * Obter agendamento específico por ID
- */
-async function obterAgendamento(id) {
-  try {
-    const snapshot = await db.ref(`agendamentos/${id}`).once('value');
-    return snapshot.val();
-  } catch (error) {
-    console.error('Erro ao obter agendamento:', error);
-    return null;
-  }
-}
-
-/**
- * Atualizar agendamento
- */
-async function atualizarAgendamento(id, dados) {
-  try {
-    const dadosAtualizados = {
-      ...dados,
-      atualizadoEm: new Date().toISOString()
-    };
-    return await db.ref(`agendamentos/${id}`).update(dadosAtualizados);
-  } catch (error) {
-    console.error('Erro ao atualizar agendamento:', error);
-    throw error;
-  }
-}
-
-/**
- * Deletar agendamento
- */
-async function deletarAgendamento(id) {
-  try {
-    return await db.ref(`agendamentos/${id}`).remove();
-  } catch (error) {
-    console.error('Erro ao deletar agendamento:', error);
-    throw error;
-  }
-}
-
-/**
- * Alterar status de agendamento
- */
-async function alterarStatusAgendamento(id, novoStatus) {
-  return atualizarAgendamento(id, { status: novoStatus });
-}
-
-/**
- * Listar agendamentos por clienteId
- */
-async function listarAgendamentosPorUsuario(clienteId) {
-  try {
-    const snapshot = await db.ref('agendamentos')
-      .orderByChild('clienteId')
-      .equalTo(clienteId)
-      .once('value');
-    return snapshot.val() || {};
-  } catch (error) {
-    console.error('Erro ao listar agendamentos do usuário:', error);
-    return {};
-  }
-}
-
-/**
- * Listar agendamentos por status
- */
-async function listarAgendamentosPorStatus(status) {
-  try {
-    const snapshot = await db.ref('agendamentos')
-      .orderByChild('status')
-      .equalTo(status)
-      .once('value');
-    return snapshot.val() || {};
-  } catch (error) {
-    console.error('Erro ao listar agendamentos por status:', error);
-    return {};
-  }
-}
-
-/**
- * Listar agendamentos por data específica
- */
-async function listarAgendamentosPorData(data) {
-  try {
-    const snapshot = await db.ref('agendamentos').once('value');
-    const todos = snapshot.val() || {};
-    const filtrados = {};
-    
-    Object.entries(todos).forEach(([id, agend]) => {
-      const agendData = agend.dataHora ? agend.dataHora.split('T')[0] : '';
-      if (agendData === data) {
-        filtrados[id] = agend;
-      }
+    // Usa .on('value') para escutar alterações em tempo real
+    agendamentosRef.on('value', (snapshot) => {
+        // O método .val() retorna os dados como um objeto JavaScript
+        const dadosAgendamentos = snapshot.val();
+        
+        // Chama a função de callback do admin.html com os dados
+        // (Será o { [id]: agendamentoData, ... } esperado pelo cache)
+        callback(dadosAgendamentos);
     });
-    
-    return filtrados;
-  } catch (error) {
-    console.error('Erro ao listar agendamentos por data:', error);
-    return {};
-  }
+
+    return agendamentosRef; // Retorna a referência (útil para desligar o listener, se necessário)
 }
 
-// ============================================
-// FUNÇÕES DE PERFIL DE USUÁRIO
-// ============================================
+// ...
+// IV. CHAT / MENSAGENS
+// =============================================
 
 /**
- * Salvar/Criar perfil de usuário
- * Estrutura: usuarios/{uid}/{nomeCompleto, email, telefone, role, criadoEm}
+ * 💾 Salva as configurações de horário de funcionamento do negócio.
+ * Nota: As configurações globais são salvas no nó 'configuracoes/horarios'.
+ * @param {object} dadosHorarios - Objeto contendo as configurações de horário (slot_duracao, dias_funcionamento, etc.).
  */
-async function salvarPerfilUsuario(userId, dados) {
-  try {
-    const perfil = {
-      nomeCompleto: dados.nome || dados.nomeCompleto,
-      email: dados.email,
-      telefone: dados.telefone || '',
-      role: dados.role || 'cliente',
-      criadoEm: dados.criadoEm || new Date().toISOString()
-    };
-    return await db.ref(`usuarios/${userId}`).set(perfil);
-  } catch (error) {
-    console.error('Erro ao salvar perfil:', error);
-    throw error;
-  }
-}
-
-/**
- * Obter perfil de usuário
- */
-async function obterPerfilUsuario(userId) {
-  try {
-    const snapshot = await db.ref(`usuarios/${userId}`).once('value');
-    const perfil = snapshot.val();
-    if (perfil) {
-      perfil.nome = perfil.nomeCompleto; // Alias para compatibilidade
+async function salvarConfiguracaoHorarios(dadosHorarios) {
+    try {
+        // Usa 'configuracoes/horarios' como nó específico
+        await db.ref('configuracoes/horarios').set(dadosHorarios);
+        console.log("Configurações de horários salvas com sucesso!");
+    } catch (error) {
+        console.error("Erro ao salvar configurações de horários:", error);
+        throw error;
     }
-    return perfil;
-  } catch (error) {
-    console.error('Erro ao obter perfil:', error);
-    return null;
-  }
 }
 
 /**
- * Atualizar perfil de usuário
+ * 🔍 Obtém as configurações de horário de funcionamento do negócio.
+ * @returns {Promise<object | null>} Configurações de horário ou null.
  */
-async function atualizarPerfilUsuario(userId, dados) {
-  try {
-    const dadosAtualizados = {
-      ...dados,
-      nomeCompleto: dados.nome || dados.nomeCompleto,
-      atualizadoEm: new Date().toISOString()
-    };
-    // Remover campos undefined
-    delete dadosAtualizados.nome;
-    return await db.ref(`usuarios/${userId}`).update(dadosAtualizados);
-  } catch (error) {
-    console.error('Erro ao atualizar perfil:', error);
-    throw error;
-  }
-}
-
-/**
- * Verificar se usuário é admin
- */
-async function isAdmin(userId) {
-  const perfil = await obterPerfilUsuario(userId);
-  return perfil && perfil.role === 'admin';
-}
-
-// ============================================
-// FUNÇÕES DE CHAT
-// ============================================
-
-/**
- * Enviar mensagem
- * Estrutura: chats/{agendamentoId}/mensagens/{msgId}/{userId, nome, texto, timestamp}
- */
-async function enviarMensagem(agendamentoId, dados) {
-  try {
-    const mensagem = {
-      userId: dados.userId,
-      nome: dados.userNome || dados.nome,
-      texto: dados.mensagem || dados.texto,
-      timestamp: Date.now()
-    };
-    return await db.ref(`chats/${agendamentoId}/mensagens`).push(mensagem);
-  } catch (error) {
-    console.error('Erro ao enviar mensagem:', error);
-    throw error;
-  }
-}
-
-/**
- * Listar mensagens com listener
- */
-function listarMensagens(agendamentoId, callback) {
-  db.ref(`chats/${agendamentoId}/mensagens`)
-    .orderByChild('timestamp')
-    .on('value', (snapshot) => {
-      const mensagens = [];
-      snapshot.forEach((child) => {
-        const msg = child.val();
-        mensagens.push({
-          id: child.key,
-          userId: msg.userId,
-          userNome: msg.nome,
-          mensagem: msg.texto,
-          timestamp: msg.timestamp
-        });
-      });
-      callback(mensagens);
-    });
-}
-
-/**
- * Marcar chat como lido
- */
-async function marcarComoLido(agendamentoId, userId, isAdmin = false) {
-  try {
-    const key = isAdmin ? 'admin' : 'cliente';
-    return await db.ref(`chats/${agendamentoId}/lido/${key}`).set(true);
-  } catch (error) {
-    console.error('Erro ao marcar como lido:', error);
-  }
-}
-
-// ============================================
-// FUNÇÕES DE HORÁRIOS DISPONÍVEIS
-// ============================================
-
-/**
- * Verificar se um horário está disponível
- */
-async function verificarDisponibilidadeComDuracao(data, horario, duracao) {
-  try {
-    // Buscar todos os agendamentos da data
-    const agendamentos = await listarAgendamentosPorData(data);
-    
-    // Converter horário selecionado para minutos
-    const [hora, min] = horario.split(':').map(Number);
-    const inicioMin = hora * 60 + min;
-    const fimMin = inicioMin + duracao;
-    
-    // Verificar conflitos
-    for (const [id, agend] of Object.entries(agendamentos)) {
-      if (agend.status === 'cancelado') continue;
-      
-      const agendHorario = agend.dataHora.split('T')[1];
-      const [agendHora, agendMinuto] = agendHorario.split(':').map(Number);
-      const agendInicioMin = agendHora * 60 + agendMinuto;
-      const agendFimMin = agendInicioMin + (agend.duracaoTotal || 30);
-      
-      // Verificar sobreposição
-      if (!(fimMin <= agendInicioMin || inicioMin >= agendFimMin)) {
-        return false; // Conflito encontrado
-      }
+async function obterConfiguracaoHorarios() {
+    try {
+        const snapshot = await db.ref('configuracoes/horarios').once('value');
+        return snapshot.val();
+    } catch (error) {
+        console.error("Erro ao obter configurações de horários:", error);
+        return null;
     }
-    
-    return true; // Disponível
-  } catch (error) {
-    console.error('Erro ao verificar disponibilidade:', error);
-    return false;
-  }
-}
-
-/**
- * Gerar slots de horário (08:00 às 18:00, exceto 12:00-13:00)
- */
-function gerarSlotsHorario(data) {
-  const slots = [];
-  const slotDuracao = 15; // minutos
-  
-  // Verificar se não é data passada
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  const dataSelecionada = new Date(data + 'T00:00:00');
-  
-  let horaInicio = 8 * 60; // 08:00 em minutos
-  const horaFim = 18 * 60; // 18:00 em minutos
-  
-  // Se for hoje, começar da próxima hora
-  if (dataSelecionada.toDateString() === hoje.toDateString()) {
-    const agora = new Date();
-    const minutoAtual = agora.getHours() * 60 + agora.getMinutes();
-    if (minutoAtual > horaInicio) {
-      horaInicio = Math.ceil(minutoAtual / slotDuracao) * slotDuracao;
-    }
-  }
-  
-  for (let min = horaInicio; min < horaFim; min += slotDuracao) {
-    // Pular horário de almoço (12:00 - 13:00)
-    if (min >= 12 * 60 && min < 13 * 60) continue;
-    
-    const hora = Math.floor(min / 60);
-    const minuto = min % 60;
-    const horario = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
-    slots.push(horario);
-  }
-  
-  return slots;
-}
-
-/**
- * Obter horários disponíveis para uma data
- */
-async function obterHorariosDisponiveis(data, duracao = 30) {
-  try {
-    const slots = gerarSlotsHorario(data);
-    const disponiveis = [];
-    
-    for (const horario of slots) {
-      const disponivel = await verificarDisponibilidadeComDuracao(data, horario, duracao);
-      if (disponivel) {
-        disponiveis.push(horario);
-      }
-    }
-    
-    return disponiveis;
-  } catch (error) {
-    console.error('Erro ao obter horários disponíveis:', error);
-    return [];
-  }
-}
-
-// ============================================
-// FUNÇÕES AUXILIARES
-// ============================================
-
-/**
- * Formatar preço em R$
- */
-function formatarPreco(valor) {
-  return `R$ ${parseFloat(valor).toFixed(2).replace('.', ',')}`;
-}
-
-/**
- * Formatar duração em minutos
- */
-function formatarDuracao(minutos) {
-  if (minutos < 60) {
-    return `${minutos} min`;
-  }
-  const horas = Math.floor(minutos / 60);
-  const mins = minutos % 60;
-  return mins > 0 ? `${horas}h ${mins}min` : `${horas}h`;
-}
-
-// ============================================
-// Exportar funções para uso global
-// ============================================
-
-if (typeof window !== 'undefined') {
-  // Agendamentos
-  window.salvarAgendamento = salvarAgendamento;
-  window.listarAgendamentos = listarAgendamentos;
-  window.listarAgendamentosOnce = listarAgendamentosOnce;
-  window.obterAgendamento = obterAgendamento;
-  window.atualizarAgendamento = atualizarAgendamento;
-  window.deletarAgendamento = deletarAgendamento;
-  window.alterarStatusAgendamento = alterarStatusAgendamento;
-  window.listarAgendamentosPorUsuario = listarAgendamentosPorUsuario;
-  window.listarAgendamentosPorData = listarAgendamentosPorData;
-  window.listarAgendamentosPorStatus = listarAgendamentosPorStatus;
-  
-  // Perfil
-  window.salvarPerfilUsuario = salvarPerfilUsuario;
-  window.obterPerfilUsuario = obterPerfilUsuario;
-  window.atualizarPerfilUsuario = atualizarPerfilUsuario;
-  window.isAdmin = isAdmin;
-  
-  // Chat
-  window.enviarMensagem = enviarMensagem;
-  window.listarMensagens = listarMensagens;
-  window.marcarComoLido = marcarComoLido;
-  
-  // Horários
-  window.verificarDisponibilidadeComDuracao = verificarDisponibilidadeComDuracao;
-  window.obterHorariosDisponiveis = obterHorariosDisponiveis;
-  window.gerarSlotsHorario = gerarSlotsHorario;
-  
-  // Auxiliares
-  window.formatarPreco = formatarPreco;
-  window.formatarDuracao = formatarDuracao;
-  
-  console.log('✅ Funções de banco de dados carregadas');
 }
