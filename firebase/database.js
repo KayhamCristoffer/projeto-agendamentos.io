@@ -283,6 +283,78 @@ function listarAgendamentos(callback) {
     return agendamentosRef; // Retorna a referência (útil para desligar o listener, se necessário)
 }
 
+/**
+ * 📋 Lista agendamentos de um usuário específico
+ * @param {string} userId - ID do usuário
+ * @returns {Promise<Array>} Array de agendamentos do usuário
+ */
+async function listarAgendamentosPorUsuario(userId) {
+    try {
+        const snapshot = await db.ref('agendamentos')
+            .orderByChild('clienteId')
+            .equalTo(userId)
+            .once('value');
+        
+        const agendamentos = [];
+        
+        snapshot.forEach((childSnapshot) => {
+            agendamentos.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val()
+            });
+        });
+        
+        // Ordena por data (mais recentes primeiro)
+        agendamentos.sort((a, b) => {
+            const dataA = new Date(a.dataHora || a.criadoEm);
+            const dataB = new Date(b.dataHora || b.criadoEm);
+            return dataB - dataA;
+        });
+        
+        return agendamentos;
+        
+    } catch (error) {
+        console.error('Erro ao listar agendamentos por usuário:', error);
+        throw error;
+    }
+}
+
+/**
+ * 📋 Lista agendamentos por status
+ * @param {string} status - Status do agendamento ('pendente', 'confirmado', 'concluido', 'cancelado')
+ * @returns {Promise<Array>} Array de agendamentos com o status especificado
+ */
+async function listarAgendamentosPorStatus(status) {
+    try {
+        const snapshot = await db.ref('agendamentos')
+            .orderByChild('status')
+            .equalTo(status)
+            .once('value');
+        
+        const agendamentos = [];
+        
+        snapshot.forEach((childSnapshot) => {
+            agendamentos.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val()
+            });
+        });
+        
+        // Ordena por data
+        agendamentos.sort((a, b) => {
+            const dataA = new Date(a.dataHora || a.criadoEm);
+            const dataB = new Date(b.dataHora || b.criadoEm);
+            return dataA - dataB;
+        });
+        
+        return agendamentos;
+        
+    } catch (error) {
+        console.error('Erro ao listar agendamentos por status:', error);
+        throw error;
+    }
+}
+
 // ...
 // IV. CHAT / MENSAGENS
 // =============================================

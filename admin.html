@@ -207,7 +207,7 @@
           <!-- Mensagens aqui -->
         </div>
         <div style="display: flex; gap: 8px;">
-          <input type="text" class="form-input" id="chatInput" placeholder="Digite sua mensagem..." style="flex: 1; margin: 0;">
+          <input type="text" class="form-input" id="chatInputMensagem" placeholder="Digite sua mensagem..." style="flex: 1; margin: 0;">
           <button class="btn btn-primary" onclick="enviarMensagemChat()">📤 Enviar</button>
         </div>
       </div>
@@ -631,7 +631,7 @@
                     <input type="checkbox" data-dia="${index}" onchange="toggleHorarios(this, ${index})" ${isFunciona ? 'checked' : ''}>
                 </td>
             `;
-        body.appendChild(tr);
+        document.querySelector("#tabelaHorarios tbody").appendChild(tr);
       });
     }
 
