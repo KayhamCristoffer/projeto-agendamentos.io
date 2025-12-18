@@ -1,0 +1,119 @@
+<!-- Menu Principal do Sistema -->
+<nav class="nav-bar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">📅 Sistema de Agendamentos</a>
+    
+    <div class="nav-menu">
+      <!-- Botão de Tema -->
+      <button id="themeToggle" class="btn btn-sm btn-ghost theme-toggle" title="Alternar tema">
+        <span class="theme-icon">🌙</span>
+      </button>
+      
+      <!-- Menu do Usuário -->
+      <div class="user-menu">
+        <span id="userNameDisplay" class="user-name"></span>
+        
+        <!-- Botões de Navegação (visível apenas quando logado) -->
+        <div id="navButtons" class="nav-buttons" style="display: none;">
+          <!-- Botão Área do Cliente (sempre visível quando logado) -->
+          <a href="cliente.html" class="btn btn-sm btn-primary">
+            👤 Área do Cliente
+          </a>
+          
+          <!-- Botão Modo Admin (visível apenas para admins) -->
+          <a href="admin.html" id="btnModoAdmin" class="btn btn-sm btn-warning" style="display: none;">
+            🛠️ Modo Admin
+          </a>
+        </div>
+        
+        <!-- Botão de Login/Sair -->
+        <button id="authButton" class="btn btn-sm" onclick="handleAuth()">
+          Entrar
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+.nav-bar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.nav-logo:hover {
+  opacity: 0.8;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.theme-toggle {
+  font-size: 20px;
+  padding: 8px 12px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-name {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .nav-menu {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .nav-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-buttons .btn {
+    width: 100%;
+  }
+}
+</style>

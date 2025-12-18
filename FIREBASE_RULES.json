@@ -1,0 +1,34 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "usuarios": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('usuarios/' + auth.uid + '/role').val() === 'admin')",
+        ".write": "auth != null && (auth.uid === $uid || root.child('usuarios/' + auth.uid + '/role').val() === 'admin')"
+      }
+    },
+    
+    "agendamentos": {
+      ".read": "auth != null",
+      ".indexOn": ["clienteId", "status", "dataHora"],
+      "$agendamentoId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (data.child('clienteId').val() === auth.uid || root.child('usuarios/' + auth.uid + '/role').val() === 'admin' || !data.exists())"
+      }
+    },
+    
+    "chats": {
+      "$agendamentoId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "configuracoes": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('usuarios/' + auth.uid + '/role').val() === 'admin'"
+    }
+  }
+}
