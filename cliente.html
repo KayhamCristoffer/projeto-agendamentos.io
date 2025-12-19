@@ -5,745 +5,250 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Área do Cliente - Sistema de Agendamentos</title>
   <link rel="stylesheet" href="assets/style.css">
-
+  <link rel="stylesheet" href="assets/cliente.css">
 </head>
 
 <body>
-  <nav class="nav-bar">
-    <div class="nav-container">
-      <a href="#" class="nav-logo">📅 Agendamentos</a>
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <span id="nomeUsuario" style="color: var(--text-secondary); font-size: 14px;"></span>
-        <button class="btn btn-sm btn-ghost" onclick="logout()">Sair</button>
-      </div>
-    </div>
-  </nav>
+  <!-- Menu será carregado aqui via JavaScript -->
+  <div id="menuContainer"></div>
 
-  <div class="container container-wide" style="margin-top: 20px;">
-    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color); overflow-x: auto;">
-      <button class="btn btn-ghost" id="tabAgendar" onclick="mostrarSecao('agendar')" style="border-radius: 0; border-bottom: 3px solid var(--primary-color); white-space: nowrap;">
-        📅 Agendar Novo
+  <div class="container" style="margin-top: 80px; max-width: 1200px;">
+    
+    <!-- Tabs de Navegação -->
+    <div class="tabs-container">
+      <button class="tab-button active" data-tab="agendar" onclick="mostrarSecao('agendar')">
+        📅 Novo Agendamento
       </button>
-      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarSecao('pendentes')" style="border-radius: 0; white-space: nowrap;">
+      <button class="tab-button" data-tab="pendentes" onclick="mostrarSecao('pendentes')">
         ⏳ Pendentes
       </button>
-      <button class="btn btn-ghost" id="tabHistorico" onclick="mostrarSecao('historico')" style="border-radius: 0; white-space: nowrap;">
-        ✅ Histórico
+      <button class="tab-button" data-tab="historico" onclick="mostrarSecao('historico')">
+        📜 Histórico
       </button>
-      <button class="btn btn-ghost" id="tabPerfil" onclick="mostrarSecao('perfil')" style="border-radius: 0; white-space: nowrap;">
+      <button class="tab-button" data-tab="perfil" onclick="mostrarSecao('perfil')">
         👤 Perfil
       </button>
     </div>
 
-    <div id="secaoAgendar" class="fade-in">
-      <h3>📅 Agendar Novo Serviço</h3>
-      <p style="color: var(--text-secondary);">Selecione o(s) serviço(s), a data e o horário desejados.</p>
+    <!-- Seção: Novo Agendamento -->
+    <div id="secaoAgendar" class="section-content active">
+      <div class="section-header">
+        <h2>📅 Novo Agendamento</h2>
+        <p>Selecione os serviços, data e horário desejados</p>
+      </div>
 
-      <form id="formAgendamento" class="mt-3">
+      <form id="formAgendamento" class="agendamento-form">
         
-        <div class="form-group">
-            <h4 class="form-label mb-2">Serviços Selecionados</h4>
-            <div id="servicosContainer" class="services-list-grid">
+        <!-- Seleção de Serviços -->
+        <div class="form-section">
+          <h3 class="section-title">Escolha os Serviços</h3>
+          <div id="servicosGrid" class="servicos-grid">
+            <!-- Serviços serão carregados aqui via JavaScript -->
+          </div>
+          
+          <!-- Resumo da Seleção -->
+          <div id="resumoSelecao" class="resumo-card" style="display: none;">
+            <div class="resumo-header">
+              <h4>📋 Resumo da Seleção</h4>
+            </div>
+            <div id="servicosSelecionadosLista" class="servicos-selecionados-lista"></div>
+            <div class="resumo-totais">
+              <div class="total-item">
+                <span>⏱️ Duração Total:</span>
+                <strong id="duracaoTotal">0 min</strong>
+              </div>
+              <div class="total-item total-preco">
+                <span>💰 Valor Total:</span>
+                <strong id="precoTotal">R$ 0,00</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid: Data e Hora -->
+        <div class="form-section">
+          <h3 class="section-title">Escolha Data e Horário</h3>
+          
+          <div class="data-hora-grid">
+            <!-- Coluna: Data -->
+            <div class="data-column">
+              <h4>📅 Selecione a Data</h4>
+              <div id="calendarioContainer" class="calendario-container">
+                <div class="calendario-header">
+                  <button type="button" class="btn-nav" onclick="navegarMes(-1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <h4 id="mesAtual" class="mes-titulo"></h4>
+                  <button type="button" class="btn-nav" onclick="navegarMes(1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
                 </div>
-            
-            <div class="flex justify-between items-center card card-light" style="padding: 12px 16px; margin-top: 16px;">
-                <span style="font-weight: 600;">Duração Total:</span>
-                <span id="totalDuracaoDisplay" class="badge badge-info">0 min</span>
-                <input type="hidden" id="inputDuracaoTotal" value="0">
                 
-                <span style="font-weight: 600;">Preço Total:</span>
-                <span id="totalPrecoDisplay" class="badge badge-success">R$ 0,00</span>
+                <div class="calendario-dias-semana">
+                  <div>Dom</div>
+                  <div>Seg</div>
+                  <div>Ter</div>
+                  <div>Qua</div>
+                  <div>Qui</div>
+                  <div>Sex</div>
+                  <div>Sáb</div>
+                </div>
+                
+                <div id="diasCalendario" class="calendario-dias">
+                  <!-- Dias serão gerados via JavaScript -->
+                </div>
+              </div>
+              <input type="hidden" id="dataSelecionada" required>
             </div>
-        </div>
 
-        <div class="form-group mt-3">
-            <label class="form-label" for="agendamentoData">Data</label>
-            <input 
-                class="form-input" 
-                type="date" 
-                id="agendamentoData" 
-                required
-            >
-        </div>
-        
-        <div class="form-group" id="grupoHorarios">
-            <label class="form-label">Horário Disponível (Baseado na Duração Total)</label>
-            <div id="horariosDisponiveis" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;">
-                <p style="grid-column: 1/-1; color: var(--text-secondary); text-align: center;">Selecione um ou mais serviços e uma data.</p>
+            <!-- Coluna: Hora -->
+            <div class="hora-column">
+              <h4>⏰ Horários Disponíveis</h4>
+              <div id="mensagemHorarios" class="mensagem-info">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                  <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <p>Selecione uma data para ver os horários</p>
+              </div>
+              <div id="horariosGrid" class="horarios-grid" style="display: none;">
+                <!-- Horários serão gerados via JavaScript -->
+              </div>
+              <input type="hidden" id="horarioSelecionado" required>
             </div>
-            <input type="hidden" id="horarioSelecionado" required>
+          </div>
         </div>
 
-        <div class="form-group mt-3">
-            <label class="form-label" for="agendamentoObservacoes">Observações (Opcional)</label>
-            <textarea 
-                class="form-input" 
-                id="agendamentoObservacoes" 
-                rows="3" 
-                placeholder="Ex: Prefiro tal profissional, ou tenho alergia a algo."
-            ></textarea>
+        <!-- Observações -->
+        <div class="form-section">
+          <label class="form-label">💬 Observações (opcional)</label>
+          <textarea 
+            id="observacoes" 
+            class="form-textarea" 
+            rows="3"
+            placeholder="Alguma preferência ou informação adicional?"></textarea>
         </div>
 
-        <button class="btn btn-primary btn-full mt-3" type="submit">
-            Confirmar Agendamento
+        <!-- Botão Confirmar -->
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right: 8px;">
+            <path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Confirmar Agendamento
         </button>
       </form>
-      <div id="mensagemAgendar" class="mt-2" style="display: none;"></div>
     </div>
 
-    <div id="secaoPendentes" class="hidden">
-      <h3>⏳ Agendamentos Pendentes</h3>
-      <p style="color: var(--text-secondary);">Você pode editar ou cancelar agendamentos pendentes</p>
-      <div id="listaPendentes">
-        <div class="spinner"></div>
+    <!-- Seção: Pendentes -->
+    <div id="secaoPendentes" class="section-content">
+      <div class="section-header">
+        <h2>⏳ Agendamentos Pendentes</h2>
+        <p>Aguardando confirmação</p>
+      </div>
+      <div id="listaPendentes" class="agendamentos-lista">
+        <div class="loading-spinner"></div>
       </div>
     </div>
 
-    <div id="secaoHistorico" class="hidden">
-      <h3>✅ Histórico de Agendamentos</h3>
-      <p style="color: var(--text-secondary);">Seus agendamentos concluídos</p>
-      <div id="listaHistorico">
-        <div class="spinner"></div>
+    <!-- Seção: Histórico -->
+    <div id="secaoHistorico" class="section-content">
+      <div class="section-header">
+        <h2>📜 Histórico de Agendamentos</h2>
+        <p>Agendamentos confirmados e concluídos</p>
+      </div>
+      <div id="listaHistorico" class="agendamentos-lista">
+        <div class="loading-spinner"></div>
       </div>
     </div>
 
-    <div id="secaoPerfil" class="hidden">
-      <h3>👤 Meu Perfil</h3>
-      
-      <form id="formPerfil" style="max-width: 500px;">
-        <div class="form-group">
-          <label class="form-label">Nome Completo</label>
-          <input class="form-input" type="text" id="perfilNomeCompleto" required>
+    <!-- Seção: Perfil -->
+    <div id="secaoPerfil" class="section-content">
+      <div class="section-header">
+        <h2>👤 Meu Perfil</h2>
+        <p>Atualize suas informações pessoais</p>
+      </div>
+
+      <form id="formPerfil" class="perfil-form card">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" id="perfilNome" class="form-input" required>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Telefone</label>
-          <input class="form-input" type="tel" id="perfilTelefone" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" id="perfilEmail" class="form-input" readonly>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Telefone</label>
+            <input type="tel" id="perfilTelefone" class="form-input" placeholder="(00) 00000-0000">
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">E-mail</label>
-          <input class="form-input" type="email" id="perfilEmail" disabled>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin-right: 8px;">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke-width="2"/>
+              <path d="M17 21v-8H7v8M7 3v5h8" stroke-width="2"/>
+            </svg>
+            Salvar Alterações
+          </button>
         </div>
-
-        <button type="submit" class="btn btn-primary">
-          💾 Salvar Alterações
-        </button>
       </form>
 
-      <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--border-color);">
+      <div class="perfil-section card" style="margin-top: 24px;">
+        <h3>🔒 Alterar Senha</h3>
+        <form id="formSenha">
+          <div class="form-group">
+            <label class="form-label">Nova Senha</label>
+            <input type="password" id="novaSenha" class="form-input" minlength="6">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Confirmar Nova Senha</label>
+            <input type="password" id="confirmarSenha" class="form-input" minlength="6">
+          </div>
 
-      <h4>🔒 Alterar Senha</h4>
-      <form id="formSenha" style="max-width: 500px;">
-        <div class="form-group">
-          <label class="form-label">Nova Senha</label>
-          <input class="form-input" type="password" id="novaSenha" minlength="6">
-        </div>
+          <button type="submit" class="btn btn-secondary">
+            Alterar Senha
+          </button>
+        </form>
+      </div>
+    </div>
 
-        <div class="form-group">
-          <label class="form-label">Confirmar Nova Senha</label>
-          <input class="form-input" type="password" id="confirmarSenha" minlength="6">
-        </div>
+  </div>
 
-        <button type="submit" class="btn btn-warning">
-          🔑 Alterar Senha
-        </button>
-      </form>
-
-      <div id="mensagemPerfil" class="mt-2" style="display: none;"></div>
+  <!-- Modal: Chat -->
+  <div id="modalChat" class="modal">
+    <div class="modal-content modal-chat">
+      <div class="modal-header">
+        <h3>💬 Chat do Agendamento</h3>
+        <button class="modal-close" onclick="fecharChat()">&times;</button>
+      </div>
+      <div id="mensagensChat" class="chat-messages"></div>
+      <div class="chat-input-container">
+        <input type="text" id="inputMensagemChat" class="form-input" placeholder="Digite sua mensagem...">
+        <button class="btn btn-primary" onclick="enviarMensagem()">Enviar</button>
+      </div>
     </div>
   </div>
 
-  <div id="modalChat" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-    <div style="width: 90%; max-width: 600px;">
-      <div class="chat-container">
-        <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>💬 Chat com a Empresa</span>
-          <button onclick="fecharChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
-        </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input-container">
-          <input type="text" class="chat-input form-input" id="chatInput" placeholder="Digite sua mensagem..." style="margin: 0;">
-          <button class="btn btn-primary" onclick="enviarMensagemChat()">📤</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  
   <script src="firebase/firebase-config.js"></script>
   <script src="firebase/services-config.js"></script>
   <script src="firebase/database.js"></script>
   <script src="assets/theme.js"></script>
-
-  <script>
-    let usuarioAtual = null;
-    let perfilAtual = {}; // Armazena o perfil para não precisar buscar toda hora
-    let agendamentoAtualChat = null;
-    let servicosSelecionados = []; // Lista de objetos de serviço selecionados
-
-    // ===============================================
-    // FUNÇÕES DE PERFIL E AUTENTICAÇÃO
-    // ===============================================
-
-    /**
-     * Carrega os dados do perfil do Firebase e preenche o formulário.
-     */
-    async function carregarDadosPerfil(userId) {
-        // obterPerfilUsuario está em database.js
-        const perfil = await obterPerfilUsuario(userId);
-        if (perfil) {
-            perfilAtual = perfil;
-            
-            // Atualiza o nome de exibição no navbar
-            document.getElementById('nomeUsuario').textContent = perfil.nomeCompleto || perfil.email;
-            
-            // Preenche os campos do formulário de perfil (seção Perfil)
-            document.getElementById('perfilNomeCompleto').value = perfil.nomeCompleto || '';
-            document.getElementById('perfilTelefone').value = perfil.telefone || '';
-            document.getElementById('perfilEmail').value = perfil.email || usuarioAtual.email;
-        }
-    }
-
-    // Função de conveniência para ser chamada ao clicar na aba Perfil
-    async function carregarPerfil() {
-        await carregarDadosPerfil(usuarioAtual.uid);
-    }
-
-    // Listener de Autenticação
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (!user) {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        usuarioAtual = user;
-        
-        // 1. Carrega e preenche o perfil
-        await carregarDadosPerfil(user.uid); 
-        
-        // 2. Carrega e exibe os serviços no agendamento
-        carregarServicos();
-        
-        // 3. Configura a data mínima de agendamento
-        configurarDataMinima();
-        
-        // Garante que a primeira seção seja exibida
-        mostrarSecao('agendar');
-    });
-
-    // ===============================================
-    // FUNÇÕES DE AGENDAMENTO (MULTI-SERVIÇO)
-    // ===============================================
-
-    // Carregar serviços (agora com checkboxes para multi-seleção)
-    function carregarServicos() {
-        // getTodosServicos, formatarPreco e formatarDuracao vêm de services-config.js
-        const servicos = getTodosServicos();
-        const container = document.getElementById('servicosContainer');
-        container.innerHTML = ''; 
-
-        servicos.forEach(servico => {
-            const item = document.createElement('div');
-            item.innerHTML = `
-                <input 
-                    type="checkbox" 
-                    id="servico-${servico.id}" 
-                    data-id="${servico.id}"
-                    data-preco="${servico.preco}"
-                    data-duracao="${servico.duracao}"
-                    class="service-checkbox hidden"
-                >
-                <label for="servico-${servico.id}" class="card service-label">
-                    <div class="service-icon">${servico.icon}</div>
-                    <div class="service-details">
-                        <div class="service-name">${servico.nome}</div>
-                        <div class="service-description">${servico.descricao}</div>
-                    </div>
-                    <div class="service-price-duration">
-                        <span class="badge badge-success">${formatarPreco(servico.preco)}</span>
-                        <span class="badge badge-info">${formatarDuracao(servico.duracao)}</span>
-                    </div>
-                </label>
-            `;
-            container.appendChild(item);
-        });
-
-        // Adicionar listener para recalcular totais e horários
-        container.addEventListener('change', () => {
-            atualizarTotaisAgendamento();
-            carregarHorarios(); // Recarrega horários quando a duração muda
-        });
-        atualizarTotaisAgendamento(); // Inicializa os totais
-    }
-    
-    // Atualiza totais de preço e duração e a lista de serviços selecionados
-    function atualizarTotaisAgendamento() {
-        const checkboxes = document.querySelectorAll('#servicosContainer .service-checkbox');
-        let totalPreco = 0;
-        let totalDuracao = 0;
-        servicosSelecionados = [];
-
-        checkboxes.forEach(checkbox => {
-            const label = checkbox.nextElementSibling;
-
-            if (checkbox.checked) {
-                totalPreco += parseFloat(checkbox.dataset.preco);
-                totalDuracao += parseInt(checkbox.dataset.duracao);
-                servicosSelecionados.push(getServicoPorId(checkbox.dataset.id));
-                label.classList.add('selected');
-            } else {
-                 label.classList.remove('selected');
-            }
-        });
-
-        // Atualiza a interface do usuário (UI)
-        document.getElementById('totalPrecoDisplay').textContent = formatarPreco(totalPreco);
-        document.getElementById('totalDuracaoDisplay').textContent = formatarDuracao(totalDuracao);
-        
-        // Atualiza o campo oculto que será usado na checagem de horário
-        document.getElementById('inputDuracaoTotal').value = totalDuracao;
-
-        // Se a duração for 0 (nenhum serviço selecionado), limpa a seleção de horário
-        if (totalDuracao === 0 && document.getElementById('agendamentoData').value) {
-            document.getElementById('horariosDisponiveis').innerHTML = '<p style="grid-column: 1/-1; color: var(--text-secondary); text-align: center;">Selecione um ou mais serviços.</p>';
-            document.getElementById('horarioSelecionado').value = '';
-        }
-    }
-
-
-    // Configurar data mínima (mínimo amanhã)
-    function configurarDataMinima() {
-        const hoje = new Date();
-        hoje.setDate(hoje.getDate() + 1); 
-        const dataMin = hoje.toISOString().split('T')[0];
-        document.getElementById('agendamentoData').min = dataMin;
-    }
-
-    // Carregar horários disponíveis
-    document.getElementById('agendamentoData').addEventListener('change', carregarHorarios);
-
-    async function carregarHorarios() {
-        const data = document.getElementById('agendamentoData').value;
-        const duracaoTotal = parseInt(document.getElementById('inputDuracaoTotal').value);
-        
-        const container = document.getElementById('horariosDisponiveis');
-        const grupo = document.getElementById('grupoHorarios');
-        
-        if (!data || duracaoTotal === 0) {
-            if (duracaoTotal > 0) {
-                 container.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-secondary); text-align: center;">Selecione uma data para ver horários.</p>';
-            }
-            // Não faz sentido carregar se não tem duração/data
-            return;
-        }
-
-        container.innerHTML = '<div class="spinner" style="grid-column: 1/-1;"></div>';
-        grupo.style.display = 'block';
-        document.getElementById('horarioSelecionado').value = ''; // Limpa seleção anterior
-
-        try {
-            // USANDO A FUNÇÃO CORRETA: verificarDisponibilidadeComDuracao (em database.js)
-            const horariosDisponiveis = await verificarDisponibilidadeComDuracao(data, duracaoTotal);
-            
-            container.innerHTML = '';
-            
-            if (horariosDisponiveis.length === 0) {
-                container.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-secondary); text-align: center;">Nenhum horário disponível nesta data para a duração selecionada.</p>';
-                return;
-            }
-
-            horariosDisponiveis.forEach(horario => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'btn btn-outline btn-sm';
-                btn.textContent = horario;
-                btn.onclick = () => selecionarHorario(horario, btn);
-                container.appendChild(btn);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar horários:', error);
-            container.innerHTML = '<p style="grid-column: 1/-1; color: var(--danger);">Erro ao carregar horários</p>';
-        }
-    }
-
-    function selecionarHorario(horario, btn) {
-        // Remover seleção anterior
-        document.querySelectorAll('#horariosDisponiveis .btn').forEach(b => {
-            b.classList.remove('btn-primary');
-            b.classList.add('btn-outline');
-        });
-        
-        // Marcar selecionado
-        btn.classList.remove('btn-outline');
-        btn.classList.add('btn-primary');
-        document.getElementById('horarioSelecionado').value = horario;
-    }
-
-    // Enviar agendamento (Atualizado para multi-serviço)
-    document.getElementById('formAgendamento').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const data = document.getElementById('agendamentoData').value;
-        const horario = document.getElementById('horarioSelecionado').value;
-        const observacoes = document.getElementById('agendamentoObservacoes').value;
-        const duracaoTotal = parseInt(document.getElementById('inputDuracaoTotal').value);
-        const precoTotal = servicosSelecionados.reduce((sum, s) => sum + s.preco, 0);
-
-        
-        if (servicosSelecionados.length === 0) {
-            mostrarMensagemAgendar('❌ Selecione pelo menos um serviço', 'erro');
-            return;
-        }
-        
-        if (!horario) {
-            mostrarMensagemAgendar('❌ Selecione um horário', 'erro');
-            return;
-        }
-
-        const dados = {
-            userId: usuarioAtual.uid,
-            nomeCompleto: perfilAtual.nomeCompleto, 
-            telefone: perfilAtual.telefone,
-            email: perfilAtual.email,
-            
-            // Novos campos para multi-serviço (array de objetos)
-            servicos: servicosSelecionados.map(s => ({ 
-                id: s.id, 
-                nome: s.nome, 
-                preco: s.preco, 
-                duracao: s.duracao 
-            })),
-            precoTotal: precoTotal,
-            duracaoTotal: duracaoTotal,
-            
-            dataHora: `${data}T${horario}`,
-            observacoes: observacoes || 'Nenhuma',
-            status: 'pendente'
-        };
-
-        try {
-            // salvarAgendamento (em database.js)
-            await salvarAgendamento(dados);
-            mostrarMensagemAgendar('✅ Agendamento realizado com sucesso!', 'sucesso');
-            document.getElementById('formAgendamento').reset();
-            document.getElementById('horariosDisponiveis').innerHTML = '';
-            document.getElementById('horarioSelecionado').value = ''; 
-            atualizarTotaisAgendamento(); // Limpa os totais e checkboxes
-            
-            setTimeout(() => mostrarSecao('pendentes'), 2000);
-        } catch (error) {
-            console.error('Erro:', error);
-            mostrarMensagemAgendar('❌ Erro ao criar agendamento', 'erro');
-        }
-    });
-
-    function mostrarMensagemAgendar(texto, tipo) {
-        const msg = document.getElementById('mensagemAgendar');
-        msg.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
-        msg.textContent = texto;
-        msg.style.display = 'block';
-        setTimeout(() => msg.style.display = 'none', 5000);
-    }
-
-    // ===============================================
-    // FUNÇÕES DE EXIBIÇÃO E MANIPULAÇÃO
-    // ===============================================
-
-    // Navegação entre seções
-    function mostrarSecao(secao) {
-        // Ocultar todas
-        document.getElementById('secaoAgendar').classList.add('hidden');
-        document.getElementById('secaoPendentes').classList.add('hidden');
-        document.getElementById('secaoHistorico').classList.add('hidden');
-        document.getElementById('secaoPerfil').classList.add('hidden');
-
-        // Remover destaque dos tabs
-        document.querySelectorAll('[id^="tab"]').forEach(tab => {
-            tab.style.borderBottom = 'none';
-        });
-
-        // Mostrar seção selecionada
-        if (secao === 'agendar') {
-            document.getElementById('secaoAgendar').classList.remove('hidden');
-            document.getElementById('tabAgendar').style.borderBottom = '3px solid var(--primary-color)';
-        } else if (secao === 'pendentes') {
-            document.getElementById('secaoPendentes').classList.remove('hidden');
-            document.getElementById('tabPendentes').style.borderBottom = '3px solid var(--primary-color)';
-            carregarPendentes();
-        } else if (secao === 'historico') {
-            document.getElementById('secaoHistorico').classList.remove('hidden');
-            document.getElementById('tabHistorico').style.borderBottom = '3px solid var(--primary-color)';
-            carregarHistorico();
-        } else if (secao === 'perfil') {
-            document.getElementById('secaoPerfil').classList.remove('hidden');
-            document.getElementById('tabPerfil').style.borderBottom = '3px solid var(--primary-color)';
-            carregarPerfil(); 
-        }
-    }
-    
-    // Carregar pendentes
-    async function carregarPendentes() {
-        const container = document.getElementById('listaPendentes');
-        container.innerHTML = '<div class="spinner"></div>';
-
-        try {
-            const agendamentos = await listarAgendamentosPorUsuario(usuarioAtual.uid);
-            const pendentes = Object.entries(agendamentos || {})
-                .filter(([id, ag]) => ag.status === 'pendente')
-                .map(([id, ag]) => ({ id, ...ag }));
-
-            if (pendentes.length === 0) {
-                container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento pendente</p>';
-                return;
-            }
-
-            container.innerHTML = '';
-            pendentes.forEach(ag => {
-                const card = criarCardAgendamento(ag, true);
-                container.appendChild(card);
-            });
-        } catch (error) {
-            console.error('Erro:', error);
-            container.innerHTML = '<p style="color: var(--danger);">Erro ao carregar agendamentos</p>';
-        }
-    }
-
-    // Carregar histórico
-    async function carregarHistorico() {
-        const container = document.getElementById('listaHistorico');
-        container.innerHTML = '<div class="spinner"></div>';
-
-        try {
-            const agendamentos = await listarAgendamentosPorUsuario(usuarioAtual.uid);
-            const concluidos = Object.entries(agendamentos || {})
-                .filter(([id, ag]) => ag.status === 'concluido')
-                .map(([id, ag]) => ({ id, ...ag }));
-
-            if (concluidos.length === 0) {
-                container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento concluído</p>';
-                return;
-            }
-
-            container.innerHTML = '';
-            concluidos.forEach(ag => {
-                const card = criarCardAgendamento(ag, false);
-                container.appendChild(card);
-            });
-        } catch (error) {
-            console.error('Erro:', error);
-            container.innerHTML = '<p style="color: var(--danger);">Erro ao carregar histórico</p>';
-        }
-    }
-
-    // Criar card de agendamento (Atualizado para multi-serviço)
-    function criarCardAgendamento(ag, isPendente) {
-        const card = document.createElement('div');
-        card.className = 'card mb-2';
-        
-        const data = new Date(ag.dataHora);
-        const dataFormatada = data.toLocaleDateString('pt-BR');
-        const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        
-        // Mapeia o array de serviços para uma lista bonita (usando a nova estrutura)
-        const listaServicos = (ag.servicos || [{ nome: ag.servico || 'Serviço Indefinido' }]) 
-                                .map(s => `<li>${s.nome} (${formatarPreco(s.preco)})</li>`)
-                                .join('');
-        
-        // Usa precoTotal e duracaoTotal, ou os campos antigos para compatibilidade
-        const precoDisplay = formatarPreco(ag.precoTotal || ag.preco || 0);
-        const duracaoDisplay = formatarDuracao(ag.duracaoTotal || ag.duracao || 0);
-
-        card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <span class="badge ${isPendente ? 'badge-warning' : 'badge-success'}">
-                            ${isPendente ? '⏳ Pendente' : '✅ Concluído'}
-                        </span>
-                    </div>
-                    <h4 style="margin: 8px 0;">Serviços:</h4>
-                    <ul style="list-style-type: disc; margin-left: 20px; font-size: 14px; padding: 0;">
-                        ${listaServicos}
-                    </ul>
-                    <p style="color: var(--text-secondary); font-size: 14px; margin: 8px 0;">
-                        📅 ${dataFormatada} às ${horaFormatada}
-                    </p>
-                    <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-                        ⏱️ Duração Total: ${duracaoDisplay}
-                    </p>
-                    <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-                        💰 Preço Total: ${precoDisplay}
-                    </p>
-                    ${ag.observacoes && ag.observacoes !== 'Nenhuma' ? `<p style="font-size: 13px; color: var(--text-tertiary); margin-top: 8px;">💬 ${ag.observacoes}</p>` : ''}
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    ${isPendente ? `
-                        <button class="btn btn-sm btn-danger" onclick="cancelarAgendamento('${ag.id}')">
-                            ❌ Cancelar
-                        </button>
-                    ` : ''}
-                    <button class="btn btn-sm btn-primary" onclick="abrirChat('${ag.id}')">
-                        💬 Chat
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        return card;
-    }
-
-    // Cancelar agendamento
-    async function cancelarAgendamento(id) {
-        if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
-
-        try {
-            await alterarStatusAgendamento(id, 'cancelado');
-            alert('✅ Agendamento cancelado com sucesso!');
-            carregarPendentes();
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('❌ Erro ao cancelar agendamento');
-        }
-    }
-
-    // Chat
-    function abrirChat(agendamentoId) {
-        agendamentoAtualChat = agendamentoId;
-        document.getElementById('modalChat').classList.remove('hidden');
-        carregarMensagensChat();
-    }
-
-    function fecharChat() {
-        document.getElementById('modalChat').classList.add('hidden');
-        agendamentoAtualChat = null;
-    }
-
-    function carregarMensagensChat() {
-        const container = document.getElementById('chatMessages');
-        container.innerHTML = '';
-
-        // listarMensagens (em database.js)
-        listarMensagens(agendamentoAtualChat, (mensagens) => {
-            container.innerHTML = '';
-            mensagens.forEach(msg => {
-                const div = document.createElement('div');
-                div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
-                div.innerHTML = `
-                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">${msg.userNome}</div>
-                    <div>${msg.mensagem}</div>
-                    <div style="font-size: 10px; opacity: 0.6; margin-top: 4px;">
-                        ${new Date(msg.timestamp).toLocaleTimeString('pt-BR')}
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            container.scrollTop = container.scrollHeight;
-        });
-    }
-
-    async function enviarMensagemChat() {
-        const input = document.getElementById('chatInput');
-        const mensagem = input.value.trim();
-        
-        if (!mensagem) return;
-
-        const perfil = await obterPerfilUsuario(usuarioAtual.uid);
-        
-        await enviarMensagem(agendamentoAtualChat, {
-            userId: usuarioAtual.uid,
-            userNome: perfil.nomeCompleto, // Corrigido para nomeCompleto
-            mensagem
-        });
-
-        input.value = '';
-    }
-
-    // Salvar perfil (Atualizado para nomeCompleto)
-    document.getElementById('formPerfil').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const nomeCompleto = document.getElementById('perfilNomeCompleto').value; // Usando ID corrigido
-        const telefone = document.getElementById('perfilTelefone').value;
-        
-        const dados = {
-            nomeCompleto: nomeCompleto, 
-            telefone: telefone,
-            email: usuarioAtual.email,
-            role: 'cliente'
-        };
-
-        try {
-            // atualizarPerfilUsuario (em database.js)
-            await atualizarPerfilUsuario(usuarioAtual.uid, dados);
-            await usuarioAtual.updateProfile({ displayName: nomeCompleto }); 
-            document.getElementById('nomeUsuario').textContent = nomeCompleto; 
-            mostrarMensagemPerfil('✅ Perfil atualizado com sucesso!', 'sucesso');
-        } catch (error) {
-            console.error('Erro:', error);
-            mostrarMensagemPerfil('❌ Erro ao atualizar perfil', 'erro');
-        }
-    });
-
-    // Alterar senha
-    document.getElementById('formSenha').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const novaSenha = document.getElementById('novaSenha').value;
-        const confirmarSenha = document.getElementById('confirmarSenha').value;
-
-        if (novaSenha !== confirmarSenha) {
-            mostrarMensagemPerfil('❌ As senhas não coincidem', 'erro');
-            return;
-        }
-
-        try {
-            await usuarioAtual.updatePassword(novaSenha);
-            mostrarMensagemPerfil('✅ Senha alterada com sucesso!', 'sucesso');
-            document.getElementById('formSenha').reset();
-        } catch (error) {
-            console.error('Erro:', error);
-            if (error.code === 'auth/requires-recent-login') {
-                mostrarMensagemPerfil('❌ Por segurança, faça login novamente antes de alterar a senha', 'erro');
-            } else {
-                mostrarMensagemPerfil('❌ Erro ao alterar senha', 'erro');
-            }
-        }
-    });
-
-    function mostrarMensagemPerfil(texto, tipo) {
-        const msg = document.getElementById('mensagemPerfil');
-        msg.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
-        msg.textContent = texto;
-        msg.style.display = 'block';
-        setTimeout(() => msg.style.display = 'none', 5000);
-    }
-
-    // Máscara telefone
-    document.getElementById('perfilTelefone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length <= 11) {
-            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-            e.target.value = value;
-        }
-    });
-
-    // Logout
-    function logout() {
-        firebase.auth().signOut().then(() => {
-            window.location.href = 'index.html';
-        });
-    }
-
-    // Enter no chat
-    document.getElementById('chatInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            enviarMensagemChat();
-        }
-    });
-  </script>
+  <script src="assets/cliente-app.js"></script>
 </body>
 </html>
