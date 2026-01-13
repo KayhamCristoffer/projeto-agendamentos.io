@@ -10,7 +10,7 @@
  */
 function salvarAgendamento(dados) {
   // Validar dados obrigatórios
-  if (!dados.nome || !dados.servico || !dados.dataHora) {
+  if (!dados.dataHora || !dados.clienteId) {
     return Promise.reject(new Error('Dados obrigatórios não fornecidos'));
   }
 
@@ -246,20 +246,16 @@ function enviarMensagem(agendamentoId, mensagem) {
  * Listar mensagens de um chat
  * @param {string} agendamentoId - ID do agendamento
  * @param {Function} callback - Callback com mensagens
+ * @returns {Function} Função para remover listener
  */
 function listarMensagens(agendamentoId, callback) {
-  db.ref(`chats/${agendamentoId}/mensagens`)
-    .orderByChild('timestamp')
-    .on('value', (snapshot) => {
-      const mensagens = [];
-      snapshot.forEach((child) => {
-        mensagens.push({
-          id: child.key,
-          ...child.val()
-        });
-      });
-      callback(mensagens);
-    });
+  const ref = db.ref(`chats/${agendamentoId}`);
+  const listener = ref.on('value', (snapshot) => {
+    callback(snapshot.val());
+  });
+  
+  // Retornar função para remover listener
+  return () => ref.off('value', listener);
 }
 
 /**

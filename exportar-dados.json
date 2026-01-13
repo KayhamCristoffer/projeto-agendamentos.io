@@ -1,145 +1,161 @@
 {
   "agendamentos": {
     "-N9Z0_ExemploConfirmado": {
-      "clienteId": "HmogEGttECZtausr6AL12v1f2VT2",
-      "clienteNome": "Maria de Souza",
-      "clienteTelefone": "(11) 99999-0000",
-      "criadoEm": "2025-12-15T14:30:00.000Z",
-      "dataHora": "2025-12-20T10:30:00.000Z",
-      "duracaoTotal": 70,
-      "observacoes": "Cliente pediu pontualidade.",
-      "precoTotal": 65,
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João Silva",
+      "clienteEmail": "joao@exemplo.com",
       "servicos": [
         {
-          "duracao": 30,
-          "id": "corte_cabelo_masc",
-          "nome": "Corte de Cabelo Masculino",
-          "preco": 35
+          "id": "corte_cabelo",
+          "nome": "Corte de Cabelo",
+          "preco": 50,
+          "duracao": 30
         },
         {
-          "duracao": 40,
-          "id": "manicure",
-          "nome": "Manicure",
-          "preco": 30
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 30,
+          "duracao": 20
         }
       ],
-      "status": "confirmado"
+      "dataHora": "2025-12-20T10:30",
+      "duracaoTotal": 50,
+      "precoTotal": 80,
+      "status": "confirmado",
+      "observacoes": "Preferência por corte degradê",
+      "criadoEm": "2025-12-15T08:00:00.000Z",
+      "timestamp": 1734249600000
     },
     "-N9Z1_ExemploPendente": {
-      "clienteId": "Q9BILOCpHxcV291uMuBQnQrpWRW2",
-      "clienteNome": "João da Silva",
-      "clienteTelefone": "(11) 98888-1111",
-      "criadoEm": "2025-12-14T10:00:00.000Z",
-      "dataHora": "2025-12-18T14:00:00.000Z",
-      "duracaoTotal": 50,
-      "observacoes": "",
-      "precoTotal": 85,
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria Santos",
+      "clienteEmail": "maria@exemplo.com",
       "servicos": [
         {
-          "duracao": 50,
-          "id": "corte_barba",
-          "nome": "Corte + Barba",
-          "preco": 85
+          "id": "manicure",
+          "nome": "Manicure",
+          "preco": 35,
+          "duracao": 45
+        },
+        {
+          "id": "pedicure",
+          "nome": "Pedicure",
+          "preco": 40,
+          "duracao": 45
         }
       ],
-      "status": "pendente"
+      "dataHora": "2025-12-21T14:00",
+      "duracaoTotal": 90,
+      "precoTotal": 75,
+      "status": "pendente",
+      "observacoes": "",
+      "criadoEm": "2025-12-15T09:30:00.000Z",
+      "timestamp": 1734255000000
     },
     "-N9Z2_ExemploConcluido": {
-      "clienteId": "HmogEGttECZtausr6AL12v1f2VT2",
-      "clienteNome": "Maria de Souza",
-      "clienteTelefone": "(11) 99999-0000",
-      "criadoEm": "2025-12-10T09:00:00.000Z",
-      "dataHora": "2025-12-12T16:00:00.000Z",
-      "duracaoTotal": 90,
-      "observacoes": "Primeira vez na loja",
-      "precoTotal": 120,
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João Silva",
+      "clienteEmail": "joao@exemplo.com",
       "servicos": [
         {
-          "duracao": 90,
-          "id": "mani_pedi",
-          "nome": "Manicure + Pedicure",
-          "preco": 120
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 80,
+          "duracao": 60
         }
       ],
-      "status": "concluido"
+      "dataHora": "2025-12-10T16:00",
+      "duracaoTotal": 60,
+      "precoTotal": 80,
+      "status": "concluido",
+      "observacoes": "Cliente muito satisfeito",
+      "criadoEm": "2025-12-08T10:00:00.000Z",
+      "timestamp": 1733846400000,
+      "atualizadoEm": "2025-12-10T17:00:00.000Z"
     },
     "-N9Z3_ExemploHistorico1": {
-      "clienteId": "Q9BILOCpHxcV291uMuBQnQrpWRW2",
-      "clienteNome": "João da Silva",
-      "clienteTelefone": "(11) 98888-1111",
-      "criadoEm": "2025-12-05T08:00:00.000Z",
-      "dataHora": "2025-12-08T10:00:00.000Z",
-      "duracaoTotal": 30,
-      "observacoes": "",
-      "precoTotal": 50,
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria Santos",
+      "clienteEmail": "maria@exemplo.com",
       "servicos": [
         {
-          "duracao": 30,
-          "id": "corte_cabelo_masc",
-          "nome": "Corte de Cabelo Masculino",
-          "preco": 50
+          "id": "tratamento_facial",
+          "nome": "Tratamento Facial",
+          "preco": 120,
+          "duracao": 60
+        },
+        {
+          "id": "limpeza_pele",
+          "nome": "Limpeza de Pele",
+          "preco": 90,
+          "duracao": 45
         }
       ],
-      "status": "concluido"
+      "dataHora": "2025-12-05T11:00",
+      "duracaoTotal": 105,
+      "precoTotal": 210,
+      "status": "concluido",
+      "observacoes": "Excelente resultado",
+      "criadoEm": "2025-12-03T14:00:00.000Z",
+      "timestamp": 1733400000000,
+      "atualizadoEm": "2025-12-05T13:00:00.000Z"
     }
   },
   "chats": {
     "-N9Z0_ExemploConfirmado": {
-      "lido": {
-        "admin": false,
-        "cliente": true
+      "mensagem1": {
+        "userId": "JdhBfj837hDkfL29Jp1s",
+        "nome": "João Silva",
+        "texto": "Olá! Gostaria de confirmar meu horário para amanhã.",
+        "timestamp": 1734250800000,
+        "lido": true
       },
-      "mensagens": {
-        "msg1": {
-          "nome": "Maria de Souza",
-          "texto": "Olá, tudo bem?",
-          "timestamp": 1734277900000,
-          "userId": "HmogEGttECZtausr6AL12v1f2VT2"
-        },
-        "msg2": {
-          "nome": "Empresa",
-          "texto": "Olá Maria! Tudo ótimo. Como posso ajudar?",
-          "timestamp": 1734278000000,
-          "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2"
-        }
+      "mensagem2": {
+        "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+        "nome": "Admin",
+        "texto": "Olá João! Seu horário está confirmado para amanhã às 10:30. Nos vemos lá!",
+        "timestamp": 1734251400000,
+        "lido": true
+      },
+      "mensagem3": {
+        "userId": "JdhBfj837hDkfL29Jp1s",
+        "nome": "João Silva",
+        "texto": "Perfeito! Obrigado!",
+        "timestamp": 1734252000000,
+        "lido": true
       }
     },
     "-N9Z1_ExemploPendente": {
-      "lido": {
-        "admin": true,
-        "cliente": true
-      },
-      "mensagens": {
-        "msg1": {
-          "nome": "João da Silva",
-          "texto": "Posso remarcar para outro horário?",
-          "timestamp": 1734191000000,
-          "userId": "Q9BILOCpHxcV291uMuBQnQrpWRW2"
-        }
+      "mensagem1": {
+        "userId": "KldBfi837hDkfL29Jp2s",
+        "nome": "Maria Santos",
+        "texto": "Boa tarde! Posso levar meu esmalte preferido?",
+        "timestamp": 1734256200000,
+        "lido": false
       }
     }
   },
   "usuarios": {
     "IEtDxVZXgZOP0M3R8OApILWvKTS2": {
-      "criadoEm": "2025-01-01T10:00:00.000Z",
+      "nome": "Kayham Cristoffer",
       "email": "kayhamoliveira98@gmail.com",
-      "nomeCompleto": "Kayham Cristoffer",
+      "telefone": "(11) 98765-4321",
       "role": "admin",
-      "telefone": "(00) 00000-0000"
+      "criadoEm": "2025-12-01T10:00:00.000Z"
     },
-    "Q9BILOCpHxcV291uMuBQnQrpWRW2": {
-      "criadoEm": "2025-12-01T00:00:00.000Z",
+    "JdhBfj837hDkfL29Jp1s": {
+      "nome": "João Silva",
       "email": "joao@exemplo.com",
-      "nomeCompleto": "João da Silva",
+      "telefone": "(11) 91234-5678",
       "role": "cliente",
-      "telefone": "(11) 98888-1111"
+      "criadoEm": "2025-12-10T14:30:00.000Z"
     },
-    "HmogEGttECZtausr6AL12v1f2VT2": {
-      "criadoEm": "2025-12-10T00:00:00.000Z",
+    "KldBfi837hDkfL29Jp2s": {
+      "nome": "Maria Santos",
       "email": "maria@exemplo.com",
-      "nomeCompleto": "Maria de Souza",
+      "telefone": "(11) 99876-5432",
       "role": "cliente",
-      "telefone": "(11) 99999-0000"
+      "criadoEm": "2025-12-12T09:15:00.000Z"
     }
   }
 }

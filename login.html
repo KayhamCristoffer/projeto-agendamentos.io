@@ -4,355 +4,261 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Sistema de Agendamentos</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+          }
+        }
+      }
+    }
+  </script>
 </head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
+  
+  <!-- Theme Toggle (Fixed Position) -->
+  <button onclick="toggleTheme()" class="fixed top-4 right-4 p-3 rounded-full bg-white dark:bg-gray-700 shadow-lg hover:shadow-xl transition z-50">
+    <span id="themeIcon" class="text-2xl">🌙</span>
+  </button>
 
-<body>
-  <div class="container">
-    <div class="text-center mb-3">
-      <h2>🔐 Bem-vindo!</h2>
-      <p>Entre na sua conta ou crie uma nova</p>
+  <!-- Login/Cadastro Container -->
+  <div class="w-full max-w-md">
+    <!-- Logo & Title -->
+    <div class="text-center mb-8">
+      <div class="text-6xl mb-4">📅</div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Sistema de Agendamentos</h1>
+      <p class="text-gray-600 dark:text-gray-400">Gerencie seus horários com facilidade</p>
     </div>
 
-    <!-- Tabs de Login/Cadastro -->
-    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color);">
-      <button class="btn btn-ghost btn-full" id="tabLogin" onclick="mostrarTab('login')" style="border-radius: 0; border-bottom: 3px solid var(--primary-color);">
-        Login
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6">
+      <button onclick="mostrarAba('login')" id="btnLogin" class="flex-1 py-3 px-4 bg-white dark:bg-gray-800 text-primary font-semibold rounded-t-lg shadow-md transition">
+        Entrar
       </button>
-      <button class="btn btn-ghost btn-full" id="tabCadastro" onclick="mostrarTab('cadastro')" style="border-radius: 0;">
+      <button onclick="mostrarAba('cadastro')" id="btnCadastro" class="flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-semibold rounded-t-lg transition">
         Cadastrar
       </button>
     </div>
 
-    <!-- Formulário de Login -->
-    <form id="formLogin" class="slide-up">
-      <div class="form-group">
-        <label class="form-label" for="loginEmail">E-mail</label>
-        <input 
-          class="form-input" 
-          type="email" 
-          id="loginEmail" 
-          placeholder="seu@email.com"
-          required
-          autocomplete="email"
-        />
-      </div>
+    <!-- Login Form -->
+    <div id="abaLogin" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+      <form id="formLogin" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">E-mail</label>
+          <input type="email" id="loginEmail" required 
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Senha</label>
+          <input type="password" id="loginSenha" required minlength="6"
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <button type="button" onclick="mostrarAba('esqueci')" class="text-sm text-primary hover:underline">
+          Esqueceu a senha?
+        </button>
+        <button type="submit" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105">
+          🚀 Entrar
+        </button>
+      </form>
+      <div id="mensagemLogin" class="mt-4 text-center"></div>
+    </div>
 
-      <div class="form-group">
-        <label class="form-label" for="loginSenha">Senha</label>
-        <input 
-          class="form-input" 
-          type="password" 
-          id="loginSenha" 
-          placeholder="••••••••"
-          required
-          autocomplete="current-password"
-          minlength="6"
-        />
-      </div>
+    <!-- Cadastro Form -->
+    <div id="abaCadastro" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 hidden">
+      <form id="formCadastro" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome Completo</label>
+          <input type="text" id="cadastroNome" required
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telefone</label>
+          <input type="tel" id="cadastroTelefone" required placeholder="(99) 99999-9999" maxlength="15"
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">E-mail</label>
+          <input type="email" id="cadastroEmail" required
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Senha</label>
+          <input type="password" id="cadastroSenha" required minlength="6"
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirmar Senha</label>
+          <input type="password" id="cadastroConfirmaSenha" required minlength="6"
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <button type="submit" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105">
+          ✅ Criar Conta
+        </button>
+      </form>
+      <div id="mensagemCadastro" class="mt-4 text-center"></div>
+    </div>
 
-      <button type="submit" class="btn btn-primary btn-full">
-        ✅ Entrar
+    <!-- Esqueceu Senha Form -->
+    <div id="abaEsqueci" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 hidden">
+      <button onclick="mostrarAba('login')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary mb-4">
+        ← Voltar ao login
       </button>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Recuperar Senha</h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Enviaremos um link de recuperação para seu e-mail</p>
+      <form id="formEsqueci" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">E-mail</label>
+          <input type="email" id="esqueciEmail" required
+                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition">
+        </div>
+        <button type="submit" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition">
+          📧 Enviar Link
+        </button>
+      </form>
+      <div id="mensagemEsqueci" class="mt-4 text-center"></div>
+    </div>
 
-      <div class="text-center mt-2">
-        <a href="#" onclick="mostrarEsqueciSenha(); return false;" style="font-size: 14px;">
-          Esqueci minha senha
-        </a>
-      </div>
-    </form>
-
-    <!-- Formulário de Cadastro -->
-    <form id="formCadastro" class="hidden">
-      <div class="form-group">
-        <label class="form-label" for="cadNome">Nome Completo</label>
-        <input 
-          class="form-input" 
-          type="text" 
-          id="cadNome" 
-          placeholder="Seu nome completo"
-          required
-          autocomplete="name"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadTelefone">Telefone</label>
-        <input 
-          class="form-input" 
-          type="tel" 
-          id="cadTelefone" 
-          placeholder="(00) 00000-0000"
-          required
-          autocomplete="tel"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadEmail">E-mail</label>
-        <input 
-          class="form-input" 
-          type="email" 
-          id="cadEmail" 
-          placeholder="seu@email.com"
-          required
-          autocomplete="email"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadSenha">Senha</label>
-        <input 
-          class="form-input" 
-          type="password" 
-          id="cadSenha" 
-          placeholder="••••••••"
-          required
-          autocomplete="new-password"
-          minlength="6"
-        />
-        <small class="form-help">Mínimo de 6 caracteres</small>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="cadSenhaConfirm">Confirmar Senha</label>
-        <input 
-          class="form-input" 
-          type="password" 
-          id="cadSenhaConfirm" 
-          placeholder="••••••••"
-          required
-          autocomplete="new-password"
-          minlength="6"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-full">
-        ➕ Criar Conta
-      </button>
-    </form>
-
-    <!-- Formulário de Esqueci Senha -->
-    <form id="formEsqueciSenha" class="hidden">
-      <div class="text-center mb-2">
-        <p style="font-size: 14px; color: var(--text-secondary);">
-          Digite seu e-mail e enviaremos instruções para redefinir sua senha
-        </p>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="resetEmail">E-mail</label>
-        <input 
-          class="form-input" 
-          type="email" 
-          id="resetEmail" 
-          placeholder="seu@email.com"
-          required
-          autocomplete="email"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-full">
-        📧 Enviar E-mail de Recuperação
-      </button>
-
-      <div class="text-center mt-2">
-        <a href="#" onclick="voltarParaLogin(); return false;" style="font-size: 14px;">
-          ← Voltar para login
-        </a>
-      </div>
-    </form>
-
-    <!-- Mensagens -->
-    <div id="mensagem" class="mt-2"></div>
-
-    <!-- Link para home -->
-    <div class="text-center mt-3">
-      <a href="index.html" class="btn btn-ghost">
-        ← Voltar para página inicial
+    <!-- Link para Home -->
+    <div class="text-center mt-6">
+      <a href="index.html" class="text-gray-600 dark:text-gray-400 hover:text-primary transition">
+        ← Voltar para home
       </a>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-  <!-- Scripts -->
   <script src="firebase/firebase-config.js"></script>
   <script src="firebase/database.js"></script>
   <script src="assets/theme.js"></script>
 
   <script>
-    // Elementos do DOM
-    const formLogin = document.getElementById('formLogin');
-    const formCadastro = document.getElementById('formCadastro');
-    const formEsqueciSenha = document.getElementById('formEsqueciSenha');
-    const mensagem = document.getElementById('mensagem');
-    const tabLogin = document.getElementById('tabLogin');
-    const tabCadastro = document.getElementById('tabCadastro');
-
-    // Mostrar/Ocultar tabs
-    function mostrarTab(tab) {
-      if (tab === 'login') {
-        formLogin.classList.remove('hidden');
-        formCadastro.classList.add('hidden');
-        formEsqueciSenha.classList.add('hidden');
-        tabLogin.style.borderBottom = '3px solid var(--primary-color)';
-        tabCadastro.style.borderBottom = 'none';
-      } else {
-        formLogin.classList.add('hidden');
-        formCadastro.classList.remove('hidden');
-        formEsqueciSenha.classList.add('hidden');
-        tabLogin.style.borderBottom = 'none';
-        tabCadastro.style.borderBottom = '3px solid var(--primary-color)';
-      }
-      limparMensagem();
-    }
-
-    function mostrarEsqueciSenha() {
-      formLogin.classList.add('hidden');
-      formCadastro.classList.add('hidden');
-      formEsqueciSenha.classList.remove('hidden');
-      tabLogin.style.borderBottom = 'none';
-      tabCadastro.style.borderBottom = 'none';
-      limparMensagem();
-    }
-
-    function voltarParaLogin() {
-      mostrarTab('login');
-    }
-
     // Máscara de telefone
-    document.getElementById('cadTelefone').addEventListener('input', function(e) {
+    document.getElementById('cadastroTelefone').addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
-      if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-        e.target.value = value;
+      if (value.length > 11) value = value.slice(0, 11);
+      
+      if (value.length > 6) {
+        value = `(${value.slice(0,2)}) ${value.slice(2,7)}-${value.slice(7)}`;
+      } else if (value.length > 2) {
+        value = `(${value.slice(0,2)}) ${value.slice(2)}`;
+      } else if (value.length > 0) {
+        value = `(${value}`;
       }
+      e.target.value = value;
     });
 
-    // Mostrar mensagem
-    function mostrarMensagem(texto, tipo) {
-      mensagem.className = tipo === 'sucesso' ? 'alert alert-success' : 'alert alert-error';
-      mensagem.textContent = texto;
-      mensagem.classList.remove('hidden');
+    // Alternar abas
+    function mostrarAba(aba) {
+      document.getElementById('abaLogin').classList.add('hidden');
+      document.getElementById('abaCadastro').classList.add('hidden');
+      document.getElementById('abaEsqueci').classList.add('hidden');
+      
+      document.getElementById('btnLogin').className = 'flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-semibold rounded-t-lg transition';
+      document.getElementById('btnCadastro').className = 'flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-semibold rounded-t-lg transition';
+      
+      if (aba === 'login') {
+        document.getElementById('abaLogin').classList.remove('hidden');
+        document.getElementById('btnLogin').className = 'flex-1 py-3 px-4 bg-white dark:bg-gray-800 text-primary font-semibold rounded-t-lg shadow-md transition';
+      } else if (aba === 'cadastro') {
+        document.getElementById('abaCadastro').classList.remove('hidden');
+        document.getElementById('btnCadastro').className = 'flex-1 py-3 px-4 bg-white dark:bg-gray-800 text-primary font-semibold rounded-t-lg shadow-md transition';
+      } else if (aba === 'esqueci') {
+        document.getElementById('abaEsqueci').classList.remove('hidden');
+      }
     }
 
-    function limparMensagem() {
-      mensagem.className = '';
-      mensagem.textContent = '';
-      mensagem.classList.add('hidden');
+    // Mostrar mensagens
+    function mostrarMensagem(tipo, mensagem, divId) {
+      const div = document.getElementById(divId);
+      const classes = tipo === 'sucesso' 
+        ? 'bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 dark:text-green-200 px-4 py-3 rounded'
+        : 'bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded';
+      div.innerHTML = `<div class="${classes}">${mensagem}</div>`;
+      setTimeout(() => div.innerHTML = '', 5000);
     }
 
     // Login
-    formLogin.addEventListener('submit', async (e) => {
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       const email = document.getElementById('loginEmail').value;
       const senha = document.getElementById('loginSenha').value;
-      
+
       try {
         const userCredential = await firebase.auth().signInWithEmailAndPassword(email, senha);
-        mostrarMensagem('✅ Login realizado com sucesso!', 'sucesso');
+        const user = userCredential.user;
         
-        // Obter perfil do usuário
-        const perfil = await obterPerfilUsuario(userCredential.user.uid);
+        // Verificar role do usuário
+        const perfil = await obterPerfilUsuario(user.uid);
         
-        // Redirecionar baseado no role
-        setTimeout(() => {
-          if (perfil && perfil.role === 'admin') {
-            window.location.href = 'admin.html';
-          } else {
-            window.location.href = 'cliente.html';
-          }
-        }, 1000);
-      } catch (error) {
-        let mensagemErro = 'Erro ao fazer login';
-        if (error.code === 'auth/user-not-found') {
-          mensagemErro = 'Usuário não encontrado';
-        } else if (error.code === 'auth/wrong-password') {
-          mensagemErro = 'Senha incorreta';
-        } else if (error.code === 'auth/invalid-email') {
-          mensagemErro = 'E-mail inválido';
+        if (perfil && perfil.role === 'admin') {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'cliente.html';
         }
-        mostrarMensagem('❌ ' + mensagemErro, 'erro');
+      } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        mostrarMensagem('erro', 'E-mail ou senha incorretos. Tente novamente.', 'mensagemLogin');
       }
     });
 
     // Cadastro
-    formCadastro.addEventListener('submit', async (e) => {
+    document.getElementById('formCadastro').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const nome = document.getElementById('cadNome').value;
-      const telefone = document.getElementById('cadTelefone').value;
-      const email = document.getElementById('cadEmail').value;
-      const senha = document.getElementById('cadSenha').value;
-      const senhaConfirm = document.getElementById('cadSenhaConfirm').value;
-      
-      // Validar senhas
-      if (senha !== senhaConfirm) {
-        mostrarMensagem('❌ As senhas não coincidem', 'erro');
+      const nome = document.getElementById('cadastroNome').value;
+      const telefone = document.getElementById('cadastroTelefone').value;
+      const email = document.getElementById('cadastroEmail').value;
+      const senha = document.getElementById('cadastroSenha').value;
+      const confirmaSenha = document.getElementById('cadastroConfirmaSenha').value;
+
+      if (senha !== confirmaSenha) {
+        mostrarMensagem('erro', 'As senhas não coincidem!', 'mensagemCadastro');
         return;
       }
-      
+
       try {
-        // Criar conta no Firebase Auth
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
+        const user = userCredential.user;
         
-        // Salvar perfil no database
-        await salvarPerfilUsuario(userCredential.user.uid, {
-          nome,
-          telefone,
-          email,
+        await user.updateProfile({ displayName: nome });
+        
+        await salvarPerfilUsuario(user.uid, {
+          nome: nome,
+          telefone: telefone,
+          email: email,
           role: 'cliente',
           criadoEm: new Date().toISOString()
         });
-        
-        // Atualizar displayName
-        await userCredential.user.updateProfile({ displayName: nome });
-        
-        mostrarMensagem('✅ Conta criada com sucesso! Redirecionando...', 'sucesso');
-        
-        setTimeout(() => {
-          window.location.href = 'cliente.html';
-        }, 1500);
+
+        mostrarMensagem('sucesso', 'Conta criada com sucesso! Redirecionando...', 'mensagemCadastro');
+        setTimeout(() => window.location.href = 'cliente.html', 2000);
       } catch (error) {
-        let mensagemErro = 'Erro ao criar conta';
+        console.error('Erro ao criar conta:', error);
+        let mensagem = 'Erro ao criar conta. Tente novamente.';
         if (error.code === 'auth/email-already-in-use') {
-          mensagemErro = 'Este e-mail já está em uso';
-        } else if (error.code === 'auth/invalid-email') {
-          mensagemErro = 'E-mail inválido';
-        } else if (error.code === 'auth/weak-password') {
-          mensagemErro = 'Senha muito fraca';
+          mensagem = 'Este e-mail já está em uso.';
         }
-        mostrarMensagem('❌ ' + mensagemErro, 'erro');
+        mostrarMensagem('erro', mensagem, 'mensagemCadastro');
       }
     });
 
-    // Esqueci senha
-    formEsqueciSenha.addEventListener('submit', async (e) => {
+    // Esqueceu senha
+    document.getElementById('formEsqueci').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const email = document.getElementById('resetEmail').value;
-      
+      const email = document.getElementById('esqueciEmail').value;
+
       try {
         await firebase.auth().sendPasswordResetEmail(email);
-        mostrarMensagem('✅ E-mail de recuperação enviado! Verifique sua caixa de entrada.', 'sucesso');
-        
-        setTimeout(() => {
-          voltarParaLogin();
-        }, 3000);
+        mostrarMensagem('sucesso', 'E-mail de recuperação enviado! Verifique sua caixa de entrada.', 'mensagemEsqueci');
       } catch (error) {
-        let mensagemErro = 'Erro ao enviar e-mail';
-        if (error.code === 'auth/user-not-found') {
-          mensagemErro = 'E-mail não cadastrado';
-        } else if (error.code === 'auth/invalid-email') {
-          mensagemErro = 'E-mail inválido';
-        }
-        mostrarMensagem('❌ ' + mensagemErro, 'erro');
+        console.error('Erro ao enviar e-mail:', error);
+        mostrarMensagem('erro', 'Erro ao enviar e-mail. Verifique o endereço e tente novamente.', 'mensagemEsqueci');
       }
     });
 

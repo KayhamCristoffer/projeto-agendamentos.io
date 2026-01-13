@@ -6,7 +6,7 @@
 const SERVICOS = [
   {
     id: 'corte_cabelo_masc',
-    icon: '✂️',
+    icone: '✂️',
     nome: 'Corte de Cabelo Masculino',
     descricao: 'Corte moderno e profissional',
     preco: 50,
@@ -14,7 +14,7 @@ const SERVICOS = [
   },
   {
     id: 'corte_cabelo_fem',
-    icon: '✂️',
+    icone: '✂️',
     nome: 'Corte de Cabelo Feminino',
     descricao: 'Corte e finalização',
     preco: 80,
@@ -22,7 +22,7 @@ const SERVICOS = [
   },
   {
     id: 'barba',
-    icon: '🧔',
+    icone: '🧔',
     nome: 'Barba',
     descricao: 'Aparar e modelar',
     preco: 40,
@@ -30,7 +30,7 @@ const SERVICOS = [
   },
   {
     id: 'corte_barba',
-    icon: '✂️',
+    icone: '✂️',
     nome: 'Corte + Barba',
     descricao: 'Combo completo',
     preco: 85,
@@ -38,7 +38,7 @@ const SERVICOS = [
   },
   {
     id: 'manicure',
-    icon: '💅',
+    icone: '💅',
     nome: 'Manicure',
     descricao: 'Unhas das mãos',
     preco: 60,
@@ -46,7 +46,7 @@ const SERVICOS = [
   },
   {
     id: 'pedicure',
-    icon: '🦶',
+    icone: '🦶',
     nome: 'Pedicure',
     descricao: 'Unhas dos pés',
     preco: 70,
@@ -54,7 +54,7 @@ const SERVICOS = [
   },
   {
     id: 'mani_pedi',
-    icon: '💅',
+    icone: '💅',
     nome: 'Manicure + Pedicure',
     descricao: 'Pacote completo',
     preco: 120,
@@ -62,7 +62,7 @@ const SERVICOS = [
   },
   {
     id: 'depilacao_facial',
-    icon: '👩',
+    icone: '👩',
     nome: 'Depilação Facial',
     descricao: 'Depilação facial completa',
     preco: 50,
@@ -70,7 +70,7 @@ const SERVICOS = [
   },
   {
     id: 'depilacao_corporal',
-    icon: '🧖',
+    icone: '🧖',
     nome: 'Depilação Corporal',
     descricao: 'Depilação corpo inteiro',
     preco: 150,
@@ -78,7 +78,7 @@ const SERVICOS = [
   },
   {
     id: 'massagem',
-    icon: '💆',
+    icone: '💆',
     nome: 'Massagem Relaxante',
     descricao: 'Massagem terapêutica',
     preco: 200,
@@ -86,7 +86,7 @@ const SERVICOS = [
   },
   {
     id: 'limpeza_pele',
-    icon: '✨',
+    icone: '✨',
     nome: 'Limpeza de Pele',
     descricao: 'Tratamento facial completo',
     preco: 180,
@@ -94,7 +94,7 @@ const SERVICOS = [
   },
   {
     id: 'design_sobrancelha',
-    icon: '👁️',
+    icone: '👁️',
     nome: 'Design de Sobrancelhas',
     descricao: 'Modelagem de sobrancelhas',
     preco: 60,
@@ -123,12 +123,37 @@ function getServicosPorIds(ids) {
   return ids.map(id => getServicoPorId(id)).filter(s => s !== undefined);
 }
 
+/**
+ * Gerar slots de horário disponíveis para uma data
+ * @param {string} data - Data no formato YYYY-MM-DD
+ * @returns {Array<string>} Array de horários no formato HH:MM
+ */
+function gerarSlotsHorario(data) {
+  const slots = [];
+  const horaInicio = 8; // 8h
+  const horaFim = 18; // 18h
+  const intervalo = 30; // 30 minutos
+  
+  for (let hora = horaInicio; hora < 20; hora++) {
+    for (let min = 0; min < 60; min += 30) {
+      if (hora === 12 && min === 0) continue; // Pausa para almoço
+      if (hora === 12 && min === 30) continue;
+      if (hora >= 19) break; // Horário de fechamento
+      
+      const horario = `${String(hora).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+      slots.push(horario);
+    }
+  }
+  return slots;
+}
+
 // Exportar para uso global
 if (typeof window !== 'undefined') {
   window.SERVICOS = SERVICOS;
   window.getTodosServicos = getTodosServicos;
   window.getServicoPorId = getServicoPorId;
   window.getServicosPorIds = getServicosPorIds;
+  window.gerarSlotsHorario = gerarSlotsHorario;
   
   console.log('✅ Serviços carregados:', SERVICOS.length);
 }

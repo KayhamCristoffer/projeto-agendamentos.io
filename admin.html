@@ -4,160 +4,216 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin - Sistema de Agendamentos</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+          }
+        }
+      }
+    }
+  </script>
 </head>
-
-<body>
-  <!-- Navegação -->
-  <nav class="nav-bar">
-    <div class="nav-container">
-      <a href="#" class="nav-logo">🛠️ Painel Admin</a>
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <span id="nomeAdmin" style="color: var(--text-secondary); font-size: 14px;"></span>
-        <button class="btn btn-sm btn-ghost" onclick="logout()">Sair</button>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+  
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-lg fixed w-full top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🛠️</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">Painel Admin</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span id="nomeAdmin" class="text-gray-600 dark:text-gray-300 text-sm hidden md:block"></span>
+          <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <span id="themeIcon" class="text-xl">🌙</span>
+          </button>
+          <a href="cliente.html" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm">
+            👤 Área Cliente
+          </a>
+          <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
+            Sair
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- Container Principal -->
-  <div class="container container-wide" style="margin-top: 20px;">
+  <!-- Main Container -->
+  <div class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
     <!-- Estatísticas -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-      <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalAgendamentos">0</div>
-        <div>Total de Agendamentos</div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-gradient-to-br from-purple-500 to-purple-700 text-white p-6 rounded-lg shadow-lg text-center">
+        <div id="totalAgendamentos" class="text-4xl font-bold mb-1">0</div>
+        <div class="text-sm opacity-90">Total</div>
       </div>
-      <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalPendentes">0</div>
-        <div>Pendentes</div>
+      <div class="bg-gradient-to-br from-yellow-500 to-orange-600 text-white p-6 rounded-lg shadow-lg text-center">
+        <div id="totalPendentes" class="text-4xl font-bold mb-1">0</div>
+        <div class="text-sm opacity-90">Pendentes</div>
       </div>
-      <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalConfirmados">0</div>
-        <div>Confirmados</div>
+      <div class="bg-gradient-to-br from-blue-500 to-cyan-600 text-white p-6 rounded-lg shadow-lg text-center">
+        <div id="totalConfirmados" class="text-4xl font-bold mb-1">0</div>
+        <div class="text-sm opacity-90">Confirmados</div>
       </div>
-      <div class="card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; text-align: center;">
-        <div style="font-size: 36px; font-weight: bold;" id="totalConcluidos">0</div>
-        <div>Concluídos</div>
+      <div class="bg-gradient-to-br from-green-500 to-teal-600 text-white p-6 rounded-lg shadow-lg text-center">
+        <div id="totalConcluidos" class="text-4xl font-bold mb-1">0</div>
+        <div class="text-sm opacity-90">Concluídos</div>
       </div>
     </div>
 
-    <!-- Tabs de Filtro -->
-    <div class="flex gap-2 mb-3" style="border-bottom: 2px solid var(--border-color);">
-      <button class="btn btn-ghost" id="tabCalendario" onclick="mostrarTab('calendario')" style="border-radius: 0; border-bottom: 3px solid var(--primary-color);">
+    <!-- Tabs -->
+    <div class="flex space-x-2 mb-6 overflow-x-auto border-b-2 border-gray-200 dark:border-gray-700">
+      <button onclick="mostrarTab('calendario')" id="tabCalendario" class="px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap">
         📅 Calendário
       </button>
-      <button class="btn btn-ghost" id="tabPendentes" onclick="mostrarTab('pendentes')" style="border-radius: 0;">
+      <button onclick="mostrarTab('usuarios')" id="tabUsuarios" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
+        👥 Usuários
+      </button>
+      <button onclick="mostrarTab('pendentes')" id="tabPendentes" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
         ⏳ Pendentes
       </button>
-      <button class="btn btn-ghost" id="tabConfirmados" onclick="mostrarTab('confirmados')" style="border-radius: 0;">
+      <button onclick="mostrarTab('confirmados')" id="tabConfirmados" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
         ✅ Confirmados
       </button>
-      <button class="btn btn-ghost" id="tabConcluidos" onclick="mostrarTab('concluidos')" style="border-radius: 0;">
+      <button onclick="mostrarTab('concluidos')" id="tabConcluidos" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
         🎉 Concluídos
       </button>
     </div>
 
     <!-- Seção: Calendário -->
     <div id="secaoCalendario">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <div class="grid md:grid-cols-2 gap-6">
         <!-- Calendário -->
-        <div class="card">
-          <h3>📅 Calendário de Agendamentos</h3>
-          <div id="calendario" class="mt-2">
-            <div class="calendar-header">
-              <button class="btn btn-sm btn-ghost" onclick="mesAnterior()">←</button>
-              <h4 id="mesAno" style="margin: 0;"></h4>
-              <button class="btn btn-sm btn-ghost" onclick="proximoMes()">→</button>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 16px; text-align: center; font-weight: 600; font-size: 12px;">
-              <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-            </div>
-            <div id="diasCalendario" class="calendar-grid mt-1"></div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">📅 Calendário</h2>
+            <button onclick="carregarCalendario()" class="bg-primary hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition">
+              🔄 Atualizar
+            </button>
           </div>
+          <div class="flex justify-between items-center mb-4">
+            <button onclick="mesAnterior()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">←</button>
+            <h3 id="mesAno" class="font-semibold text-gray-900 dark:text-white"></h3>
+            <button onclick="proximoMes()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">→</button>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">
+            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+          </div>
+          <div id="diasCalendario" class="grid grid-cols-7 gap-1"></div>
         </div>
 
-        <!-- Agendamentos do Dia Selecionado -->
-        <div class="card">
-          <h3 id="tituloAgendamentosDia">📋 Selecione uma data</h3>
-          <div id="agendamentosDia" class="mt-2">
-            <p style="color: var(--text-secondary); text-align: center;">Clique em uma data no calendário</p>
-          </div>
+        <!-- Agendamentos do Dia -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <h2 id="tituloAgendamentosDia" class="text-xl font-bold text-gray-900 dark:text-white mb-4">📋 Selecione uma data</h2>
+          <div id="agendamentosDia" class="space-y-3"></div>
         </div>
       </div>
+    </div>
+
+    <!-- Seção: Usuários -->
+    <div id="secaoUsuarios" class="hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">👥 Usuários Cadastrados</h2>
+        <button onclick="carregarUsuarios()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+          🔄 Atualizar
+        </button>
+      </div>
+      <div id="listaUsuarios" class="space-y-4"></div>
     </div>
 
     <!-- Seção: Pendentes -->
     <div id="secaoPendentes" class="hidden">
-      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>⏳ Agendamentos Pendentes</h3>
-        <button class="btn btn-sm btn-primary" onclick="carregarPendentes()">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">⏳ Agendamentos Pendentes</h2>
+        <button onclick="carregarPendentes()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
           🔄 Atualizar
         </button>
       </div>
-      <div id="listaPendentes">
-        <div class="spinner"></div>
-      </div>
+      <div id="listaPendentes" class="space-y-4"></div>
     </div>
 
     <!-- Seção: Confirmados -->
     <div id="secaoConfirmados" class="hidden">
-      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>✅ Agendamentos Confirmados</h3>
-        <button class="btn btn-sm btn-primary" onclick="carregarConfirmados()">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">✅ Agendamentos Confirmados</h2>
+        <button onclick="carregarConfirmados()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
           🔄 Atualizar
         </button>
       </div>
-      <div id="listaConfirmados">
-        <div class="spinner"></div>
-      </div>
+      <div id="listaConfirmados" class="space-y-4"></div>
     </div>
 
     <!-- Seção: Concluídos -->
     <div id="secaoConcluidos" class="hidden">
-      <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3>🎉 Agendamentos Concluídos</h3>
-        <button class="btn btn-sm btn-primary" onclick="carregarConcluidos()">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">🎉 Agendamentos Concluídos</h2>
+        <button onclick="carregarConcluidos()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
           🔄 Atualizar
         </button>
       </div>
-      <div id="listaConcluidos">
-        <div class="spinner"></div>
-      </div>
+      <div id="listaConcluidos" class="space-y-4"></div>
     </div>
   </div>
 
   <!-- Modal de Chat -->
-  <div id="modalChat" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-    <div style="width: 90%; max-width: 600px;">
-      <div class="chat-container">
-        <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <span id="chatTitulo">💬 Chat</span>
-          <button onclick="fecharChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+  <div id="modalChat" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col">
+      <div class="bg-primary text-white p-4 rounded-t-lg flex justify-between items-center">
+        <span id="chatTitulo" class="font-bold">💬 Chat com Cliente</span>
+        <div class="flex items-center gap-2">
+          <button onclick="carregarMensagens()" class="px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 rounded text-sm transition">
+            🔄 Atualizar
+          </button>
+          <button onclick="fecharChat()" class="text-2xl hover:text-gray-200">&times;</button>
         </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input-container">
-          <input type="text" class="chat-input form-input" id="chatInput" placeholder="Digite sua mensagem..." style="margin: 0;">
-          <button class="btn btn-primary" onclick="enviarMensagemChat()">📤</button>
-        </div>
+      </div>
+      <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-gray-900"></div>
+      <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex gap-2">
+        <input type="text" id="chatInput" placeholder="Digite sua mensagem..." 
+               class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        <button onclick="enviarMensagemChat()" class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+          📤
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal de Confirmar Agendamento -->
-  <div id="modalConfirmar" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-    <div class="card" style="width: 90%; max-width: 400px;">
-      <h3>✅ Confirmar Agendamento</h3>
-      <form id="formConfirmar">
-        <div class="form-group">
-          <label class="form-label">Preço Final (R$)</label>
-          <input class="form-input" type="number" id="precoFinal" step="0.01" min="0" required>
+  <!-- Modal de Edição -->
+  <div id="modalEditar" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✏️ Editar Agendamento</h3>
+      <form id="formEditar" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data</label>
+          <input type="date" id="editarData" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Horário</label>
+          <input type="time" id="editarHora" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+          <select id="editarStatus" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+            <option value="pendente">Pendente</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="concluido">Concluído</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
         </div>
         <div class="flex gap-2">
-          <button type="submit" class="btn btn-success" style="flex: 1;">
-            ✅ Confirmar
+          <button type="submit" class="flex-1 bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+            💾 Salvar
           </button>
-          <button type="button" class="btn btn-ghost" onclick="fecharModalConfirmar()" style="flex: 1;">
+          <button type="button" onclick="fecharModalEditar()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
             Cancelar
           </button>
         </div>
@@ -165,7 +221,7 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -175,460 +231,461 @@
   <script src="assets/theme.js"></script>
 
   <script>
-    let usuarioAtual = null;
-    let agendamentoAtualChat = null;
-    let agendamentoParaConfirmar = null;
+    let adminAtual = null;
+    let chatAgendamentoId = null;
+    let chatListener = null;
+    let editandoAgendamentoId = null;
     let mesAtual = new Date().getMonth();
     let anoAtual = new Date().getFullYear();
     let dataSelecionada = null;
-    let todosAgendamentos = [];
 
-    // Inicializar
+    // Verificar autenticação e permissão
     firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) {
         window.location.href = 'login.html';
         return;
       }
-
-      usuarioAtual = user;
       
-      // Verificar se é admin
-      const isAdminUser = await isAdmin(user.uid);
-      if (!isAdminUser) {
-        alert('❌ Acesso negado! Esta área é exclusiva para administradores.');
+      const perfil = await obterPerfilUsuario(user.uid);
+      if (!perfil || perfil.role !== 'admin') {
         window.location.href = 'cliente.html';
         return;
       }
-
-      const perfil = await obterPerfilUsuario(user.uid);
-      document.getElementById('nomeAdmin').textContent = perfil?.nome || user.email;
-
-      carregarTodosAgendamentos();
-      renderizarCalendario();
+      
+      adminAtual = user;
+      document.getElementById('nomeAdmin').textContent = user.displayName || user.email;
+      
+      await atualizarEstatisticas();
+      await carregarCalendario();
+      await carregarUsuarios();
     });
 
-    // Carregar todos os agendamentos
-    async function carregarTodosAgendamentos() {
-      try {
-        const agendamentos = await listarAgendamentosOnce();
-        todosAgendamentos = Object.entries(agendamentos || {}).map(([id, ag]) => ({ id, ...ag }));
-        atualizarEstatisticas();
-        renderizarCalendario();
-      } catch (error) {
-        console.error('Erro ao carregar agendamentos:', error);
-      }
+    // Logout
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = 'login.html';
+      });
+    }
+
+    // Alternar tabs
+    function mostrarTab(tab) {
+      ['calendario', 'usuarios', 'pendentes', 'confirmados', 'concluidos'].forEach(t => {
+        document.getElementById(`secao${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
+        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).className = 'px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap';
+      });
+      document.getElementById(`secao${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+      document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).className = 'px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap';
+      
+      // Carregar dados da seção
+      if (tab === 'pendentes') carregarPendentes();
+      else if (tab === 'confirmados') carregarConfirmados();
+      else if (tab === 'concluidos') carregarConcluidos();
+      else if (tab === 'usuarios') carregarUsuarios();
     }
 
     // Atualizar estatísticas
-    function atualizarEstatisticas() {
-      const total = todosAgendamentos.length;
-      const pendentes = todosAgendamentos.filter(ag => ag.status === 'pendente').length;
-      const confirmados = todosAgendamentos.filter(ag => ag.status === 'confirmado').length;
-      const concluidos = todosAgendamentos.filter(ag => ag.status === 'concluido').length;
-
-      document.getElementById('totalAgendamentos').textContent = total;
-      document.getElementById('totalPendentes').textContent = pendentes;
-      document.getElementById('totalConfirmados').textContent = confirmados;
-      document.getElementById('totalConcluidos').textContent = concluidos;
-    }
-
-    // Navegação entre tabs
-    function mostrarTab(tab) {
-      // Ocultar todas
-      document.getElementById('secaoCalendario').classList.add('hidden');
-      document.getElementById('secaoPendentes').classList.add('hidden');
-      document.getElementById('secaoConfirmados').classList.add('hidden');
-      document.getElementById('secaoConcluidos').classList.add('hidden');
-
-      // Remover destaque
-      document.querySelectorAll('[id^="tab"]').forEach(t => {
-        t.style.borderBottom = 'none';
-      });
-
-      // Mostrar seção
-      if (tab === 'calendario') {
-        document.getElementById('secaoCalendario').classList.remove('hidden');
-        document.getElementById('tabCalendario').style.borderBottom = '3px solid var(--primary-color)';
-      } else if (tab === 'pendentes') {
-        document.getElementById('secaoPendentes').classList.remove('hidden');
-        document.getElementById('tabPendentes').style.borderBottom = '3px solid var(--primary-color)';
-        carregarPendentes();
-      } else if (tab === 'confirmados') {
-        document.getElementById('secaoConfirmados').classList.remove('hidden');
-        document.getElementById('tabConfirmados').style.borderBottom = '3px solid var(--primary-color)';
-        carregarConfirmados();
-      } else if (tab === 'concluidos') {
-        document.getElementById('secaoConcluidos').classList.remove('hidden');
-        document.getElementById('tabConcluidos').style.borderBottom = '3px solid var(--primary-color)';
-        carregarConcluidos();
+    async function atualizarEstatisticas() {
+      try {
+        const agendamentos = await listarAgendamentosOnce();
+        const todos = Object.values(agendamentos || {});
+        
+        document.getElementById('totalAgendamentos').textContent = todos.length;
+        document.getElementById('totalPendentes').textContent = todos.filter(a => a.status === 'pendente').length;
+        document.getElementById('totalConfirmados').textContent = todos.filter(a => a.status === 'confirmado').length;
+        document.getElementById('totalConcluidos').textContent = todos.filter(a => a.status === 'concluido').length;
+      } catch (error) {
+        console.error('Erro ao atualizar estatísticas:', error);
       }
     }
 
     // Calendário
-    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-
-    function renderizarCalendario() {
-      document.getElementById('mesAno').textContent = `${meses[mesAtual]} ${anoAtual}`;
-
-      const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
-      const ultimoDia = new Date(anoAtual, mesAtual + 1, 0).getDate();
-
-      const container = document.getElementById('diasCalendario');
-      container.innerHTML = '';
-
-      // Dias vazios
-      for (let i = 0; i < primeiroDia; i++) {
-        const vazio = document.createElement('div');
-        vazio.className = 'calendar-day disabled';
-        container.appendChild(vazio);
-      }
-
-      // Dias do mês
-      for (let dia = 1; dia <= ultimoDia; dia++) {
-        const divDia = document.createElement('div');
-        divDia.className = 'calendar-day';
-        divDia.textContent = dia;
-
-        const dataAtual = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        
-        // Verificar se tem agendamentos neste dia
-        const temAgendamento = todosAgendamentos.some(ag => ag.dataHora.startsWith(dataAtual));
-        if (temAgendamento) {
-          divDia.classList.add('has-booking');
-        }
-
-        // Marcar se é hoje
-        const hoje = new Date();
-        if (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) {
-          divDia.style.border = '2px solid var(--primary-color)';
-        }
-
-        divDia.onclick = () => selecionarDia(dataAtual, divDia);
-        container.appendChild(divDia);
-      }
-    }
-
     function mesAnterior() {
-      mesAtual--;
-      if (mesAtual < 0) {
+      if (mesAtual === 0) {
         mesAtual = 11;
         anoAtual--;
+      } else {
+        mesAtual--;
       }
-      renderizarCalendario();
+      carregarCalendario();
     }
 
     function proximoMes() {
-      mesAtual++;
-      if (mesAtual > 11) {
+      if (mesAtual === 11) {
         mesAtual = 0;
         anoAtual++;
+      } else {
+        mesAtual++;
       }
-      renderizarCalendario();
+      carregarCalendario();
     }
 
-    function selecionarDia(data, elemento) {
-      // Remover seleção anterior
-      document.querySelectorAll('.calendar-day').forEach(d => {
-        d.classList.remove('selected');
-      });
-
-      elemento.classList.add('selected');
-      dataSelecionada = data;
-
-      // Mostrar agendamentos do dia
-      const agendamentosDia = todosAgendamentos.filter(ag => ag.dataHora.startsWith(data));
+    async function carregarCalendario() {
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      document.getElementById('mesAno').textContent = `${meses[mesAtual]} ${anoAtual}`;
       
-      const dataFormatada = new Date(data + 'T00:00').toLocaleDateString('pt-BR', { 
-        weekday: 'long', 
-        day: '2-digit', 
-        month: 'long' 
+      const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
+      const ultimoDia = new Date(anoAtual, mesAtual + 1, 0).getDate();
+      
+      const container = document.getElementById('diasCalendario');
+      container.innerHTML = '';
+      
+      // Dias vazios
+      for (let i = 0; i < primeiroDia; i++) {
+        container.innerHTML += '<div class="p-2"></div>';
+      }
+      
+      // Carregar agendamentos do mês
+      const agendamentos = await listarAgendamentosOnce();
+      const agendamentosDoMes = Object.entries(agendamentos || {}).filter(([id, a]) => {
+        const data = new Date(a.dataHora);
+        return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
       });
+      
+      // Dias do mês
+      for (let dia = 1; dia <= ultimoDia; dia++) {
+        const data = new Date(anoAtual, mesAtual, dia);
+        const dataStr = data.toISOString().split('T')[0];
+        const agendamentosNoDia = agendamentosDoMes.filter(([id, a]) => a.dataHora.startsWith(dataStr));
+        
+        const hoje = new Date();
+        const ehHoje = dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear();
+        
+        container.innerHTML += `
+          <div onclick="selecionarDia('${dataStr}')" 
+               class="p-2 text-center cursor-pointer rounded hover:bg-primary hover:text-white transition ${ehHoje ? 'bg-primary text-white font-bold' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'}">
+            <div class="text-sm">${dia}</div>
+            ${agendamentosNoDia.length > 0 ? `<div class="text-xs mt-1">●</div>` : ''}
+          </div>
+        `;
+      }
+    }
 
+    async function selecionarDia(data) {
+      dataSelecionada = data;
+      const dataFormatada = new Date(data + 'T00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
       document.getElementById('tituloAgendamentosDia').textContent = `📋 ${dataFormatada}`;
       
       const container = document.getElementById('agendamentosDia');
+      container.innerHTML = '<div class="text-center py-4 text-gray-600 dark:text-gray-400">Carregando...</div>';
       
-      if (agendamentosDia.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Nenhum agendamento nesta data</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      agendamentosDia.sort((a, b) => a.dataHora.localeCompare(b.dataHora));
-      
-      agendamentosDia.forEach(ag => {
-        const hora = ag.dataHora.split('T')[1];
-        const card = document.createElement('div');
-        card.className = 'card mb-2';
-        card.style.padding = '12px';
-        card.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <div style="font-weight: 600; margin-bottom: 4px;">🕐 ${hora} - ${ag.servico}</div>
-              <div style="font-size: 13px; color: var(--text-secondary);">👤 ${ag.nome}</div>
-              <div style="font-size: 13px; color: var(--text-secondary);">💰 ${formatarPreco(ag.preco)}</div>
+      try {
+        const agendamentos = await listarAgendamentosOnce();
+        const agendamentosNoDia = Object.entries(agendamentos || {})
+          .filter(([id, a]) => a.dataHora.startsWith(data))
+          .sort((a, b) => a[1].dataHora.localeCompare(b[1].dataHora));
+        
+        if (agendamentosNoDia.length === 0) {
+          container.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum agendamento neste dia</div>';
+          return;
+        }
+        
+        container.innerHTML = agendamentosNoDia.map(([id, a]) => `
+          <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded border-l-4 ${getStatusColor(a.status)}">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <p class="font-semibold text-gray-900 dark:text-white">${a.clienteNome}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  ${new Date(a.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • ${a.duracaoTotal} min
+                </p>
+              </div>
+              <span class="text-xs px-2 py-1 rounded ${getStatusBadge(a.status)}">
+                ${getStatusText(a.status)}
+              </span>
             </div>
-            <span class="badge badge-${ag.status === 'pendente' ? 'warning' : ag.status === 'confirmado' ? 'primary' : 'success'}">
-              ${ag.status === 'pendente' ? '⏳' : ag.status === 'confirmado' ? '✅' : '🎉'} ${ag.status}
-            </span>
+            <div class="flex gap-2 mt-2">
+              <button onclick="abrirChat('${id}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs transition">
+                💬 Chat
+              </button>
+              <button onclick="abrirModalEditar('${id}')" class="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs transition">
+                ✏️
+              </button>
+            </div>
           </div>
-        `;
-        container.appendChild(card);
-      });
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar agendamentos:', error);
+        container.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar agendamentos</div>';
+      }
+    }
+
+    // Carregar usuários
+    async function carregarUsuarios() {
+      const lista = document.getElementById('listaUsuarios');
+      lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
+      
+      try {
+        const snapshot = await firebase.database().ref('usuarios').once('value');
+        const usuarios = snapshot.val() || {};
+        const usuariosArray = Object.entries(usuarios);
+        
+        if (usuariosArray.length === 0) {
+          lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum usuário cadastrado</div>';
+          return;
+        }
+        
+        lista.innerHTML = usuariosArray.map(([id, u]) => `
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">${u.nome}</h3>
+                <p class="text-gray-600 dark:text-gray-400">${u.email}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-500">${u.telefone || 'Sem telefone'}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-sm font-semibold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                ${u.role === 'admin' ? '👑 Admin' : '👤 Cliente'}
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+              Cadastrado em: ${new Date(u.criadoEm).toLocaleDateString('pt-BR')}
+            </p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+        lista.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar usuários</div>';
+      }
     }
 
     // Carregar pendentes
     async function carregarPendentes() {
-      const container = document.getElementById('listaPendentes');
-      container.innerHTML = '<div class="spinner"></div>';
-
-      await carregarTodosAgendamentos();
-      
-      const pendentes = todosAgendamentos.filter(ag => ag.status === 'pendente');
-
-      if (pendentes.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento pendente</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      pendentes.forEach(ag => {
-        const card = criarCardAgendamento(ag, 'pendente');
-        container.appendChild(card);
-      });
+      await carregarAgendamentosPorStatus('pendente', 'listaPendentes');
     }
 
-    // Carregar confirmados
     async function carregarConfirmados() {
-      const container = document.getElementById('listaConfirmados');
-      container.innerHTML = '<div class="spinner"></div>';
-
-      await carregarTodosAgendamentos();
-      
-      const confirmados = todosAgendamentos.filter(ag => ag.status === 'confirmado');
-
-      if (confirmados.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento confirmado</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      confirmados.forEach(ag => {
-        const card = criarCardAgendamento(ag, 'confirmado');
-        container.appendChild(card);
-      });
+      await carregarAgendamentosPorStatus('confirmado', 'listaConfirmados');
     }
 
-    // Carregar concluídos
     async function carregarConcluidos() {
-      const container = document.getElementById('listaConcluidos');
-      container.innerHTML = '<div class="spinner"></div>';
-
-      await carregarTodosAgendamentos();
-      
-      const concluidos = todosAgendamentos.filter(ag => ag.status === 'concluido');
-
-      if (concluidos.length === 0) {
-        container.innerHTML = '<p class="text-center" style="color: var(--text-secondary);">Nenhum agendamento concluído</p>';
-        return;
-      }
-
-      container.innerHTML = '';
-      concluidos.forEach(ag => {
-        const card = criarCardAgendamento(ag, 'concluido');
-        container.appendChild(card);
-      });
+      await carregarAgendamentosPorStatus('concluido', 'listaConcluidos');
     }
 
-    // Criar card de agendamento
-    function criarCardAgendamento(ag, status) {
-      const card = document.createElement('div');
-      card.className = 'card mb-2';
-      
-      const data = new Date(ag.dataHora);
-      const dataFormatada = data.toLocaleDateString('pt-BR');
-      const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-      let acoes = '';
-      if (status === 'pendente') {
-        acoes = `
-          <button class="btn btn-sm btn-success" onclick="abrirModalConfirmar('${ag.id}', ${ag.preco})">
-            ✅ Confirmar
-          </button>
-          <button class="btn btn-sm btn-danger" onclick="cancelarAgendamento('${ag.id}')">
-            ❌ Cancelar
-          </button>
-        `;
-      } else if (status === 'confirmado') {
-        acoes = `
-          <button class="btn btn-sm btn-success" onclick="concluirAgendamento('${ag.id}')">
-            🎉 Concluir
-          </button>
-        `;
-      }
-
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; gap: 16px;">
-          <div style="flex: 1;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span class="badge badge-${status === 'pendente' ? 'warning' : status === 'confirmado' ? 'primary' : 'success'}">
-                ${status === 'pendente' ? '⏳ Pendente' : status === 'confirmado' ? '✅ Confirmado' : '🎉 Concluído'}
-              </span>
-            </div>
-            <h4 style="margin: 8px 0;">${ag.servico}</h4>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-              👤 ${ag.nome} | 📞 ${ag.telefone}
-            </p>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-              📅 ${dataFormatada} às ${horaFormatada} | ⏱️ ${formatarDuracao(ag.duracao)}
-            </p>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 4px 0;">
-              💰 ${formatarPreco(ag.precoFinal || ag.preco)}
-            </p>
-            ${ag.observacoes !== 'Nenhuma' ? `<p style="font-size: 13px; color: var(--text-tertiary); margin-top: 8px;">💬 ${ag.observacoes}</p>` : ''}
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            ${acoes}
-            <button class="btn btn-sm btn-primary" onclick="abrirChat('${ag.id}', '${ag.nome}')">
-              💬 Chat
-            </button>
-          </div>
-        </div>
-      `;
-      
-      return card;
-    }
-
-    // Modal confirmar
-    function abrirModalConfirmar(id, precoSugerido) {
-      agendamentoParaConfirmar = id;
-      document.getElementById('precoFinal').value = precoSugerido;
-      document.getElementById('modalConfirmar').classList.remove('hidden');
-    }
-
-    function fecharModalConfirmar() {
-      document.getElementById('modalConfirmar').classList.add('hidden');
-      agendamentoParaConfirmar = null;
-    }
-
-    document.getElementById('formConfirmar').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const precoFinal = parseFloat(document.getElementById('precoFinal').value);
+    async function carregarAgendamentosPorStatus(status, containerId) {
+      const lista = document.getElementById(containerId);
+      lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
       
       try {
-        await atualizarAgendamento(agendamentoParaConfirmar, {
-          status: 'confirmado',
-          precoFinal
+        const agendamentos = await listarAgendamentosOnce();
+        const filtrados = Object.entries(agendamentos || {})
+          .filter(([id, a]) => a.status === status)
+          .sort((a, b) => new Date(b[1].dataHora) - new Date(a[1].dataHora));
+        
+        if (filtrados.length === 0) {
+          lista.innerHTML = `<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum agendamento ${status}</div>`;
+          return;
+        }
+        
+        lista.innerHTML = filtrados.map(([id, a]) => `
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">${a.clienteNome}</h3>
+                <p class="text-gray-600 dark:text-gray-400">${a.clienteEmail}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                  ${new Date(a.dataHora).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })} às 
+                  ${new Date(a.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+              <div class="text-right">
+                <div class="text-2xl font-bold text-primary">${formatarPreco(a.precoTotal)}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">${a.duracaoTotal} min</div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Serviços:</p>
+              <div class="flex flex-wrap gap-2">
+                ${(a.servicos || []).map(s => `<span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-sm">${s.nome}</span>`).join('')}
+              </div>
+            </div>
+            ${a.observacoes ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Obs: ${a.observacoes}</p>` : ''}
+            <div class="flex gap-2">
+              <button onclick="abrirChat('${id}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                💬 Chat
+              </button>
+              <button onclick="abrirModalEditar('${id}')" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                ✏️ Editar
+              </button>
+              ${status === 'pendente' ? `
+                <button onclick="confirmarAgendamento('${id}')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+                  ✅ Confirmar
+                </button>
+              ` : ''}
+              ${status === 'confirmado' ? `
+                <button onclick="concluirAgendamento('${id}')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                  🎉 Concluir
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar agendamentos:', error);
+        lista.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar agendamentos</div>';
+      }
+    }
+
+    // Ações de agendamento
+    async function confirmarAgendamento(id) {
+      try {
+        await alterarStatusAgendamento(id, 'confirmado');
+        await atualizarEstatisticas();
+        await carregarPendentes();
+        alert('Agendamento confirmado com sucesso!');
+      } catch (error) {
+        console.error('Erro ao confirmar:', error);
+        alert('Erro ao confirmar agendamento. Tente novamente.');
+      }
+    }
+
+    async function concluirAgendamento(id) {
+      try {
+        await alterarStatusAgendamento(id, 'concluido');
+        await atualizarEstatisticas();
+        await carregarConfirmados();
+        alert('Agendamento concluído com sucesso!');
+      } catch (error) {
+        console.error('Erro ao concluir:', error);
+        alert('Erro ao concluir agendamento. Tente novamente.');
+      }
+    }
+
+    // Modal de edição
+    function abrirModalEditar(id) {
+      editandoAgendamentoId = id;
+      obterAgendamento(id).then(agendamento => {
+        const [data, hora] = agendamento.dataHora.split('T');
+        document.getElementById('editarData').value = data;
+        document.getElementById('editarHora').value = hora;
+        document.getElementById('editarStatus').value = agendamento.status;
+        document.getElementById('modalEditar').classList.remove('hidden');
+      });
+    }
+
+    function fecharModalEditar() {
+      document.getElementById('modalEditar').classList.add('hidden');
+      editandoAgendamentoId = null;
+    }
+
+    document.getElementById('formEditar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = document.getElementById('editarData').value;
+      const hora = document.getElementById('editarHora').value;
+      const status = document.getElementById('editarStatus').value;
+      
+      try {
+        await atualizarAgendamento(editandoAgendamentoId, {
+          dataHora: `${data}T${hora}`,
+          status: status
         });
         
-        fecharModalConfirmar();
-        alert('✅ Agendamento confirmado com sucesso!');
-        carregarTodosAgendamentos();
-        carregarPendentes();
+        fecharModalEditar();
+        await atualizarEstatisticas();
+        await carregarCalendario();
+        if (dataSelecionada) await selecionarDia(dataSelecionada);
+        alert('Agendamento atualizado com sucesso!');
       } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao confirmar agendamento');
+        console.error('Erro ao atualizar:', error);
+        alert('Erro ao atualizar agendamento. Tente novamente.');
       }
     });
 
-    // Concluir agendamento
-    async function concluirAgendamento(id) {
-      if (!confirm('Confirmar conclusão deste agendamento?')) return;
-
-      try {
-        await alterarStatusAgendamento(id, 'concluido');
-        alert('✅ Agendamento concluído!');
-        carregarTodosAgendamentos();
-        carregarConfirmados();
-      } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao concluir agendamento');
-      }
-    }
-
-    // Cancelar agendamento
-    async function cancelarAgendamento(id) {
-      if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
-
-      try {
-        await alterarStatusAgendamento(id, 'cancelado');
-        alert('✅ Agendamento cancelado');
-        carregarTodosAgendamentos();
-        carregarPendentes();
-      } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao cancelar agendamento');
-      }
-    }
-
     // Chat
-    function abrirChat(agendamentoId, nomeCliente) {
-      agendamentoAtualChat = agendamentoId;
-      document.getElementById('chatTitulo').textContent = `💬 Chat com ${nomeCliente}`;
+    function abrirChat(agendamentoId) {
+      chatAgendamentoId = agendamentoId;
       document.getElementById('modalChat').classList.remove('hidden');
-      carregarMensagensChat();
+      carregarMensagens();
     }
 
     function fecharChat() {
       document.getElementById('modalChat').classList.add('hidden');
-      agendamentoAtualChat = null;
+      if (chatListener) chatListener();
+      chatAgendamentoId = null;
     }
 
-    function carregarMensagensChat() {
+    function carregarMensagens() {
       const container = document.getElementById('chatMessages');
-      container.innerHTML = '';
-
-      listarMensagens(agendamentoAtualChat, (mensagens) => {
-        container.innerHTML = '';
-        mensagens.forEach(msg => {
-          const div = document.createElement('div');
-          div.className = msg.userId === usuarioAtual.uid ? 'chat-message sent' : 'chat-message received';
-          div.innerHTML = `
-            <div style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">${msg.userNome}</div>
-            <div>${msg.mensagem}</div>
-            <div style="font-size: 10px; opacity: 0.6; margin-top: 4px;">
-              ${new Date(msg.timestamp).toLocaleTimeString('pt-BR')}
+      container.innerHTML = '<div class="text-center py-4 text-gray-600 dark:text-gray-400">Carregando...</div>';
+      
+      chatListener = listarMensagens(chatAgendamentoId, (mensagens) => {
+        if (!mensagens || Object.keys(mensagens).length === 0) {
+          container.innerHTML = '<div class="text-center py-4 text-gray-600 dark:text-gray-400">Nenhuma mensagem ainda</div>';
+          return;
+        }
+        
+        const msgs = Object.values(mensagens).sort((a, b) => a.timestamp - b.timestamp);
+        container.innerHTML = msgs.map(m => {
+          const isAdmin = m.userId === adminAtual.uid;
+          return `
+            <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
+              <div class="max-w-xs px-4 py-2 rounded-lg ${isAdmin ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'}">
+                <p class="text-xs font-semibold mb-1">${m.nome}</p>
+                <p>${m.texto}</p>
+                <p class="text-xs opacity-75 mt-1">${new Date(m.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
             </div>
           `;
-          container.appendChild(div);
-        });
+        }).join('');
+        
         container.scrollTop = container.scrollHeight;
       });
     }
 
     async function enviarMensagemChat() {
       const input = document.getElementById('chatInput');
-      const mensagem = input.value.trim();
+      const texto = input.value.trim();
+      if (!texto) return;
       
-      if (!mensagem) return;
-
-      const perfil = await obterPerfilUsuario(usuarioAtual.uid);
-      
-      await enviarMensagem(agendamentoAtualChat, {
-        userId: usuarioAtual.uid,
-        userNome: perfil.nome || 'Admin',
-        mensagem
-      });
-
-      input.value = '';
+      try {
+        await enviarMensagem(chatAgendamentoId, {
+          userId: adminAtual.uid,
+          nome: 'Admin',
+          texto: texto,
+          timestamp: Date.now()
+        });
+        input.value = '';
+      } catch (error) {
+        console.error('Erro ao enviar mensagem:', error);
+        alert('Erro ao enviar mensagem. Tente novamente.');
+      }
     }
 
     document.getElementById('chatInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        enviarMensagemChat();
-      }
+      if (e.key === 'Enter') enviarMensagemChat();
     });
 
-    // Logout
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = 'index.html';
-      });
+    // Helpers
+    function formatarPreco(valor) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
     }
 
-    // Atualização automática a cada 30 segundos
-    setInterval(carregarTodosAgendamentos, 30000);
+    function getStatusColor(status) {
+      const colors = {
+        'pendente': 'border-yellow-500',
+        'confirmado': 'border-green-500',
+        'concluido': 'border-blue-500',
+        'cancelado': 'border-red-500'
+      };
+      return colors[status] || 'border-gray-500';
+    }
+
+    function getStatusBadge(status) {
+      const badges = {
+        'pendente': 'bg-yellow-100 text-yellow-800',
+        'confirmado': 'bg-green-100 text-green-800',
+        'concluido': 'bg-blue-100 text-blue-800',
+        'cancelado': 'bg-red-100 text-red-800'
+      };
+      return badges[status] || 'bg-gray-100 text-gray-800';
+    }
+
+    function getStatusText(status) {
+      const texts = {
+        'pendente': '⏳ Pendente',
+        'confirmado': '✅ Confirmado',
+        'concluido': '🎉 Concluído',
+        'cancelado': '❌ Cancelado'
+      };
+      return texts[status] || status;
+    }
   </script>
 </body>
 </html>
