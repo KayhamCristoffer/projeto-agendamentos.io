@@ -365,6 +365,83 @@ function obterHorariosDisponiveis(data, duracao = 30) {
 }
 
 // ============================================
+// FUNÇÕES DE EQUIPE
+// ============================================
+
+/**
+ * Adicionar membro da equipe
+ * @param {Object} dados - Dados do membro
+ * @returns {Promise}
+ */
+function adicionarMembroEquipe(dados) {
+  const membro = {
+    ...dados,
+    curtidas: 0,
+    criadoEm: new Date().toISOString()
+  };
+  return db.ref('equipe').push(membro);
+}
+
+/**
+ * Listar membros da equipe
+ * @returns {Promise}
+ */
+function listarEquipe() {
+  return db.ref('equipe').once('value')
+    .then((snapshot) => snapshot.val());
+}
+
+/**
+ * Atualizar membro da equipe
+ * @param {string} id - ID do membro
+ * @param {Object} dados - Dados para atualizar
+ * @returns {Promise}
+ */
+function atualizarMembroEquipe(id, dados) {
+  return db.ref(`equipe/${id}`).update(dados);
+}
+
+/**
+ * Deletar membro da equipe
+ * @param {string} id - ID do membro
+ * @returns {Promise}
+ */
+function deletarMembroEquipe(id) {
+  return db.ref(`equipe/${id}`).remove();
+}
+
+/**
+ * Curtir membro da equipe
+ * @param {string} id - ID do membro
+ * @param {string} userId - ID do usuário que curtiu
+ * @returns {Promise}
+ */
+function curtirMembroEquipe(id, userId) {
+  return db.ref(`equipe/${id}`).once('value')
+    .then((snapshot) => {
+      const membro = snapshot.val();
+      const curtidas = membro.curtidas || 0;
+      const curtidasUsuarios = membro.curtidasUsuarios || {};
+      
+      if (curtidasUsuarios[userId]) {
+        // Já curtiu, remover curtida
+        delete curtidasUsuarios[userId];
+        return db.ref(`equipe/${id}`).update({
+          curtidas: Math.max(0, curtidas - 1),
+          curtidasUsuarios: curtidasUsuarios
+        });
+      } else {
+        // Adicionar curtida
+        curtidasUsuarios[userId] = true;
+        return db.ref(`equipe/${id}`).update({
+          curtidas: curtidas + 1,
+          curtidasUsuarios: curtidasUsuarios
+        });
+      }
+    });
+}
+
+// ============================================
 // Exportar funções para uso global
 // ============================================
 
@@ -398,6 +475,13 @@ if (typeof window !== 'undefined') {
   // Horários
   window.verificarDisponibilidadeComDuracao = verificarDisponibilidadeComDuracao;
   window.obterHorariosDisponiveis = obterHorariosDisponiveis;
+  
+  // Equipe
+  window.adicionarMembroEquipe = adicionarMembroEquipe;
+  window.listarEquipe = listarEquipe;
+  window.atualizarMembroEquipe = atualizarMembroEquipe;
+  window.deletarMembroEquipe = deletarMembroEquipe;
+  window.curtirMembroEquipe = curtirMembroEquipe;
 }
 
 console.log('✅ Funções de banco de dados carregadas');

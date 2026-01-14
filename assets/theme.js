@@ -6,57 +6,33 @@
 function initTheme() {
   // Verificar se há tema salvo no localStorage
   const savedTheme = localStorage.getItem('theme') || 'light';
-  setTheme(savedTheme);
-  
-  // Criar botão de toggle se não existir
-  if (!document.querySelector('.theme-toggle')) {
-    createThemeToggle();
-  }
+  applyTheme(savedTheme);
 }
 
-// Definir tema
-function setTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
+// Aplicar tema
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
   localStorage.setItem('theme', theme);
-  
-  // Atualizar ícone do botão
-  updateThemeIcon(theme);
+  updateThemeIcons(theme);
 }
 
 // Alternar tema
 function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  setTheme(newTheme);
+  const isDark = document.documentElement.classList.contains('dark');
+  const newTheme = isDark ? 'light' : 'dark';
+  applyTheme(newTheme);
 }
 
-// Atualizar ícone do botão
-function updateThemeIcon(theme) {
-  const icon = document.querySelector('.theme-toggle-icon');
-  if (icon) {
-    icon.textContent = theme === 'light' ? '🌙' : '☀️';
-  }
-}
-
-// Criar botão de toggle
-function createThemeToggle() {
-  const button = document.createElement('button');
-  button.className = 'theme-toggle';
-  button.setAttribute('aria-label', 'Alternar tema');
-  button.onclick = toggleTheme;
-  
-  const icon = document.createElement('span');
-  icon.className = 'theme-toggle-icon';
-  icon.textContent = '🌙';
-  
-  const text = document.createElement('span');
-  text.textContent = 'Tema';
-  text.style.fontSize = '14px';
-  text.style.fontWeight = '600';
-  
-  button.appendChild(icon);
-  button.appendChild(text);
-  document.body.appendChild(button);
+// Atualizar ícones do tema
+function updateThemeIcons(theme) {
+  const icons = document.querySelectorAll('#themeIcon, .theme-icon');
+  icons.forEach(icon => {
+    icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+  });
 }
 
 // Inicializar quando DOM estiver pronto
@@ -68,7 +44,7 @@ if (document.readyState === 'loading') {
 
 // Exportar funções
 window.initTheme = initTheme;
-window.setTheme = setTheme;
+window.applyTheme = applyTheme;
 window.toggleTheme = toggleTheme;
 
 console.log('✅ Sistema de tema carregado');
