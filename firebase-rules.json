@@ -1,0 +1,76 @@
+{
+  "rules": {
+    "agendamentos": {
+      ".read": "auth != null",
+      ".indexOn": ["clienteId", "dataHora", "status"],
+      "$agendamentoId": {
+        ".write": "auth != null && (
+          !data.exists() || 
+          root.child('usuarios').child(auth.uid).child('role').val() === 'admin' ||
+          data.child('clienteId').val() === auth.uid
+        )",
+        ".validate": "newData.hasChildren(['clienteId', 'clienteNome', 'dataHora', 'status'])",
+        "clienteId": {
+          ".validate": "newData.isString()"
+        },
+        "clienteNome": {
+          ".validate": "newData.isString()"
+        },
+        "dataHora": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && (
+            newData.val() === 'pendente' || 
+            newData.val() === 'confirmado' || 
+            newData.val() === 'concluido' || 
+            newData.val() === 'cancelado'
+          )"
+        },
+        "servicos": {
+          ".validate": "newData.hasChildren()"
+        },
+        "precoTotal": {
+          ".validate": "newData.isNumber()"
+        },
+        "duracaoTotal": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "chats": {
+      ".read": "auth != null",
+      "$agendamentoId": {
+        ".write": "auth != null",
+        "mensagens": {
+          "$mensagemId": {
+            ".validate": "newData.hasChildren(['userId', 'nome', 'texto', 'timestamp'])"
+          }
+        }
+      }
+    },
+    "usuarios": {
+      ".read": "auth != null",
+      ".indexOn": ["role", "email"],
+      "$userId": {
+        ".write": "auth != null && (
+          auth.uid === $userId || 
+          root.child('usuarios').child(auth.uid).child('role').val() === 'admin'
+        )",
+        ".validate": "newData.hasChildren(['nome', 'email', 'role'])",
+        "nome": {
+          ".validate": "newData.isString()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "telefone": {
+          ".validate": "newData.isString()"
+        },
+        "role": {
+          ".validate": "newData.isString() && (newData.val() === 'admin' || newData.val() === 'cliente')"
+        }
+      }
+    }
+  }
+}
