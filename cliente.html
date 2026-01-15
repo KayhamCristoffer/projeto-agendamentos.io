@@ -29,7 +29,10 @@
           <span class="text-xl font-bold text-gray-900 dark:text-white">Área do Cliente</span>
         </div>
         <div class="flex items-center space-x-4">
-          <span id="nomeUsuario" class="text-gray-600 dark:text-gray-300 text-sm hidden md:block"></span>
+          <button onclick="abrirModalPerfil()" id="nomeUsuario" class="text-gray-600 dark:text-gray-300 text-sm hidden md:block hover:text-primary cursor-pointer font-semibold"></button>
+          <a href="admin.html" id="btnPainelAdmin" class="hidden bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition text-sm">
+            🛠️ Painel Admin
+          </a>
           <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
             <span id="themeIcon" class="text-xl">🌙</span>
           </button>
@@ -58,6 +61,9 @@
       <button onclick="mostrarSecao('perfil')" id="tabPerfil" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
         👤 Perfil
       </button>
+      <button onclick="mostrarSecao('equipe')" id="tabEquipe" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
+        👥 Equipe
+      </button>
     </div>
 
     <!-- Seção: Agendar Novo -->
@@ -66,6 +72,28 @@
       <p class="text-gray-600 dark:text-gray-400 mb-6">Selecione os serviços desejados e escolha data/horário</p>
       
       <form id="formAgendar" class="space-y-6">
+        <!-- Para quem é o agendamento -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+          <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">Para quem é o agendamento?</label>
+          <div class="flex gap-6">
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="agendadoPara" value="proprio" checked onchange="toggleNomeOutraPessoa()" 
+                     class="w-4 h-4 text-primary">
+              <span class="ml-2 text-gray-900 dark:text-white">Para mim</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="agendadoPara" value="terceiro" onchange="toggleNomeOutraPessoa()"
+                     class="w-4 h-4 text-primary">
+              <span class="ml-2 text-gray-900 dark:text-white">Para outra pessoa</span>
+            </label>
+          </div>
+          <div id="campoNomeOutraPessoa" class="hidden mt-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome completo da pessoa</label>
+            <input type="text" id="nomeOutraPessoa" placeholder="Digite o nome completo"
+                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+          </div>
+        </div>
+
         <!-- Grid de Serviços -->
         <div>
           <label class="block text-lg font-semibold text-gray-900 dark:text-white mb-3">Serviços</label>
@@ -176,6 +204,13 @@
       </div>
       <div id="mensagemPerfil" class="mt-4"></div>
     </div>
+
+    <!-- Seção: Equipe -->
+    <div id="secaoEquipe" class="hidden">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">👥 Nossa Equipe</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">Conheça os profissionais que vão cuidar de você</p>
+      <div id="listaEquipe" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
   </div>
 
   <!-- Modal de Chat -->
@@ -220,6 +255,17 @@
       usuarioAtual = user;
       document.getElementById('nomeUsuario').textContent = user.displayName || user.email;
       
+      // Verificar se usuário é admin
+      try {
+        const perfilSnap = await firebase.database().ref(`usuarios/${user.uid}`).once('value');
+        const perfil = perfilSnap.val();
+        if (perfil && perfil.role === 'admin') {
+          document.getElementById('btnPainelAdmin').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Erro ao verificar perfil:', error);
+      }
+      
       await carregarServicos();
       await carregarPendentes();
       await carregarHistorico();
@@ -233,14 +279,35 @@
       });
     }
 
+    // Função para mostrar/ocultar campo de nome para outra pessoa
+    function toggleNomeOutraPessoa() {
+      const agendadoPara = document.querySelector('input[name="agendadoPara"]:checked').value;
+      const campoNome = document.getElementById('campoNomeOutraPessoa');
+      const inputNome = document.getElementById('nomeOutraPessoa');
+      
+      if (agendadoPara === 'terceiro') {
+        campoNome.classList.remove('hidden');
+        inputNome.required = true;
+      } else {
+        campoNome.classList.add('hidden');
+        inputNome.required = false;
+        inputNome.value = '';
+      }
+    }
+
     // Alternar seções
     function mostrarSecao(secao) {
-      ['agendar', 'pendentes', 'historico', 'perfil'].forEach(s => {
+      ['agendar', 'pendentes', 'historico', 'perfil', 'equipe'].forEach(s => {
         document.getElementById(`secao${s.charAt(0).toUpperCase() + s.slice(1)}`).classList.add('hidden');
         document.getElementById(`tab${s.charAt(0).toUpperCase() + s.slice(1)}`).className = 'px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap';
       });
       document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`).classList.remove('hidden');
       document.getElementById(`tab${secao.charAt(0).toUpperCase() + secao.slice(1)}`).className = 'px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap';
+      
+      // Carregar equipe se for a seção de equipe
+      if (secao === 'equipe') {
+        carregarEquipe();
+      }
     }
 
     // Carregar serviços
@@ -356,9 +423,16 @@
       const data = document.getElementById('dataAgendamento').value;
       const horario = document.getElementById('horarioSelecionado').value;
       const obs = document.getElementById('observacoes').value;
+      const agendadoPara = document.querySelector('input[name="agendadoPara"]:checked').value;
+      const nomeOutraPessoa = document.getElementById('nomeOutraPessoa').value;
       
       if (!horario) {
         mostrarMensagem('erro', 'Selecione um horário!', 'mensagemAgendar');
+        return;
+      }
+      
+      if (agendadoPara === 'terceiro' && !nomeOutraPessoa) {
+        mostrarMensagem('erro', 'Informe o nome da pessoa para quem o agendamento será feito!', 'mensagemAgendar');
         return;
       }
       
@@ -366,11 +440,16 @@
       const totalPreco = servicosSelecionados.reduce((sum, s) => sum + s.preco, 0);
       const totalDuracao = servicosSelecionados.reduce((sum, s) => sum + s.duracao, 0);
       
+      // Determinar o nome do cliente (pessoa para quem é o agendamento)
+      const clienteNome = agendadoPara === 'proprio' ? usuarioAtual.displayName : nomeOutraPessoa;
+      
       try {
         await salvarAgendamento({
           clienteId: usuarioAtual.uid,
-          clienteNome: usuarioAtual.displayName,
+          clienteNome: clienteNome,
           clienteEmail: usuarioAtual.email,
+          agendadoPor: usuarioAtual.displayName,
+          paraQuem: agendadoPara === 'proprio' ? 'proprio' : 'terceiro',
           servicos: servicosSelecionados.map(s => ({ id: s.id, nome: s.nome, preco: s.preco, duracao: s.duracao })),
           dataHora: dataHora,
           duracaoTotal: totalDuracao,
@@ -384,6 +463,7 @@
         servicosSelecionados = [];
         atualizarResumo();
         document.getElementById('containerHorario').classList.add('hidden');
+        document.getElementById('campoNomeOutraPessoa').classList.add('hidden');
         
         setTimeout(() => {
           mostrarSecao('pendentes');
@@ -540,15 +620,20 @@
           return;
         }
         
-        const msgs = Object.values(mensagens).sort((a, b) => a.timestamp - b.timestamp);
+        const msgs = Object.values(mensagens).sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
         container.innerHTML = msgs.map(m => {
           const isMinha = m.userId === usuarioAtual.uid;
+          const nome = m.nome || 'Usuário';
+          const texto = m.texto || '';
+          const data = m.timestamp ? new Date(m.timestamp) : new Date();
+          const horaFormatada = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          
           return `
             <div class="flex ${isMinha ? 'justify-end' : 'justify-start'}">
               <div class="max-w-xs px-4 py-2 rounded-lg ${isMinha ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'}">
-                <p class="text-xs font-semibold mb-1">${m.nome}</p>
-                <p>${m.texto}</p>
-                <p class="text-xs opacity-75 mt-1">${new Date(m.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p class="text-xs font-semibold mb-1">${nome}</p>
+                <p>${texto}</p>
+                <p class="text-xs opacity-75 mt-1">${horaFormatada}</p>
               </div>
             </div>
           `;
@@ -660,6 +745,55 @@
     // Formatar preço
     function formatarPreco(valor) {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    }
+
+    // ============================================
+    // FUNÇÕES DA EQUIPE
+    // ============================================
+    
+    async function carregarEquipe() {
+      const lista = document.getElementById('listaEquipe');
+      lista.innerHTML = '<div class="col-span-3 text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
+      
+      try {
+        const equipe = await listarEquipe();
+        if (!equipe || Object.keys(equipe).length === 0) {
+          lista.innerHTML = '<div class="col-span-3 text-center py-8 text-gray-600 dark:text-gray-400">Nenhum membro cadastrado ainda</div>';
+          return;
+        }
+        
+        lista.innerHTML = Object.entries(equipe).map(([id, membro]) => `
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <div class="aspect-square bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+              ${membro.foto 
+                ? `<img src="${membro.foto}" alt="${membro.nome}" class="w-full h-full object-cover">` 
+                : `<span class="text-6xl text-white">👤</span>`
+              }
+            </div>
+            <div class="p-4">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">${membro.nome || 'Profissional'}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${membro.bio || 'Profissional especializado'}</p>
+              <div class="flex items-center justify-between">
+                <button onclick="curtirMembro('${id}')" class="flex items-center gap-2 px-4 py-2 bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300 rounded-lg hover:bg-pink-200 dark:hover:bg-pink-800 transition">
+                  ❤️ <span id="curtidas-${id}">${membro.curtidas || 0}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar equipe:', error);
+        lista.innerHTML = '<div class="col-span-3 text-center py-8 text-red-600">Erro ao carregar equipe</div>';
+      }
+    }
+    
+    async function curtirMembro(membroId) {
+      try {
+        await curtirMembroEquipe(membroId, usuarioAtual.uid);
+        carregarEquipe();
+      } catch (error) {
+        console.error('Erro ao curtir membro:', error);
+      }
     }
   </script>
 </body>

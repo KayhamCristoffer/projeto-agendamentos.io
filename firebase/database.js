@@ -249,9 +249,10 @@ function enviarMensagem(agendamentoId, mensagem) {
  * @returns {Function} Função para remover listener
  */
 function listarMensagens(agendamentoId, callback) {
-  const ref = db.ref(`chats/${agendamentoId}`);
+  const ref = db.ref(`chats/${agendamentoId}/mensagens`);
   const listener = ref.on('value', (snapshot) => {
-    callback(snapshot.val());
+    const mensagens = snapshot.val();
+    callback(mensagens);
   });
   
   // Retornar função para remover listener
@@ -326,7 +327,8 @@ function verificarDisponibilidadeComDuracao(data, horario, duracao) {
         const agendamento = child.val();
         if (agendamento.status !== 'cancelado') {
           const agendHorario = agendamento.dataHora.split('T')[1];
-          const agendDuracao = agendamento.duracao || 30;
+          // Usar duracaoTotal ao invés de duracao
+          const agendDuracao = agendamento.duracaoTotal || agendamento.duracao || 30;
           const [agendHora, agendMin] = agendHorario.split(':').map(Number);
           const agendTotalMin = agendHora * 60 + agendMin;
           const agendFimMin = agendTotalMin + agendDuracao;
@@ -334,7 +336,7 @@ function verificarDisponibilidadeComDuracao(data, horario, duracao) {
           const novoInicioMin = hora * 60 + min;
           const novoFimMin = novoInicioMin + duracao;
           
-          // Verificar sobreposição
+          // Verificar sobreposição: se há conflito entre horários
           if (!(novoFimMin <= agendTotalMin || novoInicioMin >= agendFimMin)) {
             disponivel = false;
           }
