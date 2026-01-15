@@ -3,96 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sistema de agendamentos online para pequenos negócios - Simples, rápido e eficiente">
-  <title>Agendamentos Online - Página Inicial</title>
-  
-  <link rel="stylesheet" href="assets/style.css">
-
+  <title>Sistema de Agendamentos Online</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563eb',
+            secondary: '#64748b',
+          }
+        }
+      }
+    }
+  </script>
 </head>
-
-<body>
-  <div class="container slide-up" style="max-width: 900px; margin-top: 50px;">
-    
-    <div class="hero-section">
-        <div style="font-size: 64px; margin-bottom: 16px;">📅</div>
-        <h1>Sistema de Agendamentos Online</h1>
-        <p>Gerencie seus serviços de forma simples, profissional e moderna.</p>
-
-        <div style="max-width: 400px; margin: 32px auto 0; display: flex; flex-direction: column; gap: 12px;">
-            <a href="login.html" class="btn btn-primary btn-full btn-lg">
-                🔐 Entrar ou Cadastrar
-            </a>
-            
-            <div style="margin: 16px 0; color: var(--text-tertiary); font-size: 14px;">
-                OU
-            </div>
-
-            <a href="cliente.html" class="btn btn-outline btn-full">
-                📅 Ver Agendamentos (Área do Cliente)
-            </a>
-
-            <a href="admin.html" class="btn btn-outline btn-full">
-                🛠️ Painel Administrativo
-            </a>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-lg fixed w-full top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">📅</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">Agendamentos Online</span>
         </div>
+        <div class="flex items-center space-x-4">
+          <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <span id="themeIcon" class="text-2xl">🌙</span>
+          </button>
+          <a href="login.html" class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+            Entrar
+          </a>
+        </div>
+      </div>
     </div>
-    
-    <div id="avisoLogado" class="mt-3">
-        </div>
+  </nav>
 
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h4 style="color: var(--primary-color);">✅ Facilidade</h4>
-            <p style="font-size: 14px; color: var(--text-secondary);">Agendamentos rápidos sem precisar de ligações ou mensagens.</p>
+  <!-- Hero Section -->
+  <div class="pt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="text-center">
+        <h1 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-6">
+          Sistema de Agendamentos
+          <span class="block text-primary mt-2">Rápido e Eficiente</span>
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+          Gerencie seus agendamentos de forma simples e organizada. Escolha seus serviços, 
+          selecione data e horário disponível, tudo em poucos cliques.
+        </p>
+        <div class="flex justify-center space-x-4">
+          <a href="login.html" class="bg-primary hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition transform hover:scale-105">
+            Começar Agora
+          </a>
+          <a href="#recursos" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-8 py-4 rounded-lg text-lg font-semibold transition">
+            Saiba Mais
+          </a>
         </div>
-        <div class="feature-card">
-            <h4 style="color: var(--primary-color);">⏱️ Controle Total</h4>
-            <p style="font-size: 14px; color: var(--text-secondary);">Admin gerencia horários e confirma agendamentos pendentes.</p>
-        </div>
-        <div class="feature-card">
-            <h4 style="color: var(--primary-color);">💬 Chat Integrado</h4>
-            <p style="font-size: 14px; color: var(--text-secondary);">Comunicação direta entre cliente e administrador para tirar dúvidas.</p>
-        </div>
-    </div>
-
-    <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-color); text-align: center;">
-      <p style="font-size: 14px; color: var(--text-tertiary);">
-        Desenvolvido com 💙 para pequenos negócios - Powered by Firebase
-      </p>
+      </div>
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="firebase/firebase-config.js"></script>
-  <script src="firebase/database.js"></script> <script src="assets/theme.js"></script>
+  <!-- Features -->
+  <div id="recursos" class="py-20 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+        Recursos Principais
+      </h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-xl transition">
+          <div class="text-4xl mb-4">📅</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Agendamento Fácil</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Selecione múltiplos serviços, escolha data e horário disponível em tempo real.
+          </p>
+        </div>
 
-  <script>
-    // Verificar se já está logado e redirecionar/avisar
-    firebase.auth().onAuthStateChanged(async (user) => {
-      const avisoContainer = document.getElementById('avisoLogado');
-      
-      if (user) {
-        // Usuário está logado, verificar se é admin
-        const perfil = await obterPerfilUsuario(user.uid);
-        
-        const nomeUsuario = perfil?.nomeCompleto || user.email;
-        const targetPage = perfil?.role === 'admin' ? 'admin.html' : 'cliente.html';
-        const targetRole = perfil?.role === 'admin' ? 'Admin' : 'Cliente';
-        
-        // Mostrar opção de ir direto para área logada
-        avisoContainer.innerHTML = `
-          <div class="alert alert-info">
-            ✅ Você já está logado como <strong>${nomeUsuario}</strong>
-            <br>
-            <a href="${targetPage}" class="btn btn-sm btn-info mt-2">
-                Ir para Área do ${targetRole}
-            </a>
-          </div>
-        `;
-      }
-    });
-  </script>
+        <!-- Feature 2 -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-xl transition">
+          <div class="text-4xl mb-4">💬</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Chat Integrado</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Comunique-se diretamente com a empresa para tirar dúvidas sobre seus agendamentos.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-xl transition">
+          <div class="text-4xl mb-4">📊</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Painel Completo</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Acompanhe todos os seus agendamentos: pendentes, confirmados e histórico.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-xl transition">
+          <div class="text-4xl mb-4">🎨</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Tema Claro/Escuro</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Interface moderna com suporte a modo escuro para melhor conforto visual.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-xl transition">
+          <div class="text-4xl mb-4">📱</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Responsivo</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Funciona perfeitamente em computadores, tablets e smartphones.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl hover:shadow-xl transition">
+          <div class="text-4xl mb-4">🔒</div>
+          <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Seguro</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Autenticação segura com Firebase e proteção de dados pessoais.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+        Nossos Serviços
+      </h2>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">✂️</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Cortes de Cabelo</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">🧔</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Barba</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">💅</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Manicure & Pedicure</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">💆</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Massagens</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">✨</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Tratamentos Faciais</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">🧖</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Depilação</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">👁️</div>
+          <p class="font-semibold text-gray-900 dark:text-white">Design de Sobrancelhas</p>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg text-center hover:shadow-lg transition">
+          <div class="text-3xl mb-2">🎨</div>
+          <p class="font-semibold text-gray-900 dark:text-white">E muito mais...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-gray-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center text-gray-600 dark:text-gray-400">
+        <p>&copy; 2025 Sistema de Agendamentos Online. Todos os direitos reservados.</p>
+        <p class="mt-2">Desenvolvido para o desafio acadêmico.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/theme.js"></script>
 </body>
 </html>
