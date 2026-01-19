@@ -4,11 +4,7 @@
       ".read": "auth != null",
       ".indexOn": ["clienteId", "dataHora", "status"],
       "$agendamentoId": {
-        ".write": "auth != null && (
-          !data.exists() || 
-          root.child('usuarios').child(auth.uid).child('role').val() === 'admin' ||
-          data.child('clienteId').val() === auth.uid
-        )",
+        ".write": "auth != null && (!data.exists() || root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || data.child('clienteId').val() === auth.uid)",
         ".validate": "newData.hasChildren(['clienteId', 'clienteNome', 'dataHora', 'status'])",
         "clienteId": {
           ".validate": "newData.isString()"
@@ -20,12 +16,7 @@
           ".validate": "newData.isString()"
         },
         "status": {
-          ".validate": "newData.isString() && (
-            newData.val() === 'pendente' || 
-            newData.val() === 'confirmado' || 
-            newData.val() === 'concluido' || 
-            newData.val() === 'cancelado'
-          )"
+          ".validate": "newData.isString() && (newData.val() === 'pendente' || newData.val() === 'confirmado' || newData.val() === 'concluido' || newData.val() === 'cancelado')"
         },
         "servicos": {
           ".validate": "newData.hasChildren()"
@@ -49,14 +40,27 @@
         }
       }
     },
+    "servicos": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "produtos": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "faturamento": {
+      ".read": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "equipe": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
     "usuarios": {
       ".read": "auth != null",
       ".indexOn": ["role", "email"],
       "$userId": {
-        ".write": "auth != null && (
-          auth.uid === $userId || 
-          root.child('usuarios').child(auth.uid).child('role').val() === 'admin'
-        )",
+        ".write": "auth != null && (auth.uid === $userId || root.child('usuarios').child(auth.uid).child('role').val() === 'admin')",
         ".validate": "newData.hasChildren(['nome', 'email', 'role'])",
         "nome": {
           ".validate": "newData.isString()"
