@@ -1,150 +1,104 @@
 // ============================================
-// Configuração de Serviços
+// Configuração de Serviços - Carrega do Firebase
 // Sistema de Agendamentos Online
 // ============================================
 
-const SERVICOS = [
-  {
-    id: 'corte_cabelo_masc',
-    icone: '✂️',
-    nome: 'Corte de Cabelo Masculino',
-    descricao: 'Corte moderno e profissional',
-    preco: 50,
-    duracao: 30
-  },
-  {
-    id: 'corte_cabelo_fem',
-    icone: '✂️',
-    nome: 'Corte de Cabelo Feminino',
-    descricao: 'Corte e finalização',
-    preco: 80,
-    duracao: 45
-  },
-  {
-    id: 'barba',
-    icone: '🧔',
-    nome: 'Barba',
-    descricao: 'Aparar e modelar',
-    preco: 40,
-    duracao: 20
-  },
-  {
-    id: 'corte_barba',
-    icone: '✂️',
-    nome: 'Corte + Barba',
-    descricao: 'Combo completo',
-    preco: 85,
-    duracao: 50
-  },
-  {
-    id: 'manicure',
-    icone: '💅',
-    nome: 'Manicure',
-    descricao: 'Unhas das mãos',
-    preco: 60,
-    duracao: 40
-  },
-  {
-    id: 'pedicure',
-    icone: '🦶',
-    nome: 'Pedicure',
-    descricao: 'Unhas dos pés',
-    preco: 70,
-    duracao: 50
-  },
-  {
-    id: 'mani_pedi',
-    icone: '💅',
-    nome: 'Manicure + Pedicure',
-    descricao: 'Pacote completo',
-    preco: 120,
-    duracao: 90
-  },
-  {
-    id: 'depilacao_facial',
-    icone: '👩',
-    nome: 'Depilação Facial',
-    descricao: 'Depilação facial completa',
-    preco: 50,
-    duracao: 30
-  },
-  {
-    id: 'depilacao_corporal',
-    icone: '🧖',
-    nome: 'Depilação Corporal',
-    descricao: 'Depilação corpo inteiro',
-    preco: 150,
-    duracao: 90
-  },
-  {
-    id: 'massagem',
-    icone: '💆',
-    nome: 'Massagem Relaxante',
-    descricao: 'Massagem terapêutica',
-    preco: 200,
-    duracao: 60
-  },
-  {
-    id: 'limpeza_pele',
-    icone: '✨',
-    nome: 'Limpeza de Pele',
-    descricao: 'Tratamento facial completo',
-    preco: 180,
-    duracao: 90
-  },
-  {
-    id: 'design_sobrancelha',
-    icone: '👁️',
-    nome: 'Design de Sobrancelhas',
-    descricao: 'Modelagem de sobrancelhas',
-    preco: 60,
-    duracao: 30
+let SERVICOS = [];
+
+// Carregar serviços do Firebase
+async function carregarServicosDoFirebase() {
+  try {
+    const snapshot = await firebase.database().ref('servicos').once('value');
+    const servicosData = snapshot.val();
+    
+    if (servicosData) {
+      SERVICOS = Object.entries(servicosData)
+        .filter(([id, servico]) => servico.ativo !== false)
+        .map(([id, servico]) => ({
+          id,
+          nome: servico.nome,
+          descricao: servico.descricao,
+          preco: servico.preco,
+          duracao: servico.duracao,
+          icone: servico.icone || '✂️'
+        }));
+      
+      console.log(`✅ Serviços carregados do Firebase: ${SERVICOS.length}`);
+    } else {
+      console.warn('⚠️ Nenhum serviço encontrado no Firebase');
+      SERVICOS = [];
+    }
+  } catch (error) {
+    console.error('❌ Erro ao carregar serviços:', error);
+    SERVICOS = [];
   }
-];
+}
 
 /**
- * Obter todos os serviços
+ * Retorna todos os serviços ativos
  */
 function getTodosServicos() {
   return SERVICOS;
 }
 
 /**
- * Obter serviço por ID
+ * Retorna um serviço por ID
  */
 function getServicoPorId(id) {
   return SERVICOS.find(s => s.id === id);
 }
 
 /**
- * Obter múltiplos serviços por array de IDs
+ * Retorna múltiplos serviços por IDs
  */
 function getServicosPorIds(ids) {
-  return ids.map(id => getServicoPorId(id)).filter(s => s !== undefined);
+  return SERVICOS.filter(s => ids.includes(s.id));
 }
 
 /**
- * Gerar slots de horário disponíveis para uma data
- * @param {string} data - Data no formato YYYY-MM-DD
- * @returns {Array<string>} Array de horários no formato HH:MM
+ * Gerar slots de horário disponíveis
  */
-function gerarSlotsHorario(data) {
+function gerarSlotsHorario(data, duracaoServico = 30) {
   const slots = [];
-  const horaInicio = 8; // 8h
-  const horaFim = 18; // 18h
-  const intervalo = 30; // 30 minutos
+  const dataObj = new Date(data + 'T00:00:00');
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
   
-  for (let hora = horaInicio; hora < 20; hora++) {
-    for (let min = 0; min < 60; min += 30) {
-      if (hora === 12 && min === 0) continue; // Pausa para almoço
-      if (hora === 12 && min === 30) continue;
-      if (hora >= 19) break; // Horário de fechamento
+  // Se for data passada, não retornar slots
+  if (dataObj < hoje) {
+    return [];
+  }
+  
+  const horaInicio = 8; // 8h
+  const horaFim = 20; // 20h
+  const intervalo = 30; // minutos
+  
+  for (let hora = horaInicio; hora < horaFim; hora++) {
+    for (let minuto = 0; minuto < 60; minuto += intervalo) {
+      const horarioStr = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
       
-      const horario = `${String(hora).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
-      slots.push(horario);
+      // Verificar se o horário + duração não ultrapassa horário de fechamento
+      const totalMinutos = hora * 60 + minuto + duracaoServico;
+      const horaFimServico = Math.floor(totalMinutos / 60);
+      
+      if (horaFimServico <= horaFim) {
+        slots.push(horarioStr);
+      }
     }
   }
+  
   return slots;
+}
+
+// Inicializar quando o Firebase estiver pronto
+if (typeof firebase !== 'undefined') {
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      await carregarServicosDoFirebase();
+    }
+  });
+} else {
+  console.warn('⚠️ Firebase não está disponível ainda');
 }
 
 // Exportar para uso global
@@ -154,6 +108,7 @@ if (typeof window !== 'undefined') {
   window.getServicoPorId = getServicoPorId;
   window.getServicosPorIds = getServicosPorIds;
   window.gerarSlotsHorario = gerarSlotsHorario;
-  
-  console.log('✅ Serviços carregados:', SERVICOS.length);
+  window.carregarServicosDoFirebase = carregarServicosDoFirebase;
 }
+
+console.log('✅ Sistema de serviços inicializado');
