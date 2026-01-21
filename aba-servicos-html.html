@@ -1,0 +1,79 @@
+<!-- ABA SERVIÇOS - Adicionar após a aba Equipe -->
+
+<!-- Botão da aba no menu de navegação -->
+<button onclick="mostrarTab('servicos')" id="tabServicos" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
+  ✂️ Serviços
+</button>
+
+<!-- Seção de Serviços -->
+<div id="secaoServicos" class="hidden">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">✂️ Gerenciar Serviços</h2>
+    <div class="flex gap-2">
+      <button onclick="abrirModalServico()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+        ➕ Adicionar Serviço
+      </button>
+      <button onclick="carregarServicosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+        🔄 Atualizar
+      </button>
+    </div>
+  </div>
+  <div id="listaServicosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</div>
+
+<!-- Modal Serviço -->
+<div id="modalServico" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4" id="tituloModalServico">➕ Adicionar Serviço</h3>
+    <form id="formServico" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome do Serviço *</label>
+        <input type="text" id="nomeServico" required
+               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+               placeholder="Ex: Corte Masculino">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Descrição</label>
+        <textarea id="descricaoServico" rows="3"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+                  placeholder="Descrição do serviço"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Preço (R$) *</label>
+          <input type="number" id="precoServico" required min="0" step="0.01"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+                 placeholder="50.00">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duração (min) *</label>
+          <input type="number" id="duracaoServico" required min="5" step="5"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+                 placeholder="30">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ícone</label>
+          <input type="text" id="iconeServico"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+                 placeholder="✂️">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria</label>
+          <input type="text" id="categoriaServico"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
+                 placeholder="cabelo">
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button type="submit" class="flex-1 bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+          💾 Salvar
+        </button>
+        <button type="button" onclick="fecharModalServico()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
