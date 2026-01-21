@@ -244,20 +244,31 @@
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
         const user = userCredential.user;
         
-        await user.updateProfile({ displayName: nome });
+        console.log('✅ Usuário criado no Authentication:', user.uid);
         
-        await salvarPerfilUsuario(user.uid, {
+        await user.updateProfile({ displayName: nome });
+        console.log('✅ DisplayName atualizado');
+        
+        const perfil = {
           nome: nome,
           telefone: telefone,
           email: email,
           role: 'cliente',
-          criadoEm: new Date().toISOString()
-        });
+          whatsapp: telefone,
+          totalVisitas: 0,
+          ultimaVisita: null,
+          criadoEm: new Date().toISOString(),
+          atualizadoEm: new Date().toISOString()
+        };
+        
+        console.log('📝 Salvando perfil no Realtime Database:', perfil);
+        await salvarPerfilUsuario(user.uid, perfil);
+        console.log('✅ Perfil salvo com sucesso no Realtime Database');
 
         mostrarMensagem('sucesso', 'Conta criada com sucesso! Redirecionando...', 'mensagemCadastro');
         setTimeout(() => window.location.href = 'cliente.html', 2000);
       } catch (error) {
-        console.error('Erro ao criar conta:', error);
+        console.error('❌ Erro ao criar conta:', error);
         let mensagem = 'Erro ao criar conta. Tente novamente.';
         if (error.code === 'auth/email-already-in-use') {
           mensagem = 'Este e-mail já está em uso.';
