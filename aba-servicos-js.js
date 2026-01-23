@@ -1,99 +1,70 @@
-// FUNÇÕES PARA ABA DE SERVIÇOS
-// Adicionar no final do <script> do admin.html, antes de </script>
-
-// Variável para edição
+// ========== SERVIÇOS ==========
 let editandoServicoId = null;
 
-// Carregar serviços
 async function carregarServicosAdmin() {
   const lista = document.getElementById('listaServicosAdmin');
-  lista.innerHTML = '<div class="col-span-full text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
-  
+  lista.innerHTML = '<div class="col-span-full text-center py-8">Carregando...</div>';
   try {
     const snapshot = await firebase.database().ref('servicos').once('value');
     const servicos = snapshot.val() || {};
-    
     if (Object.keys(servicos).length === 0) {
-      lista.innerHTML = '<div class="col-span-full text-center py-8 text-gray-600 dark:text-gray-400">Nenhum serviço cadastrado</div>';
+      lista.innerHTML = '<div class="col-span-full text-center py-8">Nenhum serviço</div>';
       return;
     }
-    
     lista.innerHTML = Object.entries(servicos).map(([id, s]) => `
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition">
-        <div class="flex items-start gap-3 mb-3">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div class="flex gap-3 mb-3">
           <span class="text-3xl">${s.icone || '✂️'}</span>
           <div class="flex-1">
             <h3 class="font-bold text-gray-900 dark:text-white">${s.nome}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${s.descricao || 'Sem descrição'}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">${s.descricao || ''}</p>
           </div>
-          <span class="px-2 py-1 rounded-full text-xs font-semibold ${s.ativo ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}">
-            ${s.ativo ? 'Ativo' : 'Inativo'}
-          </span>
+          <span class="px-2 py-1 rounded text-xs ${s.ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${s.ativo ? 'Ativo' : 'Inativo'}</span>
         </div>
-        <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
-          <div class="text-gray-600 dark:text-gray-400">
-            💰 Preço: <span class="font-semibold text-gray-900 dark:text-white">${formatarPreco(s.preco)}</span>
-          </div>
-          <div class="text-gray-600 dark:text-gray-400">
-            ⏱️ Duração: <span class="font-semibold text-gray-900 dark:text-white">${s.duracao} min</span>
-          </div>
+        <div class="grid grid-cols-2 gap-2 mb-3 text-sm">
+          <div class="text-gray-600 dark:text-gray-400">💰 ${formatarPreco(s.preco)}</div>
+          <div class="text-gray-600 dark:text-gray-400">⏱️ ${s.duracao} min</div>
         </div>
-        ${s.categoria ? `<p class="text-xs text-gray-500 mb-3">📁 ${s.categoria}</p>` : ''}
         <div class="flex gap-2">
-          <button onclick="editarServico('${id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition">
-            ✏️ Editar
-          </button>
-          <button onclick="toggleAtivoServico('${id}', ${!s.ativo})" class="flex-1 ${s.ativo ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'} text-white px-3 py-1 rounded text-sm transition">
-            ${s.ativo ? '🔒 Desativar' : '✅ Ativar'}
-          </button>
-          <button onclick="deletarServico('${id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">
-            🗑️
-          </button>
+          <button onclick="editarServico('${id}')" class="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm">✏️</button>
+          <button onclick="toggleAtivoServico('${id}', ${!s.ativo})" class="flex-1 ${s.ativo ? 'bg-yellow-500' : 'bg-green-500'} text-white px-3 py-1 rounded text-sm">${s.ativo ? '🔒' : '✅'}</button>
+          <button onclick="deletarServico('${id}')" class="flex-1 bg-red-500 text-white px-3 py-1 rounded text-sm">🗑️</button>
         </div>
       </div>
     `).join('');
   } catch (error) {
-    console.error('Erro ao carregar serviços:', error);
-    lista.innerHTML = '<div class="col-span-full text-center py-8 text-red-600">Erro ao carregar serviços</div>';
+    lista.innerHTML = '<div class="col-span-full text-center py-8 text-red-600">Erro</div>';
   }
 }
 
-// Abrir modal
-function abrirModalServico(servicoId = null) {
-  editandoServicoId = servicoId;
-  
-  if (servicoId) {
-    // Editar
-    document.getElementById('tituloModalServico').textContent = '✏️ Editar Serviço';
-    firebase.database().ref(`servicos/${servicoId}`).once('value').then(snapshot => {
-      const s = snapshot.val();
-      document.getElementById('nomeServico').value = s.nome || '';
-      document.getElementById('descricaoServico').value = s.descricao || '';
-      document.getElementById('precoServico').value = s.preco || 0;
-      document.getElementById('duracaoServico').value = s.duracao || 30;
-      document.getElementById('iconeServico').value = s.icone || '';
-      document.getElementById('categoriaServico').value = s.categoria || '';
+function abrirModalServico(id = null) {
+  editandoServicoId = id;
+  if (id) {
+    document.getElementById('tituloModalServico').textContent = '✏️ Editar';
+    firebase.database().ref(`servicos/${id}`).once('value').then(s => {
+      const d = s.val();
+      document.getElementById('nomeServico').value = d.nome || '';
+      document.getElementById('descricaoServico').value = d.descricao || '';
+      document.getElementById('precoServico').value = d.preco || 0;
+      document.getElementById('duracaoServico').value = d.duracao || 30;
+      document.getElementById('iconeServico').value = d.icone || '';
+      document.getElementById('categoriaServico').value = d.categoria || '';
     });
   } else {
-    // Adicionar
-    document.getElementById('tituloModalServico').textContent = '➕ Adicionar Serviço';
+    document.getElementById('tituloModalServico').textContent = '➕ Adicionar';
     document.getElementById('formServico').reset();
   }
-  
   document.getElementById('modalServico').classList.remove('hidden');
 }
 
-// Fechar modal
 function fecharModalServico() {
   document.getElementById('modalServico').classList.add('hidden');
   document.getElementById('formServico').reset();
   editandoServicoId = null;
 }
 
-// Salvar serviço
 document.getElementById('formServico')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
   const dados = {
     nome: document.getElementById('nomeServico').value,
     descricao: document.getElementById('descricaoServico').value,
@@ -104,58 +75,179 @@ document.getElementById('formServico')?.addEventListener('submit', async (e) => 
     ativo: true,
     atualizadoEm: new Date().toISOString()
   };
-  
   try {
     if (editandoServicoId) {
-      // Atualizar
       await firebase.database().ref(`servicos/${editandoServicoId}`).update(dados);
-      alert('Serviço atualizado com sucesso!');
+      alert('Atualizado!');
     } else {
-      // Adicionar
       dados.criadoEm = new Date().toISOString();
       await firebase.database().ref('servicos').push(dados);
-      alert('Serviço adicionado com sucesso!');
+      alert('Adicionado!');
     }
-    
     fecharModalServico();
     await carregarServicosAdmin();
   } catch (error) {
-    console.error('Erro ao salvar serviço:', error);
-    alert('Erro ao salvar serviço: ' + error.message);
+    alert('Erro: ' + error.message);
   }
 });
 
-// Editar serviço
 function editarServico(id) {
   abrirModalServico(id);
 }
 
-// Ativar/Desativar serviço
 async function toggleAtivoServico(id, ativo) {
   try {
-    await firebase.database().ref(`servicos/${id}`).update({
-      ativo: ativo,
-      atualizadoEm: new Date().toISOString()
-    });
+    await firebase.database().ref(`servicos/${id}`).update({ativo, atualizadoEm: new Date().toISOString()});
     await carregarServicosAdmin();
   } catch (error) {
-    console.error('Erro ao atualizar serviço:', error);
-    alert('Erro ao atualizar serviço: ' + error.message);
+    alert('Erro: ' + error.message);
   }
 }
 
-// Deletar serviço
 async function deletarServico(id) {
-  if (!confirm('Deseja realmente excluir este serviço?\n\n⚠️ Esta ação não pode ser desfeita!')) {
-    return;
-  }
-  
+  if (!confirm('Excluir este serviço?')) return;
   try {
     await firebase.database().ref(`servicos/${id}`).remove();
-    alert('Serviço excluído com sucesso!');
+    alert('Excluído!');
     await carregarServicosAdmin();
   } catch (error) {
-    console.error('Erro ao excluir serviço:', error);
-    alert('Erro ao excluir serviço: ' + error.message);
+    alert('Erro: ' + error.message);
+  }
+}
+
+// ========== PRODUTOS (similar) ==========
+let editandoProdutoId = null;
+
+async function carregarProdutosAdmin() {
+  const lista = document.getElementById('listaProdutosAdmin');
+  lista.innerHTML = '<div class="col-span-full text-center py-8">Carregando...</div>';
+  try {
+    const snapshot = await firebase.database().ref('produtos').once('value');
+    const produtos = snapshot.val() || {};
+    if (Object.keys(produtos).length === 0) {
+      lista.innerHTML = '<div class="col-span-full text-center py-8">Nenhum produto</div>';
+      return;
+    }
+    lista.innerHTML = Object.entries(produtos).map(([id, p]) => `
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div class="flex gap-3 mb-3">
+          <span class="text-3xl">${p.icone || '🛍️'}</span>
+          <div class="flex-1">
+            <h3 class="font-bold text-gray-900 dark:text-white">${p.nome}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">${p.descricao || ''}</p>
+          </div>
+          <span class="px-2 py-1 rounded text-xs ${p.ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.ativo ? 'Ativo' : 'Inativo'}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3 text-sm">
+          <div class="text-gray-600 dark:text-gray-400">💰 ${formatarPreco(p.preco)}</div>
+          <div class="text-gray-600 dark:text-gray-400">📦 ${p.estoque || 0}</div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="editarProduto('${id}')" class="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm">✏️</button>
+          <button onclick="toggleAtivoProduto('${id}', ${!p.ativo})" class="flex-1 ${p.ativo ? 'bg-yellow-500' : 'bg-green-500'} text-white px-3 py-1 rounded text-sm">${p.ativo ? '🔒' : '✅'}</button>
+          <button onclick="deletarProduto('${id}')" class="flex-1 bg-red-500 text-white px-3 py-1 rounded text-sm">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    lista.innerHTML = '<div class="col-span-full text-center py-8 text-red-600">Erro</div>';
+  }
+}
+
+function abrirModalProduto(id = null) {
+  editandoProdutoId = id;
+  if (id) {
+    document.getElementById('tituloModalProduto').textContent = '✏️ Editar';
+    firebase.database().ref(`produtos/${id}`).once('value').then(s => {
+      const d = s.val();
+      document.getElementById('nomeProduto').value = d.nome || '';
+      document.getElementById('descricaoProduto').value = d.descricao || '';
+      document.getElementById('precoProduto').value = d.preco || 0;
+      document.getElementById('estoqueProduto').value = d.estoque || 0;
+      document.getElementById('iconeProduto').value = d.icone || '';
+      document.getElementById('categoriaProduto').value = d.categoria || '';
+    });
+  } else {
+    document.getElementById('tituloModalProduto').textContent = '➕ Adicionar';
+    document.getElementById('formProduto').reset();
+  }
+  document.getElementById('modalProduto').classList.remove('hidden');
+}
+
+function fecharModalProduto() {
+  document.getElementById('modalProduto').classList.add('hidden');
+  document.getElementById('formProduto').reset();
+  editandoProdutoId = null;
+}
+
+document.getElementById('formProduto')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const dados = {
+    nome: document.getElementById('nomeProduto').value,
+    descricao: document.getElementById('descricaoProduto').value,
+    preco: parseFloat(document.getElementById('precoProduto').value),
+    estoque: parseInt(document.getElementById('estoqueProduto').value),
+    icone: document.getElementById('iconeProduto').value || '🧴',
+    categoria: document.getElementById('categoriaProduto').value || 'geral',
+    ativo: true,
+    atualizadoEm: new Date().toISOString()
+  };
+  try {
+    if (editandoProdutoId) {
+      await firebase.database().ref(`produtos/${editandoProdutoId}`).update(dados);
+      alert('Atualizado!');
+    } else {
+      dados.criadoEm = new Date().toISOString();
+      await firebase.database().ref('produtos').push(dados);
+      alert('Adicionado!');
+    }
+    fecharModalProduto();
+    await carregarProdutosAdmin();
+  } catch (error) {
+    alert('Erro: ' + error.message);
+  }
+});
+
+function editarProduto(id) {
+  abrirModalProduto(id);
+}
+
+async function toggleAtivoProduto(id, ativo) {
+  try {
+    await firebase.database().ref(`produtos/${id}`).update({ativo, atualizadoEm: new Date().toISOString()});
+    await carregarProdutosAdmin();
+  } catch (error) {
+    alert('Erro: ' + error.message);
+  }
+}
+
+async function deletarProduto(id) {
+  if (!confirm('Excluir este produto?')) return;
+  try {
+    await firebase.database().ref(`produtos/${id}`).remove();
+    alert('Excluído!');
+    await carregarProdutosAdmin();
+  } catch (error) {
+    alert('Erro: ' + error.message);
+  }
+}
+
+// ========== FATURAMENTO ==========
+async function carregarFaturamento() {
+  // Resumo simples
+  try {
+    const agendamentos = await firebase.database().ref('agendamentos').once('value');
+    let receitas = 0;
+    agendamentos.forEach(child => {
+      const a = child.val();
+      if (a.status === 'concluido') {
+        receitas += a.precoTotal || 0;
+      }
+    });
+    document.getElementById('totalReceitas').textContent = formatarPreco(receitas);
+    document.getElementById('totalDespesas').textContent = 'R$ 0,00';
+    document.getElementById('lucroTotal').textContent = formatarPreco(receitas);
+  } catch (error) {
+    console.error('Erro ao carregar faturamento:', error);
   }
 }
