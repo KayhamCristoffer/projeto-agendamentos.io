@@ -542,6 +542,9 @@
         if (secao) secao.classList.add('hidden');
         const tabBtn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (tabBtn) tabBtn.className = 'px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap';
+      else if (tab === 'servicos') carregarServicosAdmin();
+else if (tab === 'produtos') carregarProdutosAdmin();
+else if (tab === 'faturamento') carregarFaturamento();
       });
       
       const secaoAtiva = document.getElementById(`secao${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
