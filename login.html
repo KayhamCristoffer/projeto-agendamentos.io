@@ -262,8 +262,18 @@
         };
         
         console.log('📝 Salvando perfil no Realtime Database:', perfil);
-        await salvarPerfilUsuario(user.uid, perfil);
+        console.log('🔑 UID do usuário:', user.uid);
+        
+        // Salvar diretamente no Firebase Realtime Database
+        const dbRef = firebase.database().ref(`usuarios/${user.uid}`);
+        console.log('📍 Referência do Firebase:', dbRef.toString());
+        
+        await dbRef.set(perfil);
         console.log('✅ Perfil salvo com sucesso no Realtime Database');
+        
+        // Verificar se foi salvo
+        const snapshot = await dbRef.once('value');
+        console.log('🔍 Verificação - Dados salvos:', snapshot.val());
 
         mostrarMensagem('sucesso', 'Conta criada com sucesso! Redirecionando...', 'mensagemCadastro');
         setTimeout(() => window.location.href = 'cliente.html', 2000);

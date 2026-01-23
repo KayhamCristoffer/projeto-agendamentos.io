@@ -79,9 +79,6 @@
       <button onclick="mostrarTab('calendario')" id="tabCalendario" class="px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap">
         📅 Calendário
       </button>
-      <button onclick="mostrarTab('usuarios')" id="tabUsuarios" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        👥 Usuários
-      </button>
       <button onclick="mostrarTab('clientes')" id="tabClientes" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
         👥 Gerenciar Clientes
       </button>
@@ -139,16 +136,6 @@
     </div>
 
     <!-- Seção: Usuários -->
-    <div id="secaoUsuarios" class="hidden">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">👥 Usuários Cadastrados</h2>
-        <button onclick="carregarUsuarios()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
-          🔄 Atualizar
-        </button>
-      </div>
-      <div id="listaUsuarios" class="space-y-4"></div>
-    </div>
-
     <!-- Seção: Pendentes -->
     <div id="secaoPendentes" class="hidden">
       <div class="flex justify-between items-center mb-6">
@@ -220,8 +207,12 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium mb-2">Serviços</label>
+          <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Serviços *</label>
           <div id="gridServicosNovoAgendamento" class="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto"></div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">🛍️ Produtos (Opcional)</label>
+          <div id="gridProdutosNovoAgendamento" class="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto"></div>
         </div>
         <div id="resumoServicosNovoAgendamento" class="hidden p-4 bg-blue-50 dark:bg-blue-900 rounded-lg"></div>
         <div class="grid md:grid-cols-2 gap-4">
@@ -451,9 +442,11 @@
       if (tab === 'pendentes') carregarPendentes();
       else if (tab === 'confirmados') carregarConfirmados();
       else if (tab === 'concluidos') carregarConcluidos();
-      else if (tab === 'usuarios') carregarUsuarios();
       else if (tab === 'clientes') carregarClientesAdmin();
       else if (tab === 'equipe') carregarEquipeAdmin();
+      else if (tab === 'servicos') carregarServicosAdmin();
+      else if (tab === 'produtos') carregarProdutosAdmin();
+      else if (tab === 'faturamento') carregarFaturamento();
     }
 
     // Atualizar estatísticas
@@ -578,44 +571,6 @@
       } catch (error) {
         console.error('Erro ao carregar agendamentos:', error);
         container.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar agendamentos</div>';
-      }
-    }
-
-    // Carregar usuários
-    async function carregarUsuarios() {
-      const lista = document.getElementById('listaUsuarios');
-      lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
-      
-      try {
-        const snapshot = await firebase.database().ref('usuarios').once('value');
-        const usuarios = snapshot.val() || {};
-        const usuariosArray = Object.entries(usuarios);
-        
-        if (usuariosArray.length === 0) {
-          lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum usuário cadastrado</div>';
-          return;
-        }
-        
-        lista.innerHTML = usuariosArray.map(([id, u]) => `
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">${u.nome}</h3>
-                <p class="text-gray-600 dark:text-gray-400">${u.email}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-500">${u.telefone || 'Sem telefone'}</p>
-              </div>
-              <span class="px-3 py-1 rounded-full text-sm font-semibold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
-                ${u.role === 'admin' ? '👑 Admin' : '👤 Cliente'}
-              </span>
-            </div>
-            <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
-              Cadastrado em: ${new Date(u.criadoEm).toLocaleDateString('pt-BR')}
-            </p>
-          </div>
-        `).join('');
-      } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
-        lista.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar usuários</div>';
       }
     }
 
@@ -1142,17 +1097,20 @@
 
     // Novo Agendamento Admin
     let servicosSelecionadosNovo = [];
+    let produtosSelecionadosNovo = [];
     
     function abrirModalNovoAgendamento() {
       document.getElementById('modalNovoAgendamento').classList.remove('hidden');
       carregarClientesSelect();
       carregarServicosNovo();
+      carregarProdutosNovo();
     }
 
     function fecharModalNovoAgendamento() {
       document.getElementById('modalNovoAgendamento').classList.add('hidden');
       document.getElementById('formNovoAgendamentoAdmin').reset();
       servicosSelecionadosNovo = [];
+      produtosSelecionadosNovo = [];
     }
 
     async function carregarClientesSelect() {
@@ -1171,23 +1129,51 @@
       }
     }
 
-    function carregarServicosNovo() {
+    async function carregarServicosNovo() {
       const grid = document.getElementById('gridServicosNovoAgendamento');
-      grid.innerHTML = window.SERVICOS.map(s => `
-        <div onclick="toggleServicoNovo('${s.id}')" id="servico-novo-${s.id}" 
-             class="cursor-pointer p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
-          <div class="flex items-center gap-2 mb-1">
-            <input type="checkbox" id="check-novo-${s.id}" class="pointer-events-none">
-            <span class="text-lg">${s.icone}</span>
+      grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Carregando serviços...</div>';
+      
+      try {
+        const snapshot = await firebase.database().ref('servicos').orderByChild('ativo').equalTo(true).once('value');
+        const servicos = [];
+        
+        snapshot.forEach((child) => {
+          servicos.push({
+            id: child.key,
+            ...child.val()
+          });
+        });
+        
+        if (servicos.length === 0) {
+          grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Nenhum serviço disponível</div>';
+          return;
+        }
+        
+        grid.innerHTML = servicos.map(s => `
+          <div onclick="toggleServicoNovo('${s.id}')" id="servico-novo-${s.id}" 
+               class="cursor-pointer p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
+            <div class="flex items-center gap-2 mb-1">
+              <input type="checkbox" id="check-novo-${s.id}" class="pointer-events-none">
+              <span class="text-lg">${s.icone || '✂️'}</span>
+            </div>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white">${s.nome}</p>
+            <p class="text-xs text-primary">${formatarPreco(s.preco)}</p>
+            <p class="text-xs text-gray-500">${s.duracao} min</p>
           </div>
-          <p class="text-sm font-semibold">${s.nome}</p>
-          <p class="text-xs text-primary">${formatarPreco(s.preco)}</p>
-        </div>
-      `).join('');
+        `).join('');
+        
+        // Armazenar serviços globalmente para toggleServicoNovo
+        window.SERVICOS_ADMIN = servicos;
+      } catch (error) {
+        console.error('Erro ao carregar serviços:', error);
+        grid.innerHTML = '<div class="col-span-2 text-center py-4 text-red-600">Erro ao carregar serviços</div>';
+      }
     }
 
     function toggleServicoNovo(id) {
-      const servico = window.SERVICOS.find(s => s.id === id);
+      const servico = window.SERVICOS_ADMIN.find(s => s.id === id);
+      if (!servico) return;
+      
       const index = servicosSelecionadosNovo.findIndex(s => s.id === id);
       const card = document.getElementById(`servico-novo-${id}`);
       const check = document.getElementById(`check-novo-${id}`);
@@ -1203,6 +1189,66 @@
       }
       
       atualizarResumoNovo();
+    }
+
+    async function carregarProdutosNovo() {
+      const grid = document.getElementById('gridProdutosNovoAgendamento');
+      grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Carregando produtos...</div>';
+      
+      try {
+        const snapshot = await firebase.database().ref('produtos').orderByChild('ativo').equalTo(true).once('value');
+        const produtos = [];
+        
+        snapshot.forEach((child) => {
+          produtos.push({
+            id: child.key,
+            ...child.val()
+          });
+        });
+        
+        if (produtos.length === 0) {
+          grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Nenhum produto disponível</div>';
+          return;
+        }
+        
+        grid.innerHTML = produtos.map(p => `
+          <div onclick="toggleProdutoNovo('${p.id}')" id="produto-novo-${p.id}" 
+               class="cursor-pointer p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
+            <div class="flex items-center gap-2 mb-1">
+              <input type="checkbox" id="check-produto-novo-${p.id}" class="pointer-events-none">
+              <span class="text-lg">${p.icone || '🛍️'}</span>
+            </div>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white">${p.nome}</p>
+            <p class="text-xs text-primary">${formatarPreco(p.preco)}</p>
+            ${p.estoque ? `<p class="text-xs text-gray-500">Estoque: ${p.estoque}</p>` : ''}
+          </div>
+        `).join('');
+        
+        // Armazenar produtos globalmente
+        window.PRODUTOS_ADMIN = produtos;
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        grid.innerHTML = '<div class="col-span-2 text-center py-4 text-red-600">Erro ao carregar produtos</div>';
+      }
+    }
+
+    function toggleProdutoNovo(id) {
+      const produto = window.PRODUTOS_ADMIN.find(p => p.id === id);
+      if (!produto) return;
+      
+      const index = produtosSelecionadosNovo.findIndex(p => p.id === id);
+      const card = document.getElementById(`produto-novo-${id}`);
+      const check = document.getElementById(`check-produto-novo-${id}`);
+      
+      if (index > -1) {
+        produtosSelecionadosNovo.splice(index, 1);
+        card.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
+        check.checked = false;
+      } else {
+        produtosSelecionadosNovo.push(produto);
+        card.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
+        check.checked = true;
+      }
     }
 
     function atualizarResumoNovo() {
@@ -1264,10 +1310,11 @@
       
       try {
         const perfil = await obterPerfilUsuario(clienteId);
-        const totalPreco = servicosSelecionadosNovo.reduce((sum, s) => sum + s.preco, 0);
+        const totalPreco = servicosSelecionadosNovo.reduce((sum, s) => sum + s.preco, 0) +
+                          produtosSelecionadosNovo.reduce((sum, p) => sum + p.preco, 0);
         const totalDuracao = servicosSelecionadosNovo.reduce((sum, s) => sum + s.duracao, 0);
         
-        await salvarAgendamento({
+        const agendamento = {
           clienteId: clienteId,
           clienteNome: perfil.nome || perfil.nomeCompleto,
           clienteEmail: perfil.email,
@@ -1284,7 +1331,18 @@
           observacoes: obs,
           status: 'pendente',
           agendadoPor: 'admin'
-        });
+        };
+        
+        // Adicionar produtos se houver
+        if (produtosSelecionadosNovo.length > 0) {
+          agendamento.produtos = produtosSelecionadosNovo.map(p => ({
+            id: p.id,
+            nome: p.nome,
+            preco: p.preco
+          }));
+        }
+        
+        await salvarAgendamento(agendamento);
         
         alert('Agendamento criado com sucesso!');
         fecharModalNovoAgendamento();
