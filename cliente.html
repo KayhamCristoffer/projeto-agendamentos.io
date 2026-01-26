@@ -250,6 +250,7 @@
   <script src="firebase/firebase-config.js"></script>
   <script src="firebase/services-config.js"></script>
   <script src="firebase/database.js"></script>
+  <script src="firebase/session-manager.js"></script>
   <script src="assets/theme.js"></script>
 
   <script>
@@ -325,24 +326,62 @@
       }
     }
 
-    // Carregar serviços
+    // Carregar serviços do Firebase
     async function carregarServicos() {
       const grid = document.getElementById('gridServicos');
-      grid.innerHTML = window.SERVICOS.map(s => `
-        <div onclick="toggleServico('${s.id}')" id="servico-${s.id}" 
-             class="cursor-pointer p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
-          <div class="flex justify-between items-start mb-2">
-            <div class="text-2xl">${s.icone}</div>
-            <input type="checkbox" id="check-${s.id}" class="w-5 h-5 pointer-events-none">
+      grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-600 dark:text-gray-400">Carregando serviços...</div>';
+      
+      try {
+        // Buscar todos os serviços e filtrar localmente
+        const snapshot = await db.ref('servicos').once('value');
+        const servicosData = snapshot.val();
+        const servicos = [];
+        
+        if (servicosData) {
+          Object.entries(servicosData).forEach(([id, data]) => {
+            // Filtrar apenas serviços ativos (ou sem campo ativo definido)
+            if (data.ativo !== false) {
+              servicos.push({
+                id,
+                nome: data.nome,
+                descricao: data.descricao,
+                preco: data.preco,
+                duracao: data.duracao,
+                icone: data.icone || '✂️'
+              });
+            }
+          });
+        }
+        
+        // Atualizar window.SERVICOS
+        window.SERVICOS = servicos;
+        
+        console.log('Serviços carregados:', servicos.length);
+        
+        if (servicos.length === 0) {
+          grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-600 dark:text-gray-400">Nenhum serviço disponível no momento.</div>';
+          return;
+        }
+        
+        grid.innerHTML = servicos.map(s => `
+          <div onclick="toggleServico('${s.id}')" id="servico-${s.id}" 
+               class="cursor-pointer p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
+            <div class="flex justify-between items-start mb-2">
+              <div class="text-2xl">${s.icone}</div>
+              <input type="checkbox" id="check-${s.id}" class="w-5 h-5 pointer-events-none">
+            </div>
+            <h3 class="font-bold text-gray-900 dark:text-white mb-1">${s.nome}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${s.descricao}</p>
+            <div class="flex justify-between items-center text-sm">
+              <span class="font-bold text-primary">${formatarPreco(s.preco)}</span>
+              <span class="text-gray-600 dark:text-gray-400">${s.duracao} min</span>
+            </div>
           </div>
-          <h3 class="font-bold text-gray-900 dark:text-white mb-1">${s.nome}</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${s.descricao}</p>
-          <div class="flex justify-between items-center text-sm">
-            <span class="font-bold text-primary">${formatarPreco(s.preco)}</span>
-            <span class="text-gray-600 dark:text-gray-400">${s.duracao} min</span>
-          </div>
-        </div>
-      `).join('');
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar serviços:', error);
+        grid.innerHTML = '<div class="col-span-full text-center py-8 text-red-600">Erro ao carregar serviços. Por favor, recarregue a página.</div>';
+      }
     }
 
     // Toggle serviço
@@ -395,17 +434,31 @@
     // Carregar produtos do Firebase
     async function carregarProdutos() {
       try {
-        const snapshot = await db.ref('produtos').orderByChild('ativo').equalTo(true).once('value');
+        // Buscar todos os produtos e filtrar localmente
+        const snapshot = await db.ref('produtos').once('value');
+        const produtosData = snapshot.val();
         const produtos = [];
         
-        if (snapshot.exists()) {
-          snapshot.forEach((child) => {
-            produtos.push({
-              id: child.key,
-              ...child.val()
-            });
+        if (produtosData) {
+          Object.entries(produtosData).forEach(([id, data]) => {
+            // Filtrar apenas produtos ativos (ou sem campo ativo definido)
+            if (data.ativo !== false) {
+              produtos.push({
+                id,
+                nome: data.nome,
+                descricao: data.descricao,
+                preco: data.preco,
+                estoque: data.estoque,
+                icone: data.icone || '🛍️'
+              });
+            }
           });
         }
+        
+        console.log('Produtos carregados:', produtos.length);
+        
+        // Armazenar produtos globalmente
+        window.PRODUTOS = produtos;
         
         const grid = document.getElementById('gridProdutos');
         if (!grid) return;
@@ -420,7 +473,7 @@
                class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 cursor-pointer hover:shadow-md transition-all"
                onclick="toggleProduto('${p.id}')">
             <div class="flex items-start gap-3">
-              <span class="text-2xl">${p.icone || '🛍️'}</span>
+              <span class="text-2xl">${p.icone}</span>
               <div class="flex-1">
                 <h4 class="font-semibold text-gray-900 dark:text-white">${p.nome}</h4>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${p.descricao || ''}</p>
@@ -444,29 +497,24 @@
 
     // Toggle seleção de produto
     function toggleProduto(produtoId) {
-      const snapshot = db.ref('produtos').child(produtoId).once('value');
-      snapshot.then((snap) => {
-        if (!snap.exists()) return;
-        
-        const produto = { id: produtoId, ...snap.val() };
-        const index = produtosSelecionados.findIndex(p => p.id === produtoId);
-        const card = document.getElementById(`produto-${produtoId}`);
-        const check = document.getElementById(`check-produto-${produtoId}`);
-        
-        if (index > -1) {
-          produtosSelecionados.splice(index, 1);
-          card.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
-          card.classList.add('border-gray-300', 'dark:border-gray-600');
-          check.checked = false;
-        } else {
-          produtosSelecionados.push(produto);
-          card.classList.remove('border-gray-300', 'dark:border-gray-600');
-          card.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
-          check.checked = true;
-        }
-      }).catch((error) => {
-        console.error('Erro ao selecionar produto:', error);
-      });
+      const produto = window.PRODUTOS.find(p => p.id === produtoId);
+      if (!produto) return;
+      
+      const index = produtosSelecionados.findIndex(p => p.id === produtoId);
+      const card = document.getElementById(`produto-${produtoId}`);
+      const check = document.getElementById(`check-produto-${produtoId}`);
+      
+      if (index > -1) {
+        produtosSelecionados.splice(index, 1);
+        card.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
+        card.classList.add('border-gray-300', 'dark:border-gray-600');
+        check.checked = false;
+      } else {
+        produtosSelecionados.push(produto);
+        card.classList.remove('border-gray-300', 'dark:border-gray-600');
+        card.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
+        check.checked = true;
+      }
     }
 
     // Carregar horários disponíveis

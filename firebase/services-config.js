@@ -23,14 +23,28 @@ async function carregarServicosDoFirebase() {
           icone: servico.icone || '✂️'
         }));
       
+      // Atualizar window.SERVICOS
+      if (typeof window !== 'undefined') {
+        window.SERVICOS = SERVICOS;
+      }
+      
       console.log(`✅ Serviços carregados do Firebase: ${SERVICOS.length}`);
+      return SERVICOS;
     } else {
       console.warn('⚠️ Nenhum serviço encontrado no Firebase');
       SERVICOS = [];
+      if (typeof window !== 'undefined') {
+        window.SERVICOS = [];
+      }
+      return [];
     }
   } catch (error) {
     console.error('❌ Erro ao carregar serviços:', error);
     SERVICOS = [];
+    if (typeof window !== 'undefined') {
+      window.SERVICOS = [];
+    }
+    return [];
   }
 }
 

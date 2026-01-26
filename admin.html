@@ -495,6 +495,7 @@
   <script src="firebase/firebase-config.js"></script>
   <script src="firebase/services-config.js"></script>
   <script src="firebase/database.js"></script>
+  <script src="firebase/session-manager.js"></script>
   <script src="assets/correcoes.js"></script>
   <script src="assets/theme.js"></script>
 
@@ -1248,15 +1249,29 @@ else if (tab === 'faturamento') carregarFaturamento();
       grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Carregando serviços...</div>';
       
       try {
-        const snapshot = await firebase.database().ref('servicos').orderByChild('ativo').equalTo(true).once('value');
+        // Buscar todos os serviços e filtrar localmente
+        const snapshot = await firebase.database().ref('servicos').once('value');
+        const servicosData = snapshot.val();
         const servicos = [];
         
-        snapshot.forEach((child) => {
-          servicos.push({
-            id: child.key,
-            ...child.val()
+        if (servicosData) {
+          Object.entries(servicosData).forEach(([id, data]) => {
+            // Filtrar apenas serviços ativos (ou sem campo ativo definido)
+            if (data.ativo !== false) {
+              servicos.push({
+                id,
+                nome: data.nome,
+                descricao: data.descricao,
+                preco: data.preco,
+                duracao: data.duracao,
+                icone: data.icone || '✂️',
+                ativo: data.ativo !== false
+              });
+            }
           });
-        });
+        }
+        
+        console.log('Serviços carregados:', servicos.length);
         
         if (servicos.length === 0) {
           grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Nenhum serviço disponível</div>';
@@ -1268,7 +1283,7 @@ else if (tab === 'faturamento') carregarFaturamento();
                class="cursor-pointer p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
             <div class="flex items-center gap-2 mb-1">
               <input type="checkbox" id="check-novo-${s.id}" class="pointer-events-none">
-              <span class="text-lg">${s.icone || '✂️'}</span>
+              <span class="text-lg">${s.icone}</span>
             </div>
             <p class="text-sm font-semibold text-gray-900 dark:text-white">${s.nome}</p>
             <p class="text-xs text-primary">${formatarPreco(s.preco)}</p>
@@ -1310,15 +1325,29 @@ else if (tab === 'faturamento') carregarFaturamento();
       grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Carregando produtos...</div>';
       
       try {
-        const snapshot = await firebase.database().ref('produtos').orderByChild('ativo').equalTo(true).once('value');
+        // Buscar todos os produtos e filtrar localmente
+        const snapshot = await firebase.database().ref('produtos').once('value');
+        const produtosData = snapshot.val();
         const produtos = [];
         
-        snapshot.forEach((child) => {
-          produtos.push({
-            id: child.key,
-            ...child.val()
+        if (produtosData) {
+          Object.entries(produtosData).forEach(([id, data]) => {
+            // Filtrar apenas produtos ativos (ou sem campo ativo definido)
+            if (data.ativo !== false) {
+              produtos.push({
+                id,
+                nome: data.nome,
+                descricao: data.descricao,
+                preco: data.preco,
+                estoque: data.estoque,
+                icone: data.icone || '🛍️',
+                ativo: data.ativo !== false
+              });
+            }
           });
-        });
+        }
+        
+        console.log('Produtos carregados:', produtos.length);
         
         if (produtos.length === 0) {
           grid.innerHTML = '<div class="col-span-2 text-center py-4 text-gray-600 dark:text-gray-400">Nenhum produto disponível</div>';
@@ -1330,7 +1359,7 @@ else if (tab === 'faturamento') carregarFaturamento();
                class="cursor-pointer p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
             <div class="flex items-center gap-2 mb-1">
               <input type="checkbox" id="check-produto-novo-${p.id}" class="pointer-events-none">
-              <span class="text-lg">${p.icone || '🛍️'}</span>
+              <span class="text-lg">${p.icone}</span>
             </div>
             <p class="text-sm font-semibold text-gray-900 dark:text-white">${p.nome}</p>
             <p class="text-xs text-primary">${formatarPreco(p.preco)}</p>
