@@ -724,12 +724,20 @@
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">${a.clienteNome}</h3>
                 <p class="text-gray-600 dark:text-gray-400">${a.clienteEmail}</p>
                 <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                  ${new Date(a.dataHora).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })} às 
-                  ${new Date(a.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  ${a.dataHora ? `
+                    ${new Date(a.dataHora).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })} às 
+                    ${new Date(a.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  ` : 'Data não disponível'}
                 </p>
               </div>
               <div class="text-right">
-                <div class="text-2xl font-bold text-primary">${formatarPreco(a.precoTotal)}</div>
+                <div class="text-2xl font-bold text-primary">
+                  ${a.desconto ? `
+                    <div class="text-sm line-through text-gray-400">${formatarPreco(a.precoTotal)}</div>
+                    <div>${formatarPreco(a.precoTotal - a.desconto)}</div>
+                    <div class="text-xs text-green-600">Desconto: ${formatarPreco(a.desconto)}</div>
+                  ` : formatarPreco(a.precoTotal)}
+                </div>
                 <div class="text-sm text-gray-600 dark:text-gray-400">${a.duracaoTotal} min</div>
               </div>
             </div>
@@ -1761,210 +1769,6 @@
       return texts[status] || status;
     }
 
-    // ============================================
-    // FUNÇÕES DO MODAL DE NOVO AGENDAMENTO
-    // ============================================
-    
-    let servicosAdminSelecionados = [];
-    
-    async function abrirModalNovoAgendamento() {
-      document.getElementById('modalNovoAgendamento').classList.remove('hidden');
-      await carregarClientesParaAgendamento();
-      carregarServicosParaAgendamento();
-    }
-    
-    function fecharModalNovoAgendamento() {
-      document.getElementById('modalNovoAgendamento').classList.add('hidden');
-      document.getElementById('formNovoAgendamentoAdmin').reset();
-      servicosAdminSelecionados = [];
-      document.getElementById('resumoServicosNovoAgendamento').classList.add('hidden');
-    }
-    
-    async function carregarClientesParaAgendamento() {
-      const select = document.getElementById('clienteNovoAgendamento');
-      try {
-        const snapshot = await firebase.database().ref('usuarios').orderByChild('role').equalTo('cliente').once('value');
-        const clientes = snapshot.val() || {};
-        
-        select.innerHTML = '<option value="">Selecione o cliente</option>';
-        Object.entries(clientes).forEach(([id, cliente]) => {
-          select.innerHTML += `<option value="${id}" data-nome="${cliente.nome}" data-email="${cliente.email}">${cliente.nome} (${cliente.email})</option>`;
-        });
-      } catch (error) {
-        console.error('Erro ao carregar clientes:', error);
-      }
-    }
-    
-    function carregarServicosParaAgendamento() {
-      const grid = document.getElementById('gridServicosNovoAgendamento');
-      grid.innerHTML = window.SERVICOS.map(s => `
-        <div onclick="toggleServicoAdmin('${s.id}')" id="servicoAdmin-${s.id}" 
-             class="cursor-pointer p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary transition">
-          <div class="flex justify-between items-start mb-1">
-            <span class="text-xl">${s.icone}</span>
-            <input type="checkbox" id="checkAdmin-${s.id}" class="pointer-events-none">
-          </div>
-          <h4 class="font-bold text-sm text-gray-900 dark:text-white mb-1">${s.nome}</h4>
-          <div class="flex justify-between text-xs">
-            <span class="font-bold text-primary">${formatarPreco(s.preco)}</span>
-            <span class="text-gray-600 dark:text-gray-400">${s.duracao} min</span>
-          </div>
-        </div>
-      `).join('');
-    }
-    
-    function toggleServicoAdmin(id) {
-      const servico = window.SERVICOS.find(s => s.id === id);
-      const index = servicosAdminSelecionados.findIndex(s => s.id === id);
-      
-      if (index > -1) {
-        servicosAdminSelecionados.splice(index, 1);
-        document.getElementById(`servicoAdmin-${id}`).classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
-        document.getElementById(`checkAdmin-${id}`).checked = false;
-      } else {
-        servicosAdminSelecionados.push(servico);
-        document.getElementById(`servicoAdmin-${id}`).classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
-        document.getElementById(`checkAdmin-${id}`).checked = true;
-      }
-      
-      atualizarResumoAdmin();
-    }
-    
-    function atualizarResumoAdmin() {
-      const resumo = document.getElementById('resumoServicosNovoAgendamento');
-      
-      if (servicosAdminSelecionados.length === 0) {
-        resumo.classList.add('hidden');
-        document.getElementById('containerHorarioNovo').classList.add('hidden');
-        return;
-      }
-      
-      const total = servicosAdminSelecionados.reduce((sum, s) => sum + s.preco, 0);
-      const duracao = servicosAdminSelecionados.reduce((sum, s) => sum + s.duracao, 0);
-      
-      resumo.classList.remove('hidden');
-      resumo.innerHTML = `
-        <div class="flex justify-between items-center">
-          <div>
-            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Serviços selecionados:</p>
-            <p class="text-xs text-gray-600 dark:text-gray-400">${servicosAdminSelecionados.map(s => s.nome).join(', ')}</p>
-          </div>
-          <div class="text-right">
-            <p class="text-lg font-bold text-primary">${formatarPreco(total)}</p>
-            <p class="text-xs text-gray-600 dark:text-gray-400">${duracao} min</p>
-          </div>
-        </div>
-      `;
-    }
-    
-    // Event listener para data de novo agendamento
-    document.addEventListener('DOMContentLoaded', () => {
-      const dataInput = document.getElementById('dataNovoAgendamento');
-      if (dataInput) {
-        dataInput.addEventListener('change', async function() {
-          if (servicosAdminSelecionados.length === 0) {
-            alert('Selecione pelo menos um serviço primeiro');
-            this.value = '';
-            return;
-          }
-          
-          const data = this.value;
-          const duracaoTotal = servicosAdminSelecionados.reduce((sum, s) => sum + s.duracao, 0);
-          
-          document.getElementById('containerHorarioNovo').classList.remove('hidden');
-          const selectHorario = document.getElementById('horarioNovoAgendamento');
-          selectHorario.innerHTML = '<option value="">Carregando horários...</option>';
-          
-          try {
-            const agendamentos = await listarAgendamentosOnce();
-            const horariosOcupados = Object.values(agendamentos || {})
-              .filter(a => a.dataHora.startsWith(data) && a.status !== 'cancelado')
-              .map(a => ({
-                inicio: new Date(a.dataHora),
-                fim: new Date(new Date(a.dataHora).getTime() + a.duracaoTotal * 60000)
-              }));
-            
-            const slots = window.gerarSlotsHorario(data, duracaoTotal);
-            const horariosDisponiveis = slots.filter(slot => {
-              const inicioSlot = new Date(slot);
-              const fimSlot = new Date(inicioSlot.getTime() + duracaoTotal * 60000);
-              
-              return !horariosOcupados.some(ocupado => 
-                (inicioSlot >= ocupado.inicio && inicioSlot < ocupado.fim) ||
-                (fimSlot > ocupado.inicio && fimSlot <= ocupado.fim) ||
-                (inicioSlot <= ocupado.inicio && fimSlot >= ocupado.fim)
-              );
-            });
-            
-            if (horariosDisponiveis.length === 0) {
-              selectHorario.innerHTML = '<option value="">Nenhum horário disponível nesta data</option>';
-            } else {
-              selectHorario.innerHTML = '<option value="">Selecione o horário</option>' +
-                horariosDisponiveis.map(h => {
-                  const hora = new Date(h).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                  return `<option value="${h}">${hora}</option>`;
-                }).join('');
-            }
-          } catch (error) {
-            console.error('Erro ao carregar horários:', error);
-            selectHorario.innerHTML = '<option value="">Erro ao carregar horários</option>';
-          }
-        });
-      }
-    });
-    
-    // Submissão do formulário de novo agendamento
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('formNovoAgendamentoAdmin');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          
-          const clienteId = document.getElementById('clienteNovoAgendamento').value;
-          const clienteOption = document.getElementById('clienteNovoAgendamento').selectedOptions[0];
-          const clienteNome = clienteOption.dataset.nome;
-          const clienteEmail = clienteOption.dataset.email;
-          const dataHora = document.getElementById('horarioNovoAgendamento').value;
-          const obs = document.getElementById('observacoesNovoAgendamento').value;
-          
-          if (!clienteId || !dataHora || servicosAdminSelecionados.length === 0) {
-            alert('Preencha todos os campos obrigatórios');
-            return;
-          }
-          
-          const totalPreco = servicosAdminSelecionados.reduce((sum, s) => sum + s.preco, 0);
-          const totalDuracao = servicosAdminSelecionados.reduce((sum, s) => sum + s.duracao, 0);
-          
-          try {
-            await salvarAgendamento({
-              clienteId: clienteId,
-              clienteNome: clienteNome,
-              clienteEmail: clienteEmail,
-              servicos: servicosAdminSelecionados.map(s => ({ 
-                id: s.id, 
-                nome: s.nome, 
-                preco: s.preco, 
-                duracao: s.duracao 
-              })),
-              dataHora: dataHora,
-              duracaoTotal: totalDuracao,
-              precoTotal: totalPreco,
-              observacoes: obs,
-              status: 'confirmado',
-              agendadoPor: 'admin'
-            });
-            
-            alert('Agendamento criado com sucesso!');
-            fecharModalNovoAgendamento();
-            carregarCalendario();
-            carregarConfirmados();
-          } catch (error) {
-            console.error('Erro ao criar agendamento:', error);
-            alert('Erro ao criar agendamento. Tente novamente.');
-          }
-        });
-      }
-    });
   </script>
 </body>
 </html>
