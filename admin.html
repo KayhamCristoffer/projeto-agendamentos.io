@@ -1272,10 +1272,85 @@
       }
     }
 
-    function editarServico(id) {
-      alert(`Função de edição de serviço será implementada. ID: ${id}`);
-      // TODO: Implementar modal de edição
+    // ============================================
+    // CRUD DE SERVIÇOS
+    // ============================================
+    
+    let servicoEditandoId = null;
+    
+    function abrirModalServico() {
+      servicoEditandoId = null;
+      document.getElementById('tituloModalServico').textContent = '➕ Adicionar Serviço';
+      document.getElementById('formServico').reset();
+      document.getElementById('modalServico').classList.remove('hidden');
     }
+    
+    function fecharModalServico() {
+      servicoEditandoId = null;
+      document.getElementById('formServico').reset();
+      document.getElementById('modalServico').classList.add('hidden');
+    }
+    
+    async function editarServico(id) {
+      try {
+        const snapshot = await firebase.database().ref(`servicos/${id}`).once('value');
+        const servico = snapshot.val();
+        
+        if (!servico) {
+          alert('Serviço não encontrado!');
+          return;
+        }
+        
+        servicoEditandoId = id;
+        document.getElementById('tituloModalServico').textContent = '✏️ Editar Serviço';
+        document.getElementById('nomeServico').value = servico.nome || '';
+        document.getElementById('descricaoServico').value = servico.descricao || '';
+        document.getElementById('precoServico').value = servico.preco || '';
+        document.getElementById('duracaoServico').value = servico.duracao || '';
+        document.getElementById('iconeServico').value = servico.icone || '';
+        document.getElementById('categoriaServico').value = servico.categoria || '';
+        
+        document.getElementById('modalServico').classList.remove('hidden');
+      } catch (error) {
+        console.error('Erro ao carregar serviço:', error);
+        alert('Erro ao carregar dados do serviço.');
+      }
+    }
+    
+    document.getElementById('formServico').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const dados = {
+        nome: document.getElementById('nomeServico').value.trim(),
+        descricao: document.getElementById('descricaoServico').value.trim(),
+        preco: parseFloat(document.getElementById('precoServico').value),
+        duracao: parseInt(document.getElementById('duracaoServico').value),
+        icone: document.getElementById('iconeServico').value.trim() || '✂️',
+        categoria: document.getElementById('categoriaServico').value.trim(),
+        ativo: true,
+        atualizadoEm: new Date().toISOString()
+      };
+      
+      try {
+        if (servicoEditandoId) {
+          // Atualizar serviço existente
+          await firebase.database().ref(`servicos/${servicoEditandoId}`).update(dados);
+          alert('Serviço atualizado com sucesso!');
+        } else {
+          // Criar novo serviço
+          dados.criadoEm = new Date().toISOString();
+          const novoId = dados.nome.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+          await firebase.database().ref(`servicos/${novoId}`).set(dados);
+          alert('Serviço criado com sucesso!');
+        }
+        
+        fecharModalServico();
+        await carregarServicosAdmin();
+      } catch (error) {
+        console.error('Erro ao salvar serviço:', error);
+        alert('Erro ao salvar serviço. Tente novamente.');
+      }
+    });
 
     async function toggleServicoAtivo(id, ativoAtual) {
       try {
@@ -1356,10 +1431,85 @@
       }
     }
 
-    function editarProduto(id) {
-      alert(`Função de edição de produto será implementada. ID: ${id}`);
-      // TODO: Implementar modal de edição
+    // ============================================
+    // CRUD DE PRODUTOS
+    // ============================================
+    
+    let produtoEditandoId = null;
+    
+    function abrirModalProduto() {
+      produtoEditandoId = null;
+      document.getElementById('tituloModalProduto').textContent = '➕ Adicionar Produto';
+      document.getElementById('formProduto').reset();
+      document.getElementById('modalProduto').classList.remove('hidden');
     }
+    
+    function fecharModalProduto() {
+      produtoEditandoId = null;
+      document.getElementById('formProduto').reset();
+      document.getElementById('modalProduto').classList.add('hidden');
+    }
+    
+    async function editarProduto(id) {
+      try {
+        const snapshot = await firebase.database().ref(`produtos/${id}`).once('value');
+        const produto = snapshot.val();
+        
+        if (!produto) {
+          alert('Produto não encontrado!');
+          return;
+        }
+        
+        produtoEditandoId = id;
+        document.getElementById('tituloModalProduto').textContent = '✏️ Editar Produto';
+        document.getElementById('nomeProduto').value = produto.nome || '';
+        document.getElementById('descricaoProduto').value = produto.descricao || '';
+        document.getElementById('precoProduto').value = produto.preco || '';
+        document.getElementById('estoqueProduto').value = produto.estoque || '';
+        document.getElementById('iconeProduto').value = produto.icone || '';
+        document.getElementById('categoriaProduto').value = produto.categoria || '';
+        
+        document.getElementById('modalProduto').classList.remove('hidden');
+      } catch (error) {
+        console.error('Erro ao carregar produto:', error);
+        alert('Erro ao carregar dados do produto.');
+      }
+    }
+    
+    document.getElementById('formProduto').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const dados = {
+        nome: document.getElementById('nomeProduto').value.trim(),
+        descricao: document.getElementById('descricaoProduto').value.trim(),
+        preco: parseFloat(document.getElementById('precoProduto').value),
+        estoque: parseInt(document.getElementById('estoqueProduto').value),
+        icone: document.getElementById('iconeProduto').value.trim() || '🛍️',
+        categoria: document.getElementById('categoriaProduto').value.trim(),
+        ativo: true,
+        atualizadoEm: new Date().toISOString()
+      };
+      
+      try {
+        if (produtoEditandoId) {
+          // Atualizar produto existente
+          await firebase.database().ref(`produtos/${produtoEditandoId}`).update(dados);
+          alert('Produto atualizado com sucesso!');
+        } else {
+          // Criar novo produto
+          dados.criadoEm = new Date().toISOString();
+          const novoId = dados.nome.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+          await firebase.database().ref(`produtos/${novoId}`).set(dados);
+          alert('Produto criado com sucesso!');
+        }
+        
+        fecharModalProduto();
+        await carregarProdutosAdmin();
+      } catch (error) {
+        console.error('Erro ao salvar produto:', error);
+        alert('Erro ao salvar produto. Tente novamente.');
+      }
+    });
 
     async function toggleProdutoAtivo(id, ativoAtual) {
       try {
@@ -1397,6 +1547,9 @@
       try {
         tabelaExtrato.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">Carregando...</td></tr>';
         
+        // Gerar faturamento automaticamente a partir dos agendamentos concluídos
+        await gerarFaturamentoAutomatico();
+        
         const snapshot = await firebase.database().ref('faturamento/extrato').once('value');
         const extrato = snapshot.val();
         
@@ -1405,8 +1558,13 @@
           return;
         }
         
+        // Ordenar por data (mais recente primeiro)
+        const extratoArray = Object.entries(extrato).sort(([, a], [, b]) => {
+          return new Date(b.data) - new Date(a.data);
+        });
+        
         let html = '';
-        Object.entries(extrato).forEach(([id, e]) => {
+        extratoArray.forEach(([id, e]) => {
           const data = new Date(e.data).toLocaleDateString('pt-BR');
           const tipo = e.tipo === 'receita' ? '+ Receita' : '- Despesa';
           const corBadge = e.tipo === 'receita' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
@@ -1444,6 +1602,46 @@
       } catch (error) {
         console.error('Erro ao carregar faturamento:', error);
         tabelaExtrato.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-red-600">Erro ao carregar dados</td></tr>';
+      }
+    }
+    
+    // Gerar faturamento automaticamente a partir de agendamentos concluídos
+    async function gerarFaturamentoAutomatico() {
+      try {
+        const snapshot = await firebase.database().ref('agendamentos').once('value');
+        const agendamentos = snapshot.val() || {};
+        
+        // Filtrar apenas concluídos
+        const concluidos = Object.entries(agendamentos).filter(([, a]) => a.status === 'concluido');
+        
+        for (const [id, agendamento] of concluidos) {
+          // Verificar se já existe entrada no faturamento para este agendamento
+          const extratoRef = firebase.database().ref(`faturamento/extrato/${id}`);
+          const extratoSnapshot = await extratoRef.once('value');
+          
+          if (!extratoSnapshot.exists()) {
+            // Calcular valor final considerando desconto
+            const precoOriginal = agendamento.precoOriginal || agendamento.precoTotal || 0;
+            const desconto = agendamento.desconto || 0;
+            const valorFinal = Math.max(0, precoOriginal - desconto);
+            
+            // Criar entrada de receita no faturamento
+            const entrada = {
+              tipo: 'receita',
+              descricao: `Agendamento - ${agendamento.clienteNome || 'Cliente'}`,
+              valor: valorFinal,
+              data: agendamento.dataHora || new Date().toISOString(),
+              clienteId: agendamento.clienteId || '',
+              agendamentoId: id,
+              criadoEm: new Date().toISOString()
+            };
+            
+            await extratoRef.set(entrada);
+            console.log(`Faturamento gerado para agendamento ${id}`);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao gerar faturamento automático:', error);
       }
     }
 
@@ -1707,7 +1905,9 @@
           })),
           dataHora: `${data}T${horario}`,
           duracaoTotal: totalDuracao,
+          precoOriginal: totalPreco,  // Adicionar precoOriginal
           precoTotal: totalPreco,
+          desconto: 0,  // Inicializar desconto
           observacoes: obs,
           status: 'pendente',
           agendadoPor: 'admin'
