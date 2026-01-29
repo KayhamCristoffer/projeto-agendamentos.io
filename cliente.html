@@ -286,7 +286,16 @@
       await carregarHistorico();
       await carregarPerfil();
     });
-
+    firebase.auth().onAuthStateChanged(async (user) => {
+  // Verifica role do usuário
+    const perfilSnapshot = await firebase.database().ref(`usuarios/${user.uid}`).once('value');
+    const perfil = perfilSnapshot.val();
+  
+    if (perfil && perfil.role === 'admin') {
+    // Mostra botão Área Admin
+      document.getElementById('btnAreaAdmin').classList.remove('hidden');
+      }
+    });
     // Logout
     function logout() {
       firebase.auth().signOut().then(() => {
