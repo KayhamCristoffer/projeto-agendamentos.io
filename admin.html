@@ -21,41 +21,29 @@
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
   
   <!-- Navbar -->
-  <nav class="nav-bar">
-  <div class="nav-container">
-    <a href="index.html" class="nav-logo">📅 Sistema de Agendamentos</a>
-    
-    <div class="nav-menu">
-      <!-- Botão de Tema -->
-      <button id="themeToggle" class="btn btn-sm btn-ghost theme-toggle" title="Alternar tema">
-        <span class="theme-icon">🌙</span>
-      </button>
-      
-      <!-- Menu do Usuário -->
-      <div class="user-menu">
-        <span id="userNameDisplay" class="user-name"></span>
-        
-        <!-- Botões de Navegação (visível apenas quando logado) -->
-        <div id="navButtons" class="nav-buttons" style="display: none;">
-          <!-- Botão Área do Cliente (sempre visível quando logado) -->
-          <a href="cliente.html" class="btn btn-sm btn-primary">
-            👤 Área do Cliente
-          </a>
-          
-          <!-- Botão Modo Admin (visível apenas para admins) -->
-          <a href="admin.html" id="btnModoAdmin" class="btn btn-sm btn-warning" style="display: none;">
-            🛠️ Modo Admin
-          </a>
+  <nav class="bg-white dark:bg-gray-800 shadow-lg fixed w-full top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🛠️</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">Painel Admin</span>
         </div>
-        
-        <!-- Botão de Login/Sair -->
-        <button id="authButton" class="btn btn-sm" onclick="handleAuth()">
-          Entrar
-        </button>
+        <div class="flex items-center space-x-4">
+          <span id="nomeAdmin" class="text-gray-600 dark:text-gray-300 text-sm hidden md:block"></span>
+          <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <span id="themeIcon" class="text-xl">🌙</span>
+          </button>
+          <a href="cliente.html" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm">
+            👤 Área Cliente
+          </a>
+          <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
+            Sair
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
+
   <!-- Main Container -->
   <div class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
