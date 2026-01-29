@@ -43,7 +43,41 @@
       </div>
     </div>
   </nav>
-
+  <nav class="nav-bar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">📅 Sistema de Agendamentos</a>
+    
+    <div class="nav-menu">
+      <!-- Botão de Tema -->
+      <button id="themeToggle" class="btn btn-sm btn-ghost theme-toggle" title="Alternar tema">
+        <span class="theme-icon">🌙</span>
+      </button>
+      
+      <!-- Menu do Usuário -->
+      <div class="user-menu">
+        <span id="userNameDisplay" class="user-name"></span>
+        
+        <!-- Botões de Navegação (visível apenas quando logado) -->
+        <div id="navButtons" class="nav-buttons" style="display: none;">
+          <!-- Botão Área do Cliente (sempre visível quando logado) -->
+          <a href="cliente.html" class="btn btn-sm btn-primary">
+            👤 Área do Cliente
+          </a>
+          
+          <!-- Botão Modo Admin (visível apenas para admins) -->
+          <a href="admin.html" id="btnModoAdmin" class="btn btn-sm btn-warning" style="display: none;">
+            🛠️ Modo Admin
+          </a>
+        </div>
+        
+        <!-- Botão de Login/Sair -->
+        <button id="authButton" class="btn btn-sm" onclick="handleAuth()">
+          Entrar
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
   <!-- Main Container -->
   <div class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
@@ -256,7 +290,6 @@
   <script>
     let usuarioAtual = null;
     let servicosSelecionados = [];
-    let produtosSelecionados = [];
     let produtosSelecionados = [];
     let chatAgendamentoId = null;
     let chatListener = null;

@@ -1,36 +1,39 @@
 {
   "agendamentos": {
     "-N9Z0_ExemploConfirmado": {
-      "atualizadoEm": "2026-01-14T17:51:35.273Z",
+      "agendadoPor": "proprio",
+      "atualizadoEm": "2026-01-26T14:13:04.631Z",
       "clienteEmail": "kayhamoliveira98@gmail.com",
       "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
       "clienteNome": "Kayham Cristoffer",
       "clienteTelefone": "(00) 00000-0000",
       "criadoEm": "2025-12-16T14:30:00.000Z",
       "dataHora": "2025-12-20T10:30",
+      "desconto": 10,
       "duracaoTotal": 50,
       "observacoes": "Cliente pediu pontualidade.",
-      "precoTotal": 60,
-      "agendadoPor": "proprio",
+      "precoOriginal": 60,
+      "precoTotal": 50,
       "servicos": [
         {
+          "duracao": 30,
           "id": "corte_cabelo_masc",
           "nome": "Corte de Cabelo Masculino",
-          "preco": 35,
-          "duracao": 30
+          "preco": 35
         },
         {
+          "duracao": 20,
           "id": "barba",
           "nome": "Barba",
-          "preco": 25,
-          "duracao": 20
+          "preco": 25
         }
       ],
       "status": "concluido",
       "timestamp": 1734363000000
     },
     "-O3A1_ExemploPendente": {
-      "atualizadoEm": "2026-01-14T17:51:28.899Z",
+      "agendadoPor": "proprio",
+      "atualizadoEm": "2026-01-26T14:12:17.871Z",
       "clienteEmail": "maria@exemplo.com",
       "clienteId": "KldBfi837hDkfL29Jp2s",
       "clienteNome": "Maria de Souza",
@@ -40,19 +43,151 @@
       "duracaoTotal": 90,
       "observacoes": "",
       "precoTotal": 120,
-      "agendadoPor": "proprio",
       "servicos": [
         {
+          "duracao": 90,
           "id": "mani_pedi",
           "nome": "Manicure + Pedicure",
-          "preco": 120,
-          "duracao": 90
+          "preco": 120
         }
       ],
-      "status": "pendente",
+      "status": "concluido",
       "timestamp": 1734805800000
     },
+    "-OjucHYvu9NsN8KfAn1z": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-27T16:33:42.576Z",
+      "clienteEmail": "joao@exemplo.com",
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João da Silva",
+      "criadoEm": "2026-01-26T14:07:04.520Z",
+      "dataHora": "2026-01-30T15:00",
+      "desconto": 0,
+      "duracaoTotal": 140,
+      "observacoes": "",
+      "precoOriginal": 240,
+      "precoTotal": 240,
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        },
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        },
+        {
+          "duracao": 90,
+          "id": "depilacao_corporal",
+          "nome": "Depilação Corporal",
+          "preco": 150
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769436424520
+    },
+    "-Ojucj5E3-6TQYf__jKN": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-26T14:12:40.815Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "criadoEm": "2026-01-26T14:09:01.400Z",
+      "dataHora": "2025-12-31T13:00",
+      "desconto": 0,
+      "duracaoTotal": 30,
+      "observacoes": "",
+      "precoOriginal": 50,
+      "precoTotal": 50,
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769436541400
+    },
+    "-Ok-HTK1mI3RdK93duyD": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-27T16:33:49.392Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "criadoEm": "2026-01-27T16:29:28.840Z",
+      "dataHora": "16:00",
+      "duracaoTotal": 80,
+      "observacoes": "",
+      "precoTotal": 150,
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        },
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        },
+        {
+          "duracao": 30,
+          "id": "design_sobrancelhas",
+          "nome": "Design de Sobrancelhas",
+          "preco": 60
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769531368840
+    },
+    "-Ok4fSF4IMUOWXPuB7fd": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-28T17:38:00.358Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "clienteTelefone": "(11) 99999-0000",
+      "criadoEm": "2026-01-28T17:36:44.105Z",
+      "dataHora": "2026-01-29T11:00",
+      "desconto": 0,
+      "duracaoTotal": 90,
+      "observacoes": "",
+      "precoOriginal": 305,
+      "precoTotal": 305,
+      "produtos": [
+        {
+          "id": "shampoo_anti_caspa",
+          "nome": "Shampoo Anti-Caspa",
+          "preco": 45
+        }
+      ],
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "design_sobrancelhas",
+          "nome": "Design de Sobrancelhas",
+          "preco": 60
+        },
+        {
+          "duracao": 60,
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 200
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769621804106
+    },
     "-P4B2_ExemploConcluido": {
+      "agendadoPor": "proprio",
       "atualizadoEm": "2025-12-15T15:00:00.000Z",
       "clienteEmail": "joao@exemplo.com",
       "clienteId": "JdhBfj837hDkfL29Jp1s",
@@ -63,13 +198,12 @@
       "duracaoTotal": 50,
       "observacoes": "Cliente satisfeito",
       "precoTotal": 85,
-      "agendadoPor": "proprio",
       "servicos": [
         {
+          "duracao": 50,
           "id": "corte_barba",
           "nome": "Corte + Barba",
-          "preco": 85,
-          "duracao": 50
+          "preco": 85
         }
       ],
       "status": "concluido",
@@ -80,28 +214,200 @@
     "-N9Z0_ExemploConfirmado": {
       "mensagens": {
         "msg1": {
+          "nome": "Kayham Cristoffer",
           "texto": "Olá! Confirmo meu agendamento.",
           "timestamp": 1734363100000,
-          "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
-          "nome": "Kayham Cristoffer"
+          "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2"
         },
         "msg2": {
+          "nome": "Administrador",
           "texto": "Perfeito! Te esperamos no horário agendado.",
           "timestamp": 1734363200000,
-          "userId": "admin_system",
-          "nome": "Administrador"
+          "userId": "admin_system"
         }
       }
     },
     "-O3A1_ExemploPendente": {
       "mensagens": {
         "msg1": {
+          "nome": "Maria de Souza",
           "texto": "Olá, preciso de ajuda com meu agendamento.",
           "timestamp": 1734806000000,
-          "userId": "KldBfi837hDkfL29Jp2s",
-          "nome": "Maria de Souza"
+          "userId": "KldBfi837hDkfL29Jp2s"
         }
       }
+    }
+  },
+  "equipe": {
+    "membro1": {
+      "bio": "Profissional com mais de 5 anos de experiência em atendimento personalizado.",
+      "cargo": "Proprietário e Especialista",
+      "criadoEm": "2025-01-01T10:00:00.000Z",
+      "curtidas": 0,
+      "foto": "img/kay.jpg",
+      "nome": "Kayham Cristoffer"
+    }
+  },
+  "faturamento": {
+    "extrato": {
+      "ext_001": {
+        "categoria": "servico",
+        "cliente": "João Silva",
+        "data": "2026-01-16T14:30:00.000Z",
+        "descricao": "Corte + Barba - Cliente João",
+        "profissional": "prof_joao",
+        "tipo": "receita",
+        "valor": 85
+      }
+    },
+    "metas": {
+      "2026-01": {
+        "alcancado": 6500,
+        "valor": 10000
+      }
+    },
+    "profissionais": {
+      "prof_joao": {
+        "comissao": 30,
+        "nome": "João Silva",
+        "periodo": "2026-01",
+        "totalAtendimentos": 45,
+        "totalComissao": 675,
+        "totalGerado": 2250
+      }
+    }
+  },
+  "produtos": {
+    "shampoo_anti_caspa": {
+      "ativo": true,
+      "categoria": "shampoo",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Shampoo para tratamento de caspa",
+      "estoque": 20,
+      "nome": "Shampoo Anti-Caspa",
+      "preco": 45
+    }
+  },
+  "servicos": {
+    "barba": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Aparar e modelar",
+      "duracao": 20,
+      "icone": "🧔",
+      "nome": "Barba",
+      "preco": 40
+    },
+    "corte_barba": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Combo completo",
+      "duracao": 50,
+      "icone": "✂️",
+      "nome": "Corte + Barba",
+      "preco": 85
+    },
+    "corte_feminino": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Corte e finalização",
+      "duracao": 45,
+      "icone": "✂️",
+      "nome": "Corte de Cabelo Feminino",
+      "preco": 80
+    },
+    "corte_masculino": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Corte moderno e profissional",
+      "duracao": 30,
+      "icone": "✂️",
+      "nome": "Corte de Cabelo Masculino",
+      "preco": 50
+    },
+    "depilacao_corporal": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Depilação corpo inteiro",
+      "duracao": 90,
+      "icone": "🧖",
+      "nome": "Depilação Corporal",
+      "preco": 150
+    },
+    "depilacao_facial": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Depilação facial completa",
+      "duracao": 30,
+      "icone": "👩",
+      "nome": "Depilação Facial",
+      "preco": 50
+    },
+    "design_sobrancelhas": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Modelagem de sobrancelhas",
+      "duracao": 30,
+      "icone": "👁️",
+      "nome": "Design de Sobrancelhas",
+      "preco": 60
+    },
+    "limpeza_pele": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Tratamento facial completo",
+      "duracao": 90,
+      "icone": "✨",
+      "nome": "Limpeza de Pele",
+      "preco": 180
+    },
+    "manicure": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Unhas das mãos",
+      "duracao": 40,
+      "icone": "💅",
+      "nome": "Manicure",
+      "preco": 60
+    },
+    "manicure_pedicure": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Pacote completo",
+      "duracao": 90,
+      "icone": "💅",
+      "nome": "Manicure + Pedicure",
+      "preco": 120
+    },
+    "massagem_relaxante": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Massagem terapêutica",
+      "duracao": 60,
+      "icone": "💆",
+      "nome": "Massagem Relaxante",
+      "preco": 200
+    },
+    "pedicure": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Unhas dos pés",
+      "duracao": 50,
+      "icone": "🦶",
+      "nome": "Pedicure",
+      "preco": 70
     }
   },
   "usuarios": {
@@ -128,178 +434,6 @@
       "nome": "Maria de Souza",
       "role": "cliente",
       "telefone": "(11) 99999-0000"
-    }
-  },
-  "servicos": {
-    "corte_masculino": {
-      "nome": "Corte de Cabelo Masculino",
-      "descricao": "Corte moderno e profissional",
-      "preco": 50,
-      "duracao": 30,
-      "icone": "✂️",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "corte_feminino": {
-      "nome": "Corte de Cabelo Feminino",
-      "descricao": "Corte e finalização",
-      "preco": 80,
-      "duracao": 45,
-      "icone": "✂️",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "barba": {
-      "nome": "Barba",
-      "descricao": "Aparar e modelar",
-      "preco": 40,
-      "duracao": 20,
-      "icone": "🧔",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "corte_barba": {
-      "nome": "Corte + Barba",
-      "descricao": "Combo completo",
-      "preco": 85,
-      "duracao": 50,
-      "icone": "✂️",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "manicure": {
-      "nome": "Manicure",
-      "descricao": "Unhas das mãos",
-      "preco": 60,
-      "duracao": 40,
-      "icone": "💅",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "pedicure": {
-      "nome": "Pedicure",
-      "descricao": "Unhas dos pés",
-      "preco": 70,
-      "duracao": 50,
-      "icone": "🦶",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "manicure_pedicure": {
-      "nome": "Manicure + Pedicure",
-      "descricao": "Pacote completo",
-      "preco": 120,
-      "duracao": 90,
-      "icone": "💅",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "depilacao_facial": {
-      "nome": "Depilação Facial",
-      "descricao": "Depilação facial completa",
-      "preco": 50,
-      "duracao": 30,
-      "icone": "👩",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "depilacao_corporal": {
-      "nome": "Depilação Corporal",
-      "descricao": "Depilação corpo inteiro",
-      "preco": 150,
-      "duracao": 90,
-      "icone": "🧖",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "massagem_relaxante": {
-      "nome": "Massagem Relaxante",
-      "descricao": "Massagem terapêutica",
-      "preco": 200,
-      "duracao": 60,
-      "icone": "💆",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "limpeza_pele": {
-      "nome": "Limpeza de Pele",
-      "descricao": "Tratamento facial completo",
-      "preco": 180,
-      "duracao": 90,
-      "icone": "✨",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    },
-    "design_sobrancelhas": {
-      "nome": "Design de Sobrancelhas",
-      "descricao": "Modelagem de sobrancelhas",
-      "preco": 60,
-      "duracao": 30,
-      "icone": "👁️",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z",
-      "atualizadoEm": "2026-01-16T10:00:00.000Z"
-    }
-  },
-  "produtos": {
-    "shampoo_anti_caspa": {
-      "nome": "Shampoo Anti-Caspa",
-      "descricao": "Shampoo para tratamento de caspa",
-      "preco": 45,
-      "estoque": 20,
-      "categoria": "shampoo",
-      "ativo": true,
-      "criadoEm": "2026-01-16T10:00:00.000Z"
-    }
-  },
-  "faturamento": {
-    "profissionais": {
-      "prof_joao": {
-        "nome": "João Silva",
-        "totalAtendimentos": 45,
-        "totalGerado": 2250,
-        "comissao": 30,
-        "totalComissao": 675,
-        "periodo": "2026-01"
-      }
-    },
-    "extrato": {
-      "ext_001": {
-        "descricao": "Corte + Barba - Cliente João",
-        "cliente": "João Silva",
-        "data": "2026-01-16T14:30:00.000Z",
-        "tipo": "receita",
-        "valor": 85,
-        "categoria": "servico",
-        "profissional": "prof_joao"
-      }
-    },
-    "metas": {
-      "2026-01": {
-        "valor": 10000,
-        "alcancado": 6500
-      }
-    }
-  },
-  "equipe": {
-    "membro1": {
-      "nome": "Kayham Cristoffer",
-      "cargo": "Proprietário e Especialista",
-      "bio": "Profissional com mais de 5 anos de experiência em atendimento personalizado.",
-      "foto": "img/kay.jpg",
-      "curtidas": 0,
-      "criadoEm": "2025-01-01T10:00:00.000Z"
     }
   }
 }
