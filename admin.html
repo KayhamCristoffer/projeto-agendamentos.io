@@ -194,27 +194,32 @@
   <!-- ADICIONAR ESTAS 3 SEÇÕES COMPLETAS -->
 
 <!-- Seção: Serviços -->
+<!-- Seção: Serviços -->
 <div id="secaoServicos" class="hidden">
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">✂️ Gerenciar Serviços</h2>
-    <div class="flex gap-2">
-      <button onclick="abrirModalServico()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">➕ Adicionar</button>
-      <button onclick="carregarServicosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">🔄 Atualizar</button>
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">✂️ Gerenciar Serviços</h2>
+      <div class="flex gap-2">
+        <button onclick="abrirModalServico()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">➕ Adicionar</button>
+        <button onclick="carregarServicosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">🔄 Atualizar</button>
+      </div>
     </div>
+    <div id="listaServicosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
-  <div id="listaServicosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 </div>
 
 <!-- Seção: Produtos -->
 <div id="secaoProdutos" class="hidden">
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">🛍️ Ponto de Vendas</h2>
-    <div class="flex gap-2">
-      <button onclick="abrirModalProduto()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">➕ Adicionar</button>
-      <button onclick="carregarProdutosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">🔄 Atualizar</button>
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">🛍️ Ponto de Vendas</h2>
+      <div class="flex gap-2">
+        <button onclick="abrirModalProduto()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">➕ Adicionar</button>
+        <button onclick="carregarProdutosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">🔄 Atualizar</button>
+      </div>
     </div>
+    <div id="listaProdutosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
-  <div id="listaProdutosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 </div>
 
 <!-- Seção: Faturamento -->
@@ -240,7 +245,10 @@
   <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-xl font-bold text-gray-900 dark:text-white">📋 Extrato</h3>
-      <button onclick="alert('Funcionalidade em desenvolvimento')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition">➕ Nova Entrada</button>
+      <div class="flex gap-2">
+        <button onclick="abrirModalNovaDespesa()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition">➕ Nova Despesa</button>
+        <button onclick="abrirModalDespesasRecorrentes()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition">⚙️ Despesas Recorrentes</button>
+      </div>
     </div>
     <div class="overflow-x-auto">
       <table class="w-full">
@@ -259,6 +267,88 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Nova Despesa -->
+<div id="modalNovaDespesa" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white">➕ Nova Despesa</h3>
+      <button onclick="fecharModalNovaDespesa()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">✕</button>
+    </div>
+    <form id="formNovaDespesa" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição *</label>
+        <input type="text" id="descricaoDespesa" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor (R$) *</label>
+        <input type="number" id="valorDespesa" step="0.01" min="0" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data *</label>
+        <input type="date" id="dataDespesa" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+      </div>
+      <div class="flex gap-2">
+        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">Adicionar Despesa</button>
+        <button type="button" onclick="fecharModalNovaDespesa()" class="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-lg transition">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Despesas Recorrentes -->
+<div id="modalDespesasRecorrentes" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white">⚙️ Gerenciar Despesas Recorrentes</h3>
+      <button onclick="fecharModalDespesasRecorrentes()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">✕</button>
+    </div>
+    
+    <!-- Formulário Nova Despesa Recorrente -->
+    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
+      <h4 class="font-bold text-gray-900 dark:text-white mb-3">➕ Adicionar Nova Despesa Recorrente</h4>
+      <form id="formDespesaRecorrente" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição *</label>
+            <input type="text" id="descricaoRecorrente" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="Ex: Aluguel">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor (R$) *</label>
+            <input type="number" id="valorRecorrente" step="0.01" min="0" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dia de Cobrança *</label>
+            <input type="number" id="diaRecorrente" min="1" max="31" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="1 a 31">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+            <select id="statusRecorrente" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+              <option value="ativo">✅ Ativo</option>
+              <option value="inativo">⏸️ Inativo</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">➕ Adicionar Despesa Recorrente</button>
+      </form>
+    </div>
+    
+    <!-- Lista de Despesas Recorrentes -->
+    <div>
+      <h4 class="font-bold text-gray-900 dark:text-white mb-3">📋 Despesas Cadastradas</h4>
+      <div id="listaDespesasRecorrentes" class="space-y-2">
+        <!-- Preenchido dinamicamente -->
+      </div>
+    </div>
+    
+    <div class="mt-4">
+      <button onclick="fecharModalDespesasRecorrentes()" class="w-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-lg transition">Fechar</button>
+    </div>
+  </div>
+</div>
+
   <!-- Modal Novo Agendamento -->
   <div id="modalNovoAgendamento" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
@@ -732,9 +822,9 @@
               </div>
               <div class="text-right">
                 <div class="text-2xl font-bold text-primary">
-                  ${a.desconto ? `
-                    <div class="text-sm line-through text-gray-400">${formatarPreco(a.precoTotal)}</div>
-                    <div>${formatarPreco(a.precoTotal - a.desconto)}</div>
+                  ${a.desconto && a.desconto > 0 ? `
+                    <div class="text-sm line-through text-gray-400">${formatarPreco(a.precoOriginal || a.precoTotal)}</div>
+                    <div>${formatarPreco(a.precoTotal)}</div>
                     <div class="text-xs text-green-600">Desconto: ${formatarPreco(a.desconto)}</div>
                   ` : formatarPreco(a.precoTotal)}
                 </div>
@@ -747,6 +837,14 @@
                 ${(a.servicos || []).map(s => `<span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-sm">${s.nome}</span>`).join('')}
               </div>
             </div>
+            ${a.produtos && a.produtos.length > 0 ? `
+            <div class="mb-4">
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Produtos:</p>
+              <div class="flex flex-wrap gap-2">
+                ${a.produtos.map(p => `<span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-sm">🛍️ ${p.nome} - ${formatarPreco(p.preco)}</span>`).join('')}
+              </div>
+            </div>
+            ` : ''}
             ${a.observacoes ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Obs: ${a.observacoes}</p>` : ''}
             <div class="flex gap-2">
               <button onclick="abrirChat('${id}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
@@ -789,13 +887,43 @@
 
     async function concluirAgendamento(id) {
       try {
+        // Obter dados do agendamento para descontar estoque
+        const agendamento = await obterAgendamento(id);
+        
+        // Descontar estoque dos produtos (se houver)
+        if (agendamento.produtos && agendamento.produtos.length > 0) {
+          for (const produto of agendamento.produtos) {
+            await descontarEstoqueProduto(produto.id, 1); // Desconta 1 unidade
+          }
+        }
+        
         await alterarStatusAgendamento(id, 'concluido');
         await atualizarEstatisticas();
         await carregarConfirmados();
-        alert('Agendamento concluído com sucesso!');
+        alert('Agendamento concluído com sucesso! Estoque atualizado.');
       } catch (error) {
         console.error('Erro ao concluir:', error);
         alert('Erro ao concluir agendamento. Tente novamente.');
+      }
+    }
+    
+    // Descontar estoque de produto
+    async function descontarEstoqueProduto(produtoId, quantidade = 1) {
+      try {
+        const produtoRef = firebase.database().ref(`produtos/${produtoId}`);
+        const snapshot = await produtoRef.once('value');
+        const produto = snapshot.val();
+        
+        if (produto && produto.estoque !== undefined) {
+          const novoEstoque = Math.max(0, produto.estoque - quantidade);
+          await produtoRef.update({
+            estoque: novoEstoque,
+            atualizadoEm: new Date().toISOString()
+          });
+          console.log(`Estoque atualizado: ${produto.nome} - Novo estoque: ${novoEstoque}`);
+        }
+      } catch (error) {
+        console.error('Erro ao descontar estoque:', error);
       }
     }
 
@@ -823,7 +951,8 @@
     
     function atualizarPrecoFinal() {
       const precoOriginalText = document.getElementById('editarPrecoOriginal').value;
-      const precoOriginal = parseFloat(precoOriginalText.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+      // Corrigir parsing: remover R$, trocar vírgula por ponto, remover pontos de milhar
+      const precoOriginal = parseFloat(precoOriginalText.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
       const desconto = parseFloat(document.getElementById('editarDesconto').value) || 0;
       const precoFinal = Math.max(0, precoOriginal - desconto);
       document.getElementById('editarPrecoFinal').value = formatarPreco(precoFinal);
@@ -842,7 +971,8 @@
       
       // Calcular preços
       const precoOriginalText = document.getElementById('editarPrecoOriginal').value;
-      const precoOriginal = parseFloat(precoOriginalText.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+      // Corrigir parsing: remover R$, remover TODOS os pontos (milhar), trocar vírgula por ponto
+      const precoOriginal = parseFloat(precoOriginalText.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
       const desconto = parseFloat(document.getElementById('editarDesconto').value) || 0;
       const precoTotal = Math.max(0, precoOriginal - desconto);
       
@@ -942,15 +1072,34 @@
       lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
       
       try {
+        // Buscar usuários do Realtime Database
         const snapshot = await firebase.database().ref('usuarios').once('value');
-        const usuarios = snapshot.val() || {};
+        const usuariosDB = snapshot.val() || {};
         
-        if (Object.keys(usuarios).length === 0) {
+        // Buscar todos os usuários do Authentication (se for admin)
+        // Nota: Firebase Admin SDK é necessário no backend para listar todos os usuários
+        // Por enquanto, vamos usar apenas os do Database
+        
+        if (Object.keys(usuariosDB).length === 0) {
           lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum usuário cadastrado</div>';
           return;
         }
         
-        lista.innerHTML = Object.entries(usuarios).map(([id, u]) => `
+        // Filtrar apenas clientes (role !== admin) e ordenar por data de criação
+        const clientes = Object.entries(usuariosDB)
+          .filter(([id, u]) => u.role !== 'admin')
+          .sort(([, a], [, b]) => {
+            const dataA = new Date(a.criadoEm || 0);
+            const dataB = new Date(b.criadoEm || 0);
+            return dataB - dataA; // Mais recente primeiro
+          });
+        
+        if (clientes.length === 0) {
+          lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum cliente cadastrado</div>';
+          return;
+        }
+        
+        lista.innerHTML = clientes.map(([id, u]) => `
           <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
             <div class="flex justify-between items-start">
               <div class="flex-1">
@@ -960,10 +1109,10 @@
                 <div class="mt-3 space-y-1">
                   <p class="text-sm text-gray-500 dark:text-gray-400">👥 Total de Visitas: <span class="font-semibold">${u.totalVisitas || 0}</span></p>
                   <p class="text-sm text-gray-500 dark:text-gray-400">📅 Última Visita: <span class="font-semibold">${u.ultimaVisita ? new Date(u.ultimaVisita).toLocaleDateString('pt-BR') : 'Nunca'}</span></p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">📝 Cadastrado em: <span class="font-semibold">${new Date(u.criadoEm).toLocaleDateString('pt-BR')}</span></p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">📝 Cadastrado em: <span class="font-semibold">${u.criadoEm ? new Date(u.criadoEm).toLocaleDateString('pt-BR') : 'Data desconhecida'}</span></p>
                 </div>
-                <span class="inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'}">
-                  ${u.role === 'admin' ? '👑 Admin' : '👤 Cliente'}
+                <span class="inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  👤 Cliente
                 </span>
               </div>
               <div class="flex flex-col gap-2 ml-4">
@@ -973,11 +1122,9 @@
                 <button onclick="modalAlterarSenhaUsuario('${id}')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition text-sm">
                   🔒 Senha
                 </button>
-                ${u.role !== 'admin' ? `
                 <button onclick="deletarCliente('${id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition text-sm">
                   🗑️ Excluir
                 </button>
-                ` : ''}
               </div>
             </div>
           </div>
@@ -1547,6 +1694,9 @@
       try {
         tabelaExtrato.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">Carregando...</td></tr>';
         
+        // Processar despesas recorrentes antes de carregar
+        await processarDespesasRecorrentes();
+        
         // Gerar faturamento automaticamente a partir dos agendamentos concluídos
         await gerarFaturamentoAutomatico();
         
@@ -1642,6 +1792,213 @@
         }
       } catch (error) {
         console.error('Erro ao gerar faturamento automático:', error);
+      }
+    }
+    
+    // ============================================
+    // DESPESAS MANUAIS E RECORRENTES
+    // ============================================
+    
+    // Modal Nova Despesa
+    function abrirModalNovaDespesa() {
+      document.getElementById('dataDespesa').valueAsDate = new Date();
+      document.getElementById('modalNovaDespesa').classList.remove('hidden');
+    }
+    
+    function fecharModalNovaDespesa() {
+      document.getElementById('modalNovaDespesa').classList.add('hidden');
+      document.getElementById('formNovaDespesa').reset();
+    }
+    
+    document.getElementById('formNovaDespesa').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const descricao = document.getElementById('descricaoDespesa').value.trim();
+      const valor = parseFloat(document.getElementById('valorDespesa').value);
+      const data = document.getElementById('dataDespesa').value;
+      
+      try {
+        const despesa = {
+          tipo: 'despesa',
+          descricao: descricao,
+          valor: valor,
+          data: new Date(data + 'T12:00:00').toISOString(),
+          criadoEm: new Date().toISOString(),
+          manual: true
+        };
+        
+        const novaRef = firebase.database().ref('faturamento/extrato').push();
+        await novaRef.set(despesa);
+        
+        alert('Despesa adicionada com sucesso!');
+        fecharModalNovaDespesa();
+        await carregarFaturamento();
+      } catch (error) {
+        console.error('Erro ao adicionar despesa:', error);
+        alert('Erro ao adicionar despesa. Tente novamente.');
+      }
+    });
+    
+    // Modal Despesas Recorrentes
+    function abrirModalDespesasRecorrentes() {
+      document.getElementById('modalDespesasRecorrentes').classList.remove('hidden');
+      carregarDespesasRecorrentes();
+    }
+    
+    function fecharModalDespesasRecorrentes() {
+      document.getElementById('modalDespesasRecorrentes').classList.add('hidden');
+      document.getElementById('formDespesaRecorrente').reset();
+    }
+    
+    async function carregarDespesasRecorrentes() {
+      const lista = document.getElementById('listaDespesasRecorrentes');
+      lista.innerHTML = '<div class="text-center py-4 text-gray-500">Carregando...</div>';
+      
+      try {
+        const snapshot = await firebase.database().ref('faturamento/despesasRecorrentes').once('value');
+        const despesas = snapshot.val() || {};
+        
+        if (Object.keys(despesas).length === 0) {
+          lista.innerHTML = '<div class="text-center py-4 text-gray-500">Nenhuma despesa recorrente cadastrada</div>';
+          return;
+        }
+        
+        lista.innerHTML = Object.entries(despesas).map(([id, d]) => `
+          <div class="bg-white dark:bg-gray-700 p-4 rounded-lg border ${d.status === 'ativo' ? 'border-green-300' : 'border-gray-300'}">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h5 class="font-bold text-gray-900 dark:text-white">${d.descricao}</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">💰 Valor: ${formatarPreco(d.valor)}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">📅 Dia de cobrança: Todo dia ${d.diaCobranca}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">📊 Última cobrança: ${d.ultimaCobranca ? new Date(d.ultimaCobranca).toLocaleDateString('pt-BR') : 'Nunca'}</p>
+                <span class="inline-block mt-2 px-2 py-1 rounded text-xs font-semibold ${d.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                  ${d.status === 'ativo' ? '✅ Ativo' : '⏸️ Inativo'}
+                </span>
+              </div>
+              <div class="flex flex-col gap-2 ml-4">
+                <button onclick="toggleDespesaRecorrente('${id}', '${d.status}')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                  ${d.status === 'ativo' ? '⏸️ Desativar' : '▶️ Ativar'}
+                </button>
+                <button onclick="deletarDespesaRecorrente('${id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                  🗑️ Excluir
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar despesas recorrentes:', error);
+        lista.innerHTML = '<div class="text-center py-4 text-red-600">Erro ao carregar despesas</div>';
+      }
+    }
+    
+    document.getElementById('formDespesaRecorrente').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const descricao = document.getElementById('descricaoRecorrente').value.trim();
+      const valor = parseFloat(document.getElementById('valorRecorrente').value);
+      const dia = parseInt(document.getElementById('diaRecorrente').value);
+      const status = document.getElementById('statusRecorrente').value;
+      
+      if (dia < 1 || dia > 31) {
+        alert('O dia de cobrança deve estar entre 1 e 31.');
+        return;
+      }
+      
+      try {
+        const despesa = {
+          descricao: descricao,
+          valor: valor,
+          diaCobranca: dia,
+          status: status,
+          criadoEm: new Date().toISOString(),
+          ultimaCobranca: null
+        };
+        
+        await firebase.database().ref('faturamento/despesasRecorrentes').push(despesa);
+        
+        alert('Despesa recorrente adicionada com sucesso!');
+        document.getElementById('formDespesaRecorrente').reset();
+        await carregarDespesasRecorrentes();
+      } catch (error) {
+        console.error('Erro ao adicionar despesa recorrente:', error);
+        alert('Erro ao adicionar despesa recorrente. Tente novamente.');
+      }
+    });
+    
+    async function toggleDespesaRecorrente(id, statusAtual) {
+      try {
+        const novoStatus = statusAtual === 'ativo' ? 'inativo' : 'ativo';
+        await firebase.database().ref(`faturamento/despesasRecorrentes/${id}`).update({
+          status: novoStatus,
+          atualizadoEm: new Date().toISOString()
+        });
+        await carregarDespesasRecorrentes();
+      } catch (error) {
+        console.error('Erro ao atualizar status:', error);
+        alert('Erro ao atualizar status da despesa.');
+      }
+    }
+    
+    async function deletarDespesaRecorrente(id) {
+      if (!confirm('Deseja realmente excluir esta despesa recorrente?')) return;
+      
+      try {
+        await firebase.database().ref(`faturamento/despesasRecorrentes/${id}`).remove();
+        alert('Despesa recorrente excluída com sucesso!');
+        await carregarDespesasRecorrentes();
+      } catch (error) {
+        console.error('Erro ao excluir despesa:', error);
+        alert('Erro ao excluir despesa recorrente.');
+      }
+    }
+    
+    // Processar despesas recorrentes do mês atual
+    async function processarDespesasRecorrentes() {
+      try {
+        const snapshot = await firebase.database().ref('faturamento/despesasRecorrentes').once('value');
+        const despesas = snapshot.val() || {};
+        
+        const hoje = new Date();
+        const diaAtual = hoje.getDate();
+        const mesAtual = hoje.getMonth();
+        const anoAtual = hoje.getFullYear();
+        
+        for (const [id, despesa] of Object.entries(despesas)) {
+          if (despesa.status !== 'ativo') continue;
+          
+          // Verificar se já foi cobrada este mês
+          const ultimaCobranca = despesa.ultimaCobranca ? new Date(despesa.ultimaCobranca) : null;
+          if (ultimaCobranca && ultimaCobranca.getMonth() === mesAtual && ultimaCobranca.getFullYear() === anoAtual) {
+            continue; // Já cobrada este mês
+          }
+          
+          // Verificar se chegou o dia de cobrança
+          if (diaAtual >= despesa.diaCobranca) {
+            // Adicionar despesa no extrato
+            const dataCobranca = new Date(anoAtual, mesAtual, despesa.diaCobranca);
+            const entrada = {
+              tipo: 'despesa',
+              descricao: `${despesa.descricao} (Recorrente)`,
+              valor: despesa.valor,
+              data: dataCobranca.toISOString(),
+              recorrente: true,
+              despesaRecorrenteId: id,
+              criadoEm: new Date().toISOString()
+            };
+            
+            await firebase.database().ref('faturamento/extrato').push(entrada);
+            
+            // Atualizar última cobrança
+            await firebase.database().ref(`faturamento/despesasRecorrentes/${id}`).update({
+              ultimaCobranca: dataCobranca.toISOString()
+            });
+            
+            console.log(`Despesa recorrente processada: ${despesa.descricao}`);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao processar despesas recorrentes:', error);
       }
     }
 
