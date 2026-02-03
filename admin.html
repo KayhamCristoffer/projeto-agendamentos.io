@@ -364,6 +364,12 @@
           </select>
         </div>
         <div>
+          <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Profissional *</label>
+          <select id="profissionalNovoAgendamento" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+            <option value="">Selecione o profissional</option>
+          </select>
+        </div>
+        <div>
           <label class="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Serviços *</label>
           <div id="gridServicosNovoAgendamento" class="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto"></div>
         </div>
@@ -572,6 +578,35 @@
           </button>
           <button type="button" onclick="fecharModalEditar()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
             Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Cancelar Agendamento -->
+  <div id="modalCancelar" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-xl font-bold text-red-600 dark:text-red-400 mb-4">❌ Cancelar Agendamento</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-4">Por favor, informe o motivo do cancelamento:</p>
+      <form id="formCancelar" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Motivo do Cancelamento *</label>
+          <textarea id="motivoCancelamento" required rows="4" 
+                    placeholder="Ex: Cliente desistiu, mudança de horário, etc."
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"></textarea>
+        </div>
+        <div class="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-lg p-3">
+          <p class="text-sm text-yellow-800 dark:text-yellow-200">
+            ⚠️ Esta ação não pode ser desfeita. O agendamento será marcado como cancelado.
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+            ❌ Confirmar Cancelamento
+          </button>
+          <button type="button" onclick="fecharModalCancelar()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+            Voltar
           </button>
         </div>
       </form>
@@ -789,7 +824,84 @@
     }
 
     async function carregarConcluidos() {
-      await carregarAgendamentosPorStatus('concluido', 'listaConcluidos');
+      // Carregar concluídos e cancelados na mesma lista
+      const lista = document.getElementById('listaConcluidos');
+      lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Carregando...</div>';
+      
+      try {
+        const agendamentos = await listarAgendamentosOnce();
+        const filtrados = agendamentos.filter(([, a]) => a.status === 'concluido' || a.status === 'cancelado');
+        
+        if (filtrados.length === 0) {
+          lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum agendamento concluído ou cancelado</div>';
+          return;
+        }
+        
+        lista.innerHTML = filtrados.map(([id, a]) => `
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow ${a.status === 'cancelado' ? 'border-l-4 border-red-500' : ''}">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">${a.clienteNome}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  📧 ${a.clienteEmail}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                  📅 ${a.dataHora ? (() => {
+                    try {
+                      const [data, hora] = a.dataHora.split('T');
+                      const [ano, mes, dia] = data.split('-');
+                      return `${dia}/${mes}/${ano} às ${hora}`;
+                    } catch {
+                      return a.dataHora;
+                    }
+                  })() : 'Data não disponível'}
+                </p>
+                ${a.profissionalNome ? `<p class="text-sm text-gray-600 dark:text-gray-400">👤 Profissional: ${a.profissionalNome}</p>` : ''}
+              </div>
+              <div class="text-right">
+                ${a.status === 'cancelado' ? `
+                  <div class="text-lg font-bold text-red-600 dark:text-red-400 mb-2">
+                    ❌ CANCELADO
+                  </div>
+                ` : ''}
+                <div class="text-2xl font-bold ${a.status === 'cancelado' ? 'line-through text-gray-400' : 'text-primary'}">
+                  ${a.desconto && a.desconto > 0 && a.status !== 'cancelado' ? `
+                    <div class="text-sm line-through text-gray-400">${formatarPreco(a.precoOriginal || a.precoTotal)}</div>
+                    <div>${formatarPreco(a.precoTotal)}</div>
+                    <div class="text-xs text-green-600">Desconto: ${formatarPreco(a.desconto)}</div>
+                  ` : formatarPreco(a.precoTotal)}
+                </div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">${a.duracaoTotal} min</div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Serviços:</p>
+              <div class="flex flex-wrap gap-2">
+                ${(a.servicos || []).map(s => `<span class="px-2 py-1 ${a.status === 'cancelado' ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'} rounded text-sm">${s.nome}</span>`).join('')}
+              </div>
+            </div>
+            ${a.produtos && a.produtos.length > 0 ? `
+            <div class="mb-4">
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Produtos:</p>
+              <div class="flex flex-wrap gap-2">
+                ${a.produtos.map(p => `<span class="px-2 py-1 ${a.status === 'cancelado' ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' : 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'} rounded text-sm">🛍️ ${p.nome} - ${formatarPreco(p.preco)}</span>`).join('')}
+              </div>
+            </div>
+            ` : ''}
+            ${a.status === 'cancelado' && a.motivoCancelamento ? `
+            <div class="mt-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-sm font-semibold text-red-800 dark:text-red-200 mb-1">Motivo do Cancelamento:</p>
+              <p class="text-sm text-red-700 dark:text-red-300">${a.motivoCancelamento}</p>
+              ${a.canceladoEm ? `<p class="text-xs text-red-600 dark:text-red-400 mt-1">Cancelado em: ${new Date(a.canceladoEm).toLocaleDateString('pt-BR')}</p>` : ''}
+            </div>
+            ` : ''}
+            ${a.observacoes && a.status !== 'cancelado' ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-4">Obs: ${a.observacoes}</p>` : ''}
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Erro ao carregar concluídos/cancelados:', error);
+        lista.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar agendamentos</div>';
+      }
     }
 
     async function carregarAgendamentosPorStatus(status, containerId) {
@@ -857,10 +969,16 @@
                 <button onclick="confirmarAgendamento('${id}')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
                   ✅ Confirmar
                 </button>
+                <button onclick="abrirModalCancelar('${id}')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                  ❌ Cancelar
+                </button>
               ` : ''}
               ${status === 'confirmado' ? `
                 <button onclick="concluirAgendamento('${id}')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
                   🎉 Concluir
+                </button>
+                <button onclick="abrirModalCancelar('${id}')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                  ❌ Cancelar
                 </button>
               ` : ''}
             </div>
@@ -926,6 +1044,52 @@
         console.error('Erro ao descontar estoque:', error);
       }
     }
+    
+    // Modal de Cancelamento
+    let cancelandoAgendamentoId = null;
+    
+    function abrirModalCancelar(id) {
+      cancelandoAgendamentoId = id;
+      document.getElementById('motivoCancelamento').value = '';
+      document.getElementById('modalCancelar').classList.remove('hidden');
+    }
+    
+    function fecharModalCancelar() {
+      cancelandoAgendamentoId = null;
+      document.getElementById('modalCancelar').classList.add('hidden');
+      document.getElementById('formCancelar').reset();
+    }
+    
+    document.getElementById('formCancelar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const motivo = document.getElementById('motivoCancelamento').value.trim();
+      
+      if (!motivo) {
+        alert('Por favor, informe o motivo do cancelamento.');
+        return;
+      }
+      
+      try {
+        await firebase.database().ref(`agendamentos/${cancelandoAgendamentoId}`).update({
+          status: 'cancelado',
+          motivoCancelamento: motivo,
+          canceladoEm: new Date().toISOString(),
+          atualizadoEm: new Date().toISOString()
+        });
+        
+        alert('Agendamento cancelado com sucesso.');
+        fecharModalCancelar();
+        await atualizarEstatisticas();
+        await carregarCalendario();
+        
+        // Recarregar a lista apropriada
+        if (dataSelecionada) await selecionarDia(dataSelecionada);
+      } catch (error) {
+        console.error('Erro ao cancelar agendamento:', error);
+        alert('Erro ao cancelar agendamento. Tente novamente.');
+      }
+    });
 
     // Modal de edição
     function abrirModalEditar(id) {
@@ -2009,6 +2173,7 @@
     function abrirModalNovoAgendamento() {
       document.getElementById('modalNovoAgendamento').classList.remove('hidden');
       carregarClientesSelect();
+      carregarProfissionaisSelect();
       carregarServicosNovo();
       carregarProdutosNovo();
     }
@@ -2033,6 +2198,21 @@
             .join('');
       } catch (error) {
         console.error('Erro ao carregar clientes:', error);
+      }
+    }
+    
+    async function carregarProfissionaisSelect() {
+      const select = document.getElementById('profissionalNovoAgendamento');
+      try {
+        const snapshot = await firebase.database().ref('equipe').once('value');
+        const equipe = snapshot.val() || {};
+        
+        select.innerHTML = '<option value="">Selecione o profissional</option>' + 
+          Object.entries(equipe)
+            .map(([id, p]) => `<option value="${id}">${p.nome} - ${p.cargo || 'Profissional'}</option>`)
+            .join('');
+      } catch (error) {
+        console.error('Erro ao carregar profissionais:', error);
       }
     }
 
@@ -2234,6 +2414,7 @@
       e.preventDefault();
       
       const clienteId = document.getElementById('clienteNovoAgendamento').value;
+      const profissionalId = document.getElementById('profissionalNovoAgendamento').value;
       const data = document.getElementById('dataNovoAgendamento').value;
       const horario = document.getElementById('horarioNovoAgendamento').value;
       const obs = document.getElementById('observacoesNovoAgendamento').value;
@@ -2243,8 +2424,18 @@
         return;
       }
       
+      if (!profissionalId) {
+        alert('Selecione um profissional!');
+        return;
+      }
+      
       try {
         const perfil = await obterPerfilUsuario(clienteId);
+        
+        // Buscar dados do profissional
+        const profissionalSnapshot = await firebase.database().ref(`equipe/${profissionalId}`).once('value');
+        const profissional = profissionalSnapshot.val();
+        
         const totalPreco = servicosSelecionadosNovo.reduce((sum, s) => sum + s.preco, 0) +
                           produtosSelecionadosNovo.reduce((sum, p) => sum + p.preco, 0);
         const totalDuracao = servicosSelecionadosNovo.reduce((sum, s) => sum + s.duracao, 0);
@@ -2254,6 +2445,8 @@
           clienteNome: perfil.nome || perfil.nomeCompleto,
           clienteEmail: perfil.email,
           clienteTelefone: perfil.telefone || '',
+          profissionalId: profissionalId,
+          profissionalNome: profissional ? profissional.nome : 'Não especificado',
           servicos: servicosSelecionadosNovo.map(s => ({
             id: s.id,
             nome: s.nome,
