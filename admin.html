@@ -830,7 +830,10 @@
       
       try {
         const agendamentos = await listarAgendamentosOnce();
-        const filtrados = agendamentos.filter(([, a]) => a.status === 'concluido' || a.status === 'cancelado');
+        // Converter objeto para array de [id, agendamento]
+        const filtrados = Object.entries(agendamentos || {})
+          .filter(([, a]) => a.status === 'concluido' || a.status === 'cancelado')
+          .sort((a, b) => new Date(b[1].dataHora) - new Date(a[1].dataHora));
         
         if (filtrados.length === 0) {
           lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum agendamento concluído ou cancelado</div>';
