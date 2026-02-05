@@ -2484,6 +2484,47 @@
       }
     });
 
+    // Firebase - Funções Auxiliares de Agendamentos
+    async function listarAgendamentosOnce() {
+      const snapshot = await firebase.database().ref('agendamentos').once('value');
+      return snapshot.val() || {};
+    }
+
+    async function obterAgendamento(id) {
+      const snapshot = await firebase.database().ref(`agendamentos/${id}`).once('value');
+      return snapshot.val();
+    }
+
+    async function salvarAgendamento(agendamento) {
+      const novoId = firebase.database().ref('agendamentos').push().key;
+      agendamento.criadoEm = agendamento.criadoEm || new Date().toISOString();
+      agendamento.timestamp = agendamento.timestamp || Date.now();
+      await firebase.database().ref(`agendamentos/${novoId}`).set(agendamento);
+      return novoId;
+    }
+
+    async function atualizarAgendamento(id, dados) {
+      dados.atualizadoEm = new Date().toISOString();
+      await firebase.database().ref(`agendamentos/${id}`).update(dados);
+    }
+
+    async function alterarStatusAgendamento(id, novoStatus) {
+      await firebase.database().ref(`agendamentos/${id}`).update({
+        status: novoStatus,
+        atualizadoEm: new Date().toISOString()
+      });
+    }
+
+    async function obterPerfilUsuario(userId) {
+      const snapshot = await firebase.database().ref(`usuarios/${userId}`).once('value');
+      return snapshot.val();
+    }
+
+    async function listarEquipe() {
+      const snapshot = await firebase.database().ref('equipe').once('value');
+      return snapshot.val() || {};
+    }
+
     // Helpers
     function formatarPreco(valor) {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
