@@ -48,7 +48,7 @@
   <div class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
     <!-- Estatísticas -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
       <div class="bg-gradient-to-br from-purple-500 to-purple-700 text-white p-6 rounded-lg shadow-lg text-center">
         <div id="totalAgendamentos" class="text-4xl font-bold mb-1">0</div>
         <div class="text-sm opacity-90">Total</div>
@@ -64,6 +64,10 @@
       <div class="bg-gradient-to-br from-green-500 to-teal-600 text-white p-6 rounded-lg shadow-lg text-center">
         <div id="totalConcluidos" class="text-4xl font-bold mb-1">0</div>
         <div class="text-sm opacity-90">Concluídos</div>
+      </div>
+      <div class="bg-gradient-to-br from-red-500 to-pink-600 text-white p-6 rounded-lg shadow-lg text-center">
+        <div id="totalCancelados" class="text-4xl font-bold mb-1">0</div>
+        <div class="text-sm opacity-90">Cancelados</div>
       </div>
     </div>
 
@@ -173,9 +177,14 @@
     <div id="secaoClientes" class="hidden">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white">👥 Gerenciar Clientes</h2>
-      <button onclick="carregarClientesAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
-        🔄 Atualizar
-      </button>
+      <div class="flex gap-2">
+        <button onclick="abrirModalAdicionarCliente()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+          ➕ Adicionar Cliente
+        </button>
+        <button onclick="carregarClientesAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+          🔄 Atualizar
+        </button>
+      </div>
     </div>
     <div id="listaClientesAdmin" class="space-y-4"></div>
     </div>
@@ -428,6 +437,42 @@
           Cancelar
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Cliente -->
+  <div id="modalAdicionarCliente" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">➕ Adicionar Novo Cliente</h3>
+      <form id="formAdicionarCliente" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome Completo *</label>
+          <input type="text" id="novoClienteNome" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="João Silva">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email *</label>
+          <input type="email" id="novoClienteEmail" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="cliente@email.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telefone/WhatsApp *</label>
+          <input type="tel" id="novoClienteTelefone" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="(11) 98765-4321">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Senha Inicial *</label>
+          <input type="password" id="novoClienteSenha" required minlength="6" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="Mínimo 6 caracteres">
+        </div>
+        <p class="text-xs text-gray-600 dark:text-gray-400">
+          ℹ️ O cliente será criado no Firebase Authentication e no Realtime Database.
+        </p>
+        <div class="flex gap-2">
+          <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+            ✅ Criar Cliente
+          </button>
+          <button type="button" onclick="fecharModalAdicionarCliente()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+            Cancelar
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -699,6 +744,7 @@
         document.getElementById('totalPendentes').textContent = todos.filter(a => a.status === 'pendente').length;
         document.getElementById('totalConfirmados').textContent = todos.filter(a => a.status === 'confirmado').length;
         document.getElementById('totalConcluidos').textContent = todos.filter(a => a.status === 'concluido').length;
+        document.getElementById('totalCancelados').textContent = todos.filter(a => a.status === 'cancelado').length;
       } catch (error) {
         console.error('Erro ao atualizar estatísticas:', error);
       }
@@ -899,6 +945,14 @@
             </div>
             ` : ''}
             ${a.observacoes && a.status !== 'cancelado' ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-4">Obs: ${a.observacoes}</p>` : ''}
+            <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <button onclick="abrirModalEditar('${id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition">
+                ✏️ Editar
+              </button>
+              <button onclick="deletarAgendamento('${id}', '${a.clienteNome}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition">
+                🗑️ Deletar
+              </button>
+            </div>
           </div>
         `).join('');
       } catch (error) {
@@ -1045,6 +1099,31 @@
         }
       } catch (error) {
         console.error('Erro ao descontar estoque:', error);
+      }
+    }
+    
+    // Deletar Agendamento
+    async function deletarAgendamento(id, clienteNome) {
+      if (!confirm(`⚠️ Deseja realmente DELETAR o agendamento de "${clienteNome}"?\n\nEsta ação NÃO pode ser desfeita!`)) {
+        return;
+      }
+      
+      try {
+        // Deletar agendamento
+        await firebase.database().ref(`agendamentos/${id}`).remove();
+        
+        // Deletar chat associado (se existir)
+        await firebase.database().ref(`chats/${id}`).remove();
+        
+        console.log(`✅ Agendamento ${id} deletado com sucesso`);
+        alert('Agendamento deletado com sucesso!');
+        
+        // Recarregar lista
+        await atualizarEstatisticas();
+        await carregarConcluidos();
+      } catch (error) {
+        console.error('Erro ao deletar agendamento:', error);
+        alert('Erro ao deletar agendamento. Tente novamente.');
       }
     }
     
@@ -1359,6 +1438,88 @@
         alert('Erro ao enviar email de recuperação.');
       }
     }
+
+    // Adicionar Cliente
+    function abrirModalAdicionarCliente() {
+      document.getElementById('modalAdicionarCliente').classList.remove('hidden');
+      document.getElementById('formAdicionarCliente').reset();
+    }
+
+    function fecharModalAdicionarCliente() {
+      document.getElementById('modalAdicionarCliente').classList.add('hidden');
+      document.getElementById('formAdicionarCliente').reset();
+    }
+
+    document.getElementById('formAdicionarCliente').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const nome = document.getElementById('novoClienteNome').value;
+      const email = document.getElementById('novoClienteEmail').value;
+      const telefone = document.getElementById('novoClienteTelefone').value;
+      const senha = document.getElementById('novoClienteSenha').value;
+      
+      try {
+        console.log('🔧 Criando usuário no Authentication...');
+        
+        // Criar usuário no Firebase Authentication
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
+        const user = userCredential.user;
+        
+        console.log('✅ Usuário criado no Authentication:', user.uid);
+        
+        // Atualizar displayName
+        await user.updateProfile({ displayName: nome });
+        console.log('✅ DisplayName atualizado');
+        
+        // Criar perfil no Realtime Database
+        const perfil = {
+          nome: nome,
+          nomeCompleto: nome,
+          email: email,
+          telefone: telefone,
+          whatsapp: telefone,
+          role: 'cliente',
+          totalVisitas: 0,
+          ultimaVisita: null,
+          criadoEm: new Date().toISOString(),
+          atualizadoEm: new Date().toISOString()
+        };
+        
+        console.log('📝 Salvando perfil no Realtime Database...');
+        await firebase.database().ref(`usuarios/${user.uid}`).set(perfil);
+        console.log('✅ Perfil salvo com sucesso');
+        
+        // Fazer logout do novo usuário (para não afetar a sessão do admin)
+        await firebase.auth().signOut();
+        
+        // Fazer login novamente como admin (se necessário)
+        // Nota: O admin já estava logado, então apenas recarregar
+        
+        alert(`✅ Cliente "${nome}" criado com sucesso!\n\n📧 Email: ${email}\n🔑 UID: ${user.uid}`);
+        
+        fecharModalAdicionarCliente();
+        await carregarClientesAdmin();
+        
+        // Recarregar a página para garantir que o admin continue logado
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+        
+      } catch (error) {
+        console.error('❌ Erro ao criar cliente:', error);
+        let mensagem = 'Erro ao criar cliente: ' + error.message;
+        
+        if (error.code === 'auth/email-already-in-use') {
+          mensagem = '⚠️ Este email já está em uso.';
+        } else if (error.code === 'auth/invalid-email') {
+          mensagem = '⚠️ Email inválido.';
+        } else if (error.code === 'auth/weak-password') {
+          mensagem = '⚠️ Senha muito fraca. Use no mínimo 6 caracteres.';
+        }
+        
+        alert(mensagem);
+      }
+    });
 
     // Editar Cliente
     async function editarCliente(userId) {

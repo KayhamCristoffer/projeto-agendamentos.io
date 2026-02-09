@@ -257,6 +257,7 @@
     let usuarioAtual = null;
     let servicosSelecionados = [];
     let produtosSelecionados = [];
+    let produtosSelecionados = [];
     let chatAgendamentoId = null;
     let chatListener = null;
 
@@ -286,16 +287,7 @@
       await carregarHistorico();
       await carregarPerfil();
     });
-    firebase.auth().onAuthStateChanged(async (user) => {
-  // Verifica role do usuário
-    const perfilSnapshot = await firebase.database().ref(`usuarios/${user.uid}`).once('value');
-    const perfil = perfilSnapshot.val();
-  
-    if (perfil && perfil.role === 'admin') {
-    // Mostra botão Área Admin
-      document.getElementById('btnAreaAdmin').classList.remove('hidden');
-      }
-    });
+
     // Logout
     function logout() {
       firebase.auth().signOut().then(() => {
@@ -332,6 +324,17 @@
       if (secao === 'equipe') {
         carregarEquipe();
       }
+    }
+
+    // Funções Auxiliares do Firebase
+    async function obterPerfilUsuario(userId) {
+      const snapshot = await firebase.database().ref(`usuarios/${userId}`).once('value');
+      return snapshot.val();
+    }
+
+    async function atualizarPerfilUsuario(userId, dados) {
+      dados.atualizadoEm = new Date().toISOString();
+      await firebase.database().ref(`usuarios/${userId}`).update(dados);
     }
 
     // Carregar serviços do Firebase
