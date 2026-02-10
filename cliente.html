@@ -257,9 +257,9 @@
     let usuarioAtual = null;
     let servicosSelecionados = [];
     let produtosSelecionados = [];
-    let produtosSelecionados = [];
     let chatAgendamentoId = null;
     let chatListener = null;
+    const db = firebase.database(); // Definir db para facilitar acesso
 
     // Verificar autenticação
     firebase.auth().onAuthStateChanged(async (user) => {

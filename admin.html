@@ -1072,13 +1072,39 @@
           }
         }
         
+        // Incrementar totalVisitas do cliente
+        if (agendamento.clienteId) {
+          await incrementarVisitasCliente(agendamento.clienteId);
+        }
+        
         await alterarStatusAgendamento(id, 'concluido');
         await atualizarEstatisticas();
         await carregarConfirmados();
-        alert('Agendamento concluído com sucesso! Estoque atualizado.');
+        alert('Agendamento concluído com sucesso! Estoque e visitas atualizados.');
       } catch (error) {
         console.error('Erro ao concluir:', error);
         alert('Erro ao concluir agendamento. Tente novamente.');
+      }
+    }
+    
+    // Incrementar visitas do cliente
+    async function incrementarVisitasCliente(clienteId) {
+      try {
+        const clienteRef = firebase.database().ref(`usuarios/${clienteId}`);
+        const snapshot = await clienteRef.once('value');
+        const cliente = snapshot.val();
+        
+        if (cliente) {
+          const totalVisitas = (cliente.totalVisitas || 0) + 1;
+          await clienteRef.update({
+            totalVisitas: totalVisitas,
+            ultimaVisita: new Date().toISOString(),
+            atualizadoEm: new Date().toISOString()
+          });
+          console.log(`✅ Visitas do cliente ${cliente.nome} incrementadas: ${totalVisitas}`);
+        }
+      } catch (error) {
+        console.error('Erro ao incrementar visitas:', error);
       }
     }
     
