@@ -259,7 +259,16 @@
     let produtosSelecionados = [];
     let chatAgendamentoId = null;
     let chatListener = null;
+    
+    // Verificar se Firebase está carregado
+    if (typeof firebase === 'undefined') {
+      console.error('❌ Firebase não está carregado!');
+      alert('Erro ao carregar Firebase. Recarregue a página.');
+    }
+    
     const db = firebase.database(); // Definir db para facilitar acesso
+    console.log('✅ Firebase inicializado:', !!firebase);
+    console.log('✅ Database inicializado:', !!db);
 
     // Verificar autenticação
     firebase.auth().onAuthStateChanged(async (user) => {

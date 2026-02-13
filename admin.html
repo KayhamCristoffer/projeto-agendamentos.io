@@ -1487,6 +1487,13 @@
       try {
         console.log('🔧 Criando usuário no Authentication...');
         
+        // Salvar sessão atual do admin
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+          alert('❌ Você precisa estar logado como admin para criar usuários.');
+          return;
+        }
+        
         // Criar usuário no Firebase Authentication
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
         const user = userCredential.user;
@@ -1515,21 +1522,18 @@
         await firebase.database().ref(`usuarios/${user.uid}`).set(perfil);
         console.log('✅ Perfil salvo com sucesso');
         
-        // Fazer logout do novo usuário (para não afetar a sessão do admin)
+        // Fazer logout do novo usuário criado
         await firebase.auth().signOut();
+        console.log('🔓 Logout do novo usuário realizado');
         
-        // Fazer login novamente como admin (se necessário)
-        // Nota: O admin já estava logado, então apenas recarregar
-        
-        alert(`✅ Cliente "${nome}" criado com sucesso!\n\n📧 Email: ${email}\n🔑 UID: ${user.uid}`);
+        alert(`✅ Cliente "${nome}" criado com sucesso!\n\n📧 Email: ${email}\n🔑 UID: ${user.uid}\n\n⚠️ Você será redirecionado para fazer login novamente como admin.`);
         
         fecharModalAdicionarCliente();
-        await carregarClientesAdmin();
         
-        // Recarregar a página para garantir que o admin continue logado
+        // Redirecionar para login
         setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+          window.location.href = 'login.html';
+        }, 2000);
         
       } catch (error) {
         console.error('❌ Erro ao criar cliente:', error);
