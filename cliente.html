@@ -114,18 +114,23 @@
         </div>
 
         <!-- Data e Horário -->
-        <div class="grid md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data</label>
-            <input type="date" id="dataAgendamento" required
-                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-800 dark:text-white">
-          </div>
-          <div id="containerHorario" class="hidden">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Horário</label>
-            <div id="gridHorarios" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
-              <!-- Horários disponíveis -->
+        <div id="secaoDataHorario" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            ⚠️ <strong>Selecione pelo menos um serviço</strong> para escolher data e horário
+          </p>
+          <div class="grid md:grid-cols-2 gap-4 opacity-50 pointer-events-none" id="camposDataHora">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data</label>
+              <input type="date" id="dataAgendamento" required
+                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-800 dark:text-white">
             </div>
-            <input type="hidden" id="horarioSelecionado">
+            <div id="containerHorario" class="hidden">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Horário</label>
+              <div id="gridHorarios" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                <!-- Horários disponíveis -->
+              </div>
+              <input type="hidden" id="horarioSelecionado">
+            </div>
           </div>
         </div>
 
@@ -279,6 +284,10 @@
       usuarioAtual = user;
       document.getElementById('nomeUsuario').textContent = user.displayName || user.email;
       
+      // Definir data mínima como hoje
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('dataAgendamento').setAttribute('min', hoje);
+      
       // Verificar se usuário é admin
       try {
         const perfilSnap = await firebase.database().ref(`usuarios/${user.uid}`).once('value');
@@ -344,6 +353,25 @@
     async function atualizarPerfilUsuario(userId, dados) {
       dados.atualizadoEm = new Date().toISOString();
       await firebase.database().ref(`usuarios/${userId}`).update(dados);
+    }
+
+    async function listarEquipe() {
+      const snapshot = await firebase.database().ref('equipe').once('value');
+      return snapshot.val() || {};
+    }
+
+    async function curtirMembroEquipe(membroId, usuarioId) {
+      const membroRef = firebase.database().ref(`equipe/${membroId}`);
+      const snapshot = await membroRef.once('value');
+      const membro = snapshot.val();
+      
+      if (membro) {
+        const curtidas = (membro.curtidas || 0) + 1;
+        await membroRef.update({
+          curtidas: curtidas,
+          atualizadoEm: new Date().toISOString()
+        });
+      }
     }
 
     // Carregar serviços do Firebase
@@ -430,11 +458,24 @@
     function atualizarResumo() {
       const resumo = document.getElementById('resumoServicos');
       const lista = document.getElementById('listaServicos');
+      const secaoDataHorario = document.getElementById('secaoDataHorario');
+      const camposDataHora = document.getElementById('camposDataHora');
       
       if (servicosSelecionados.length === 0) {
         resumo.classList.add('hidden');
+        // Desabilitar seção de data/hora
+        secaoDataHorario.classList.add('border-dashed', 'border-gray-300', 'dark:border-gray-600', 'bg-gray-100', 'dark:bg-gray-700');
+        secaoDataHorario.classList.remove('border-primary', 'bg-white', 'dark:bg-gray-800');
+        camposDataHora.classList.add('opacity-50', 'pointer-events-none');
+        secaoDataHorario.querySelector('p').classList.remove('hidden');
         return;
       }
+      
+      // Habilitar seção de data/hora
+      secaoDataHorario.classList.remove('border-dashed', 'border-gray-300', 'dark:border-gray-600', 'bg-gray-100', 'dark:bg-gray-700');
+      secaoDataHorario.classList.add('border-primary', 'bg-white', 'dark:bg-gray-800');
+      camposDataHora.classList.remove('opacity-50', 'pointer-events-none');
+      secaoDataHorario.querySelector('p').classList.add('hidden');
       
       resumo.classList.remove('hidden');
       lista.innerHTML = servicosSelecionados.map(s => 
@@ -637,6 +678,24 @@
         mostrarMensagem('erro', 'Erro ao criar agendamento. Tente novamente.', 'mensagemAgendar');
       }
     });
+
+    // Salvar agendamento
+    async function salvarAgendamento(agendamento) {
+      const novoId = firebase.database().ref('agendamentos').push().key;
+      agendamento.criadoEm = new Date().toISOString();
+      agendamento.timestamp = Date.now();
+      agendamento.precoOriginal = agendamento.precoTotal;
+      agendamento.desconto = 0;
+      agendamento.atualizadoEm = new Date().toISOString();
+      await firebase.database().ref(`agendamentos/${novoId}`).set(agendamento);
+      return novoId;
+    }
+
+    // Listar agendamentos
+    async function listarAgendamentosOnce() {
+      const snapshot = await firebase.database().ref('agendamentos').once('value');
+      return snapshot.val() || {};
+    }
 
     // Carregar pendentes
     async function carregarPendentes() {
@@ -956,6 +1015,67 @@
         carregarEquipe();
       } catch (error) {
         console.error('Erro ao curtir membro:', error);
+      }
+    }
+
+    // ============================================
+    // FUNÇÕES AUXILIARES DO CHAT
+    // ============================================
+    
+    function listarMensagens(agendamentoId, callback) {
+      const ref = firebase.database().ref(`chats/${agendamentoId}/mensagens`);
+      ref.on('value', (snapshot) => {
+        callback(snapshot.val());
+      });
+      return () => ref.off('value');
+    }
+
+    async function enviarMensagem(agendamentoId, mensagem) {
+      const ref = firebase.database().ref(`chats/${agendamentoId}/mensagens`);
+      await ref.push(mensagem);
+    }
+
+    // ============================================
+    // FUNÇÃO DE HORÁRIOS DISPONÍVEIS
+    // ============================================
+    
+    async function obterHorariosDisponiveis(data, duracaoNecessaria) {
+      // Configurar horários do salão (8:00 às 19:00)
+      const horarios = [];
+      for (let hora = 8; hora < 19; hora++) {
+        for (let minuto = 0; minuto < 60; minuto += 30) {
+          const horario = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
+          horarios.push(horario);
+        }
+      }
+      
+      // Buscar agendamentos da data selecionada
+      try {
+        const agendamentos = await listarAgendamentosOnce();
+        const agendamentosData = Object.values(agendamentos || {})
+          .filter(a => {
+            const dataAgendamento = a.dataHora.split('T')[0];
+            return dataAgendamento === data && (a.status === 'pendente' || a.status === 'confirmado');
+          });
+        
+        // Filtrar horários disponíveis
+        return horarios.filter(horario => {
+          const dataHoraAtual = new Date(`${data}T${horario}`);
+          const fimAtual = new Date(dataHoraAtual.getTime() + duracaoNecessaria * 60000);
+          
+          // Verificar se há conflito com algum agendamento existente
+          return !agendamentosData.some(a => {
+            const inicioExistente = new Date(a.dataHora);
+            const fimExistente = new Date(inicioExistente.getTime() + a.duracaoTotal * 60000);
+            
+            return (dataHoraAtual >= inicioExistente && dataHoraAtual < fimExistente) ||
+                   (fimAtual > inicioExistente && fimAtual <= fimExistente) ||
+                   (dataHoraAtual <= inicioExistente && fimAtual >= fimExistente);
+          });
+        });
+      } catch (error) {
+        console.error('Erro ao verificar horários:', error);
+        return horarios; // Retornar todos os horários em caso de erro
       }
     }
   </script>
