@@ -252,11 +252,59 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="firebase/firebase-config.js"></script>
-  <script src="firebase/services-config.js"></script>
-  <script src="firebase/database.js"></script>
-  <script src="firebase/session-manager.js"></script>
-  <script src="assets/theme.js"></script>
+
+  <script>
+    // ============================================
+    // CONFIGURAÇÃO DO FIREBASE
+    // ============================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVDzykztfiQ91o_CpzQHBy0eMHQQxSERE",
+      authDomain: "projeto-agendamentos-6ddf3.firebaseapp.com",
+      databaseURL: "https://projeto-agendamentos-6ddf3-default-rtdb.firebaseio.com",
+      projectId: "projeto-agendamentos-6ddf3",
+      storageBucket: "projeto-agendamentos-6ddf3.firebasestorage.app",
+      messagingSenderId: "1029815341640",
+      appId: "1:1029815341640:web:4c285d529a773818ef3e7d",
+      measurementId: "G-J199JG5FZJ"
+    };
+
+    // Inicializar Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+      console.log('🔥 Firebase inicializado com sucesso!');
+    }
+
+    // ============================================
+    // SISTEMA DE TEMA
+    // ============================================
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      applyTheme(savedTheme);
+    }
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      localStorage.setItem('theme', theme);
+      const icon = document.getElementById('themeIcon');
+      if (icon) icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    }
+
+    // Inicializar tema
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTheme);
+    } else {
+      initTheme();
+    }
+  </script>
 
   <script>
     let usuarioAtual = null;
@@ -264,46 +312,89 @@
     let produtosSelecionados = [];
     let chatAgendamentoId = null;
     let chatListener = null;
+    const db = firebase.database();
     
-    // Verificar se Firebase está carregado
-    if (typeof firebase === 'undefined') {
-      console.error('❌ Firebase não está carregado!');
-      alert('Erro ao carregar Firebase. Recarregue a página.');
-    }
-    
-    const db = firebase.database(); // Definir db para facilitar acesso
-    console.log('✅ Firebase inicializado:', !!firebase);
-    console.log('✅ Database inicializado:', !!db);
+    console.log('✅ Variáveis inicializadas');
+    console.log('✅ Firebase disponível:', typeof firebase !== 'undefined');
+    console.log('✅ Database disponível:', typeof db !== 'undefined');
 
     // Verificar autenticação
     firebase.auth().onAuthStateChanged(async (user) => {
+      console.log('🔐 Estado de autenticação mudou:', user ? 'Logado' : 'Não logado');
+      
       if (!user) {
+        console.log('❌ Usuário não autenticado, redirecionando...');
         window.location.href = 'login.html';
         return;
       }
+      
       usuarioAtual = user;
-      document.getElementById('nomeUsuario').textContent = user.displayName || user.email;
+      console.log('✅ Usuário autenticado:', user.email);
+      
+      // Atualizar nome do usuário no navbar
+      const nomeElement = document.getElementById('nomeUsuario');
+      if (nomeElement) {
+        nomeElement.textContent = user.displayName || user.email;
+        console.log('✅ Nome exibido:', nomeElement.textContent);
+      }
       
       // Definir data mínima como hoje
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById('dataAgendamento').setAttribute('min', hoje);
+      console.log('✅ Data mínima configurada:', hoje);
       
       // Verificar se usuário é admin
       try {
         const perfilSnap = await firebase.database().ref(`usuarios/${user.uid}`).once('value');
         const perfil = perfilSnap.val();
+        console.log('👤 Perfil do usuário:', perfil);
+        
         if (perfil && perfil.role === 'admin') {
           document.getElementById('btnPainelAdmin').classList.remove('hidden');
+          console.log('✅ Botão admin exibido');
         }
       } catch (error) {
-        console.error('Erro ao verificar perfil:', error);
+        console.error('❌ Erro ao verificar perfil:', error);
       }
       
-      await carregarServicos();
-      await carregarProdutos();
-      await carregarPendentes();
-      await carregarHistorico();
-      await carregarPerfil();
+      // Carregar dados
+      console.log('📥 Iniciando carregamento de dados...');
+      try {
+        await carregarServicos();
+        console.log('✅ Serviços carregados');
+      } catch (error) {
+        console.error('❌ Erro ao carregar serviços:', error);
+      }
+      
+      try {
+        await carregarProdutos();
+        console.log('✅ Produtos carregados');
+      } catch (error) {
+        console.error('❌ Erro ao carregar produtos:', error);
+      }
+      
+      try {
+        await carregarPendentes();
+        console.log('✅ Pendentes carregados');
+      } catch (error) {
+        console.error('❌ Erro ao carregar pendentes:', error);
+      }
+      
+      try {
+        await carregarHistorico();
+        console.log('✅ Histórico carregado');
+      } catch (error) {
+        console.error('❌ Erro ao carregar histórico:', error);
+      }
+      
+      try {
+        await carregarPerfil();
+        console.log('✅ Perfil carregado');
+      } catch (error) {
+        console.error('❌ Erro ao carregar perfil:', error);
+      }
+      
+      console.log('🎉 Carregamento completo!');
     });
 
     // Logout
@@ -331,15 +422,35 @@
 
     // Alternar seções
     function mostrarSecao(secao) {
+      console.log('🔄 Mudando para seção:', secao);
+      
       ['agendar', 'pendentes', 'historico', 'perfil', 'equipe'].forEach(s => {
-        document.getElementById(`secao${s.charAt(0).toUpperCase() + s.slice(1)}`).classList.add('hidden');
-        document.getElementById(`tab${s.charAt(0).toUpperCase() + s.slice(1)}`).className = 'px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap';
+        const secaoElement = document.getElementById(`secao${s.charAt(0).toUpperCase() + s.slice(1)}`);
+        const tabElement = document.getElementById(`tab${s.charAt(0).toUpperCase() + s.slice(1)}`);
+        
+        if (secaoElement) secaoElement.classList.add('hidden');
+        if (tabElement) {
+          tabElement.className = 'px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap';
+        }
       });
-      document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`).classList.remove('hidden');
-      document.getElementById(`tab${secao.charAt(0).toUpperCase() + secao.slice(1)}`).className = 'px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap';
+      
+      const secaoAtiva = document.getElementById(`secao${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
+      const tabAtiva = document.getElementById(`tab${secao.charAt(0).toUpperCase() + secao.slice(1)}`);
+      
+      if (secaoAtiva) {
+        secaoAtiva.classList.remove('hidden');
+        console.log('✅ Seção exibida:', secao);
+      } else {
+        console.error('❌ Seção não encontrada:', secao);
+      }
+      
+      if (tabAtiva) {
+        tabAtiva.className = 'px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap';
+      }
       
       // Carregar equipe se for a seção de equipe
       if (secao === 'equipe') {
+        console.log('👥 Carregando equipe...');
         carregarEquipe();
       }
     }
@@ -434,21 +545,42 @@
 
     // Toggle serviço
     function toggleServico(id) {
+      console.log('🔄 Toggle serviço:', id);
+      
+      if (!window.SERVICOS) {
+        console.error('❌ window.SERVICOS não está definido');
+        return;
+      }
+      
       const servico = window.SERVICOS.find(s => s.id === id);
+      if (!servico) {
+        console.error('❌ Serviço não encontrado:', id);
+        return;
+      }
+      
+      console.log('✅ Serviço encontrado:', servico);
+      
       const index = servicosSelecionados.findIndex(s => s.id === id);
       const card = document.getElementById(`servico-${id}`);
       const check = document.getElementById(`check-${id}`);
+      
+      if (!card || !check) {
+        console.error('❌ Elementos não encontrados para o serviço:', id);
+        return;
+      }
       
       if (index > -1) {
         servicosSelecionados.splice(index, 1);
         card.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
         card.classList.add('border-gray-300', 'dark:border-gray-600');
         check.checked = false;
+        console.log('➖ Serviço removido. Total:', servicosSelecionados.length);
       } else {
         servicosSelecionados.push(servico);
         card.classList.remove('border-gray-300', 'dark:border-gray-600');
         card.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900');
         check.checked = true;
+        console.log('➕ Serviço adicionado. Total:', servicosSelecionados.length);
       }
       
       atualizarResumo();
