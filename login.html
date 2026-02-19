@@ -241,14 +241,23 @@
       }
 
       try {
+        // Verificar se Firebase Database está disponível
+        if (!firebase.database) {
+          throw new Error('Firebase Database não está disponível. Verifique se o SDK foi carregado corretamente.');
+        }
+        
+        console.log('🔥 Criando usuário no Authentication...');
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
         const user = userCredential.user;
         
         console.log('✅ Usuário criado no Authentication:', user.uid);
+        console.log('📧 Email:', user.email);
         
+        // Atualizar displayName
         await user.updateProfile({ displayName: nome });
-        console.log('✅ DisplayName atualizado');
+        console.log('✅ DisplayName atualizado para:', nome);
         
+        // Preparar dados do perfil
         const perfil = {
           nome: nome,
           nomeCompleto: nome,
@@ -262,19 +271,33 @@
           atualizadoEm: new Date().toISOString()
         };
         
-        console.log('📝 Salvando perfil no Realtime Database:', perfil);
-        console.log('🔑 UID do usuário:', user.uid);
+        console.log('📝 Dados do perfil a serem salvos:', JSON.stringify(perfil, null, 2));
+        console.log('🔑 Salvando em: /usuarios/' + user.uid);
         
-        // Salvar diretamente no Firebase Realtime Database
-        const dbRef = firebase.database().ref(`usuarios/${user.uid}`);
-        console.log('📍 Referência do Firebase:', dbRef.toString());
+        // Obter referência do database
+        const db = firebase.database();
+        console.log('✅ Database disponível:', !!db);
         
+        const dbRef = db.ref('usuarios/' + user.uid);
+        console.log('📍 Referência criada:', dbRef.toString());
+        
+        // Salvar no Realtime Database
         await dbRef.set(perfil);
-        console.log('✅ Perfil salvo com sucesso no Realtime Database');
+        console.log('✅ Comando set() executado com sucesso');
         
-        // Verificar se foi salvo
+        // Aguardar um momento para garantir que foi salvo
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Verificar se foi realmente salvo
         const snapshot = await dbRef.once('value');
-        console.log('🔍 Verificação - Dados salvos:', snapshot.val());
+        const dadosSalvos = snapshot.val();
+        
+        if (dadosSalvos) {
+          console.log('✅✅✅ SUCESSO! Dados verificados no Firebase:', JSON.stringify(dadosSalvos, null, 2));
+        } else {
+          console.error('❌ ERRO! Dados não foram encontrados após salvar!');
+          throw new Error('Os dados não foram salvos corretamente no Firebase.');
+        }
 
         mostrarMensagem('sucesso', 'Conta criada com sucesso! Redirecionando...', 'mensagemCadastro');
         setTimeout(() => window.location.href = 'cliente.html', 2000);

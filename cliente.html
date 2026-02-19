@@ -252,59 +252,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-  <script>
-    // ============================================
-    // CONFIGURAÇÃO DO FIREBASE
-    // ============================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyBVDzykztfiQ91o_CpzQHBy0eMHQQxSERE",
-      authDomain: "projeto-agendamentos-6ddf3.firebaseapp.com",
-      databaseURL: "https://projeto-agendamentos-6ddf3-default-rtdb.firebaseio.com",
-      projectId: "projeto-agendamentos-6ddf3",
-      storageBucket: "projeto-agendamentos-6ddf3.firebasestorage.app",
-      messagingSenderId: "1029815341640",
-      appId: "1:1029815341640:web:4c285d529a773818ef3e7d",
-      measurementId: "G-J199JG5FZJ"
-    };
-
-    // Inicializar Firebase
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-      console.log('🔥 Firebase inicializado com sucesso!');
-    }
-
-    // ============================================
-    // SISTEMA DE TEMA
-    // ============================================
-    function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      applyTheme(savedTheme);
-    }
-
-    function applyTheme(theme) {
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      localStorage.setItem('theme', theme);
-      const icon = document.getElementById('themeIcon');
-      if (icon) icon.textContent = theme === 'dark' ? '☀️' : '🌙';
-    }
-
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.contains('dark');
-      applyTheme(isDark ? 'light' : 'dark');
-    }
-
-    // Inicializar tema
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initTheme);
-    } else {
-      initTheme();
-    }
-  </script>
+  <script src="firebase/firebase-config.js"></script>
+  <script src="firebase/services-config.js"></script>
+  <script src="firebase/database.js"></script>
+  <script src="firebase/session-manager.js"></script>
+  <script src="assets/theme.js"></script>
 
   <script>
     let usuarioAtual = null;
@@ -312,7 +264,6 @@
     let produtosSelecionados = [];
     let chatAgendamentoId = null;
     let chatListener = null;
-    const db = firebase.database();
     
     console.log('✅ Variáveis inicializadas');
     console.log('✅ Firebase disponível:', typeof firebase !== 'undefined');

@@ -455,7 +455,7 @@
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telefone/WhatsApp *</label>
-          <input type="tel" id="novoClienteTelefone" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="(11) 98765-4321">
+          <input type="tel" id="novoClienteTelefone" required maxlength="15" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="(11) 98765-4321">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Senha Inicial *</label>
@@ -1476,6 +1476,22 @@
       document.getElementById('formAdicionarCliente').reset();
     }
 
+    // Aplicar máscara de telefone no campo de novo cliente
+    document.getElementById('novoClienteTelefone').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.slice(0, 11);
+      
+      if (value.length > 6) {
+        value = `(${value.slice(0,2)}) ${value.slice(2,7)}-${value.slice(7)}`;
+      } else if (value.length > 2) {
+        value = `(${value.slice(0,2)}) ${value.slice(2)}`;
+      } else if (value.length > 0) {
+        value = `(${value}`;
+      }
+      
+      e.target.value = value;
+    });
+
     document.getElementById('formAdicionarCliente').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -1487,6 +1503,11 @@
       try {
         console.log('🔧 Criando usuário no Authentication...');
         
+        // Verificar se Firebase Database está disponível
+        if (!firebase.database) {
+          throw new Error('Firebase Database não está disponível!');
+        }
+        
         // Salvar sessão atual do admin
         const currentUser = firebase.auth().currentUser;
         if (!currentUser) {
@@ -1494,15 +1515,20 @@
           return;
         }
         
+        console.log('👤 Admin atual:', currentUser.email);
+        
         // Criar usuário no Firebase Authentication
+        console.log('📧 Criando usuário:', email);
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
         const user = userCredential.user;
         
-        console.log('✅ Usuário criado no Authentication:', user.uid);
+        console.log('✅ Usuário criado no Authentication');
+        console.log('🆔 UID:', user.uid);
+        console.log('📧 Email:', user.email);
         
         // Atualizar displayName
         await user.updateProfile({ displayName: nome });
-        console.log('✅ DisplayName atualizado');
+        console.log('✅ DisplayName atualizado para:', nome);
         
         // Criar perfil no Realtime Database
         const perfil = {
@@ -1518,9 +1544,27 @@
           atualizadoEm: new Date().toISOString()
         };
         
-        console.log('📝 Salvando perfil no Realtime Database...');
-        await firebase.database().ref(`usuarios/${user.uid}`).set(perfil);
-        console.log('✅ Perfil salvo com sucesso');
+        console.log('📝 Dados do perfil:', JSON.stringify(perfil, null, 2));
+        console.log('💾 Salvando em: /usuarios/' + user.uid);
+        
+        const db = firebase.database();
+        const dbRef = db.ref('usuarios/' + user.uid);
+        
+        await dbRef.set(perfil);
+        console.log('✅ Comando set() executado');
+        
+        // Aguardar um momento
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Verificar se foi salvo
+        const snapshot = await dbRef.once('value');
+        const dadosSalvos = snapshot.val();
+        
+        if (dadosSalvos) {
+          console.log('✅✅✅ VERIFICADO! Dados no Firebase:', JSON.stringify(dadosSalvos, null, 2));
+        } else {
+          console.error('❌ ERRO! Dados não foram encontrados no Firebase!');
+        }
         
         // Fazer logout do novo usuário criado
         await firebase.auth().signOut();
