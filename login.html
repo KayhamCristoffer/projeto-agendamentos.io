@@ -274,6 +274,16 @@
         console.log('📝 Dados do perfil a serem salvos:', JSON.stringify(perfil, null, 2));
         console.log('🔑 Salvando em: /usuarios/' + user.uid);
         
+        // Testar permissões primeiro
+        try {
+          const testRef = firebase.database().ref('.info/connected');
+          const testSnap = await testRef.once('value');
+          console.log('✅ Conexão com Firebase OK:', testSnap.val());
+        } catch (testError) {
+          console.error('❌ Erro de conexão com Firebase:', testError);
+          throw new Error('Não foi possível conectar ao Firebase Database. Verifique as permissões.');
+        }
+        
         // Obter referência do database
         const db = firebase.database();
         console.log('✅ Database disponível:', !!db);
@@ -281,9 +291,20 @@
         const dbRef = db.ref('usuarios/' + user.uid);
         console.log('📍 Referência criada:', dbRef.toString());
         
-        // Salvar no Realtime Database
-        await dbRef.set(perfil);
-        console.log('✅ Comando set() executado com sucesso');
+        // Salvar no Realtime Database COM tratamento de erro específico
+        try {
+          await dbRef.set(perfil);
+          console.log('✅ Comando set() executado com sucesso');
+        } catch (setError) {
+          console.error('❌ ERRO ao executar set():', setError);
+          console.error('Código do erro:', setError.code);
+          console.error('Mensagem:', setError.message);
+          
+          if (setError.code === 'PERMISSION_DENIED') {
+            throw new Error('Permissão negada para salvar dados. Verifique as regras do Firebase Realtime Database.');
+          }
+          throw setError;
+        }
         
         // Aguardar um momento para garantir que foi salvo
         await new Promise(resolve => setTimeout(resolve, 500));

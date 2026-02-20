@@ -1508,14 +1508,22 @@
           throw new Error('Firebase Database não está disponível!');
         }
         
-        // Salvar sessão atual do admin
+        // Salvar dados do admin atual
         const currentUser = firebase.auth().currentUser;
         if (!currentUser) {
           alert('❌ Você precisa estar logado como admin para criar usuários.');
           return;
         }
         
-        console.log('👤 Admin atual:', currentUser.email);
+        const adminEmail = currentUser.email;
+        console.log('👤 Admin atual:', adminEmail);
+        
+        // Pedir senha do admin para relogar depois
+        const adminSenha = prompt('⚠️ Para criar um novo cliente, digite SUA senha de admin para confirmar:');
+        if (!adminSenha) {
+          alert('❌ Senha não fornecida. Operação cancelada.');
+          return;
+        }
         
         // Criar usuário no Firebase Authentication
         console.log('📧 Criando usuário:', email);
@@ -1550,8 +1558,16 @@
         const db = firebase.database();
         const dbRef = db.ref('usuarios/' + user.uid);
         
-        await dbRef.set(perfil);
-        console.log('✅ Comando set() executado');
+        try {
+          await dbRef.set(perfil);
+          console.log('✅ Comando set() executado');
+        } catch (setError) {
+          console.error('❌ ERRO ao salvar perfil:', setError);
+          if (setError.code === 'PERMISSION_DENIED') {
+            throw new Error('Permissão negada. Verifique as regras do Firebase.');
+          }
+          throw setError;
+        }
         
         // Aguardar um momento
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -1570,14 +1586,26 @@
         await firebase.auth().signOut();
         console.log('🔓 Logout do novo usuário realizado');
         
-        alert(`✅ Cliente "${nome}" criado com sucesso!\n\n📧 Email: ${email}\n🔑 UID: ${user.uid}\n\n⚠️ Você será redirecionado para fazer login novamente como admin.`);
-        
-        fecharModalAdicionarCliente();
-        
-        // Redirecionar para login
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 2000);
+        // Relogar como admin
+        console.log('🔄 Relogando como admin:', adminEmail);
+        try {
+          await firebase.auth().signInWithEmailAndPassword(adminEmail, adminSenha);
+          console.log('✅ Admin relogado com sucesso!');
+          
+          alert(`✅ Cliente "${nome}" criado com sucesso!\n\n📧 Email: ${email}\n🔑 UID: ${user.uid}\n\n✅ Você continua logado como admin.`);
+          
+          fecharModalAdicionarCliente();
+          
+          // Recarregar lista de clientes
+          carregarClientesAdmin();
+          
+        } catch (reloginError) {
+          console.error('❌ Erro ao relogar como admin:', reloginError);
+          alert(`✅ Cliente criado com sucesso!\n\n❌ Porém, erro ao relogar como admin.\nVocê será redirecionado para fazer login novamente.`);
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        }
         
       } catch (error) {
         console.error('❌ Erro ao criar cliente:', error);
