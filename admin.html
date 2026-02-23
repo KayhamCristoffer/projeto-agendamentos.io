@@ -83,6 +83,9 @@
       <button onclick="mostrarTab('calendario')" id="tabCalendario" class="px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap">
         📅 Calendário
       </button>
+      <button onclick="mostrarTab('aprovacoes')" id="tabAprovacoes" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
+        ⏳ Aprovações <span id="badgeAprovacoes" class="hidden bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-1">0</span>
+      </button>
       <button onclick="mostrarTab('clientes')" id="tabClientes" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
         👥 Gerenciar Clientes
       </button>
@@ -171,6 +174,17 @@
         </button>
       </div>
       <div id="listaConcluidos" class="space-y-4"></div>
+    </div>
+
+    <!-- Seção: Aprovações Pendentes -->
+    <div id="secaoAprovacoes" class="hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">⏳ Aprovações Pendentes</h2>
+        <button onclick="carregarAprovacoesPendentes()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+          🔄 Atualizar
+        </button>
+      </div>
+      <div id="listaAprovacoesPendentes" class="space-y-4"></div>
     </div>
 
     <!-- Seção: Gerenciar Clientes -->
@@ -476,6 +490,72 @@
     </div>
   </div>
 
+  <!-- ⭐ Modal Editar Cliente -->
+  <div id="modalEditarCliente" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✏️ Editar Cliente</h3>
+      <form id="formEditarCliente" class="space-y-4">
+        <input type="hidden" id="editClienteId">
+        
+        <!-- Nome Completo -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome Completo *</label>
+          <input type="text" id="editClienteNome" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+
+        <!-- Email (readonly) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+          <input type="email" id="editClienteEmail" readonly class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 cursor-not-allowed">
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            ℹ️ O email não pode ser alterado aqui (exige Firebase Authentication)
+          </p>
+        </div>
+
+        <!-- Telefone/WhatsApp -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Telefone/WhatsApp *</label>
+          <input type="tel" id="editClienteTelefone" required maxlength="15" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+
+        <!-- Status de Aprovação -->
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+          <label class="flex items-center cursor-pointer">
+            <input type="checkbox" id="editClienteAprovado" class="w-5 h-5 text-primary focus:ring-primary rounded">
+            <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+              ✅ Conta Aprovada (permite login)
+            </span>
+          </label>
+        </div>
+
+        <!-- Total de Visitas -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Total de Visitas</label>
+          <input type="number" id="editClienteVisitas" min="0" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+
+        <!-- Informações Adicionais (readonly) -->
+        <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+          <p class="text-sm text-blue-800 dark:text-blue-200">
+            <strong>📅 Cadastrado em:</strong> <span id="editClienteCriadoEm"></span><br>
+            <strong>🔄 Última Atualização:</strong> <span id="editClienteAtualizadoEm"></span><br>
+            <strong>👁️ Última Visita:</strong> <span id="editClienteUltimaVisita"></span>
+          </p>
+        </div>
+
+        <!-- Botões -->
+        <div class="flex gap-2">
+          <button type="submit" class="flex-1 bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+            ✅ Salvar Alterações
+          </button>
+          <button type="button" onclick="fecharModalEditarCliente()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Adicionar Membro Equipe -->
   <div id="modalAdicionarMembro" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
@@ -709,7 +789,7 @@
     // Alternar tabs
     function mostrarTab(tab) {
       // Adicionar tabs de serviços, produtos e faturamento
-      const allTabs = ['calendario', 'usuarios', 'clientes', 'equipe', 'servicos', 'produtos', 'faturamento', 'pendentes', 'confirmados', 'concluidos'];
+      const allTabs = ['calendario', 'usuarios', 'aprovacoes', 'clientes', 'equipe', 'servicos', 'produtos', 'faturamento', 'pendentes', 'confirmados', 'concluidos'];
       
       allTabs.forEach(t => {
         const secao = document.getElementById(`secao${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -727,6 +807,7 @@
       if (tab === 'pendentes') carregarPendentes();
       else if (tab === 'confirmados') carregarConfirmados();
       else if (tab === 'concluidos') carregarConcluidos();
+      else if (tab === 'aprovacoes') carregarAprovacoesPendentes();
       else if (tab === 'clientes') carregarClientesAdmin();
       else if (tab === 'equipe') carregarEquipeAdmin();
       else if (tab === 'servicos') carregarServicosAdmin();
@@ -1501,42 +1582,22 @@
       const senha = document.getElementById('novoClienteSenha').value;
       
       try {
-        console.log('🔧 Criando usuário no Authentication...');
+        console.log('🔧 Criando cliente...');
         
-        // Verificar se Firebase Database está disponível
-        if (!firebase.database) {
-          throw new Error('Firebase Database não está disponível!');
-        }
-        
-        // Salvar dados do admin atual
         const currentUser = firebase.auth().currentUser;
         if (!currentUser) {
-          alert('❌ Você precisa estar logado como admin para criar usuários.');
+          alert('❌ Você precisa estar logado como admin.');
           return;
         }
         
-        const adminEmail = currentUser.email;
-        console.log('👤 Admin atual:', adminEmail);
-        
-        // Pedir senha do admin para relogar depois
-        const adminSenha = prompt('⚠️ Para criar um novo cliente, digite SUA senha de admin para confirmar:');
-        if (!adminSenha) {
-          alert('❌ Senha não fornecida. Operação cancelada.');
-          return;
-        }
-        
-        // Criar usuário no Firebase Authentication
-        console.log('📧 Criando usuário:', email);
+        // Criar usuário
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
         const user = userCredential.user;
         
-        console.log('✅ Usuário criado no Authentication');
-        console.log('🆔 UID:', user.uid);
-        console.log('📧 Email:', user.email);
+        console.log('✅ Cliente criado:', user.uid);
         
         // Atualizar displayName
         await user.updateProfile({ displayName: nome });
-        console.log('✅ DisplayName atualizado para:', nome);
         
         // Criar perfil no Realtime Database
         const perfil = {
@@ -1552,60 +1613,17 @@
           atualizadoEm: new Date().toISOString()
         };
         
-        console.log('📝 Dados do perfil:', JSON.stringify(perfil, null, 2));
-        console.log('💾 Salvando em: /usuarios/' + user.uid);
-        
         const db = firebase.database();
-        const dbRef = db.ref('usuarios/' + user.uid);
+        await db.ref('usuarios/' + user.uid).set(perfil);
+        console.log('✅ Perfil salvo');
         
-        try {
-          await dbRef.set(perfil);
-          console.log('✅ Comando set() executado');
-        } catch (setError) {
-          console.error('❌ ERRO ao salvar perfil:', setError);
-          if (setError.code === 'PERMISSION_DENIED') {
-            throw new Error('Permissão negada. Verifique as regras do Firebase.');
-          }
-          throw setError;
-        }
-        
-        // Aguardar um momento
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Verificar se foi salvo
-        const snapshot = await dbRef.once('value');
-        const dadosSalvos = snapshot.val();
-        
-        if (dadosSalvos) {
-          console.log('✅✅✅ VERIFICADO! Dados no Firebase:', JSON.stringify(dadosSalvos, null, 2));
-        } else {
-          console.error('❌ ERRO! Dados não foram encontrados no Firebase!');
-        }
-        
-        // Fazer logout do novo usuário criado
+        // Fazer logout do novo usuário
         await firebase.auth().signOut();
-        console.log('🔓 Logout do novo usuário realizado');
         
-        // Relogar como admin
-        console.log('🔄 Relogando como admin:', adminEmail);
-        try {
-          await firebase.auth().signInWithEmailAndPassword(adminEmail, adminSenha);
-          console.log('✅ Admin relogado com sucesso!');
-          
-          alert(`✅ Cliente "${nome}" criado com sucesso!\n\n📧 Email: ${email}\n🔑 UID: ${user.uid}\n\n✅ Você continua logado como admin.`);
-          
-          fecharModalAdicionarCliente();
-          
-          // Recarregar lista de clientes
-          carregarClientesAdmin();
-          
-        } catch (reloginError) {
-          console.error('❌ Erro ao relogar como admin:', reloginError);
-          alert(`✅ Cliente criado com sucesso!\n\n❌ Porém, erro ao relogar como admin.\nVocê será redirecionado para fazer login novamente.`);
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 2000);
-        }
+        alert(`✅ Cliente "${nome}" criado!\n\nEmail: ${email}\nUID: ${user.uid}\n\n⚠️ Faça login novamente como admin.`);
+        
+        fecharModalAdicionarCliente();
+        window.location.href = 'login.html';
         
       } catch (error) {
         console.error('❌ Erro ao criar cliente:', error);
@@ -1624,29 +1642,109 @@
     });
 
     // Editar Cliente
+    // ⭐ Editar Cliente - Modal Completa
     async function editarCliente(userId) {
       try {
+        console.log('✏️ Abrindo modal de edição para:', userId);
         const perfil = await obterPerfilUsuario(userId);
-        const nome = prompt('Nome:', perfil.nome || '');
-        if (nome === null) return;
         
-        const telefone = prompt('Telefone/WhatsApp:', perfil.telefone || perfil.whatsapp || '');
-        if (telefone === null) return;
+        // Preencher campos
+        document.getElementById('editClienteId').value = userId;
+        document.getElementById('editClienteNome').value = perfil.nome || perfil.nomeCompleto || '';
+        document.getElementById('editClienteEmail').value = perfil.email || '';
+        document.getElementById('editClienteTelefone').value = perfil.telefone || perfil.whatsapp || '';
+        document.getElementById('editClienteAprovado').checked = perfil.aprovado === true;
+        document.getElementById('editClienteVisitas').value = perfil.totalVisitas || 0;
         
-        await atualizarPerfilUsuario(userId, {
-          nome: nome,
-          telefone: telefone,
-          whatsapp: telefone,
-          atualizadoEm: new Date().toISOString()
-        });
+        // Preencher informações readonly
+        document.getElementById('editClienteCriadoEm').textContent = perfil.criadoEm 
+          ? new Date(perfil.criadoEm).toLocaleString('pt-BR')
+          : 'Data desconhecida';
+        document.getElementById('editClienteAtualizadoEm').textContent = perfil.atualizadoEm 
+          ? new Date(perfil.atualizadoEm).toLocaleString('pt-BR')
+          : 'Nunca';
+        document.getElementById('editClienteUltimaVisita').textContent = perfil.ultimaVisita 
+          ? new Date(perfil.ultimaVisita).toLocaleString('pt-BR')
+          : 'Nunca';
         
-        alert('Cliente atualizado com sucesso!');
-        await carregarClientesAdmin();
+        // Abrir modal
+        document.getElementById('modalEditarCliente').classList.remove('hidden');
       } catch (error) {
-        console.error('Erro ao editar cliente:', error);
-        alert('Erro ao editar cliente: ' + error.message);
+        console.error('❌ Erro ao abrir modal de edição:', error);
+        alert('Erro ao carregar dados do cliente: ' + error.message);
       }
     }
+
+    function fecharModalEditarCliente() {
+      document.getElementById('modalEditarCliente').classList.add('hidden');
+      document.getElementById('formEditarCliente').reset();
+    }
+
+    // Máscara de telefone na modal de edição
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('editClienteTelefone')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length <= 11) {
+          value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+          value = value.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+        
+        e.target.value = value;
+      });
+    });
+
+    // Submit do formulário de edição
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('formEditarCliente')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const userId = document.getElementById('editClienteId').value;
+        const nome = document.getElementById('editClienteNome').value.trim();
+        const telefone = document.getElementById('editClienteTelefone').value.trim();
+        const aprovado = document.getElementById('editClienteAprovado').checked;
+        const visitas = parseInt(document.getElementById('editClienteVisitas').value) || 0;
+
+        if (!nome || !telefone) {
+          alert('Por favor, preencha todos os campos obrigatórios.');
+          return;
+        }
+
+        // Validar telefone
+        const telefoneNumeros = telefone.replace(/\D/g, '');
+        if (telefoneNumeros.length < 10) {
+          alert('Telefone inválido. Digite no formato (DD) XXXXX-XXXX');
+          return;
+        }
+
+        try {
+          console.log('💾 Salvando alterações do cliente:', userId);
+          
+          const updates = {
+            nome: nome,
+            nomeCompleto: nome,
+            telefone: telefone,
+            whatsapp: telefone,
+            aprovado: aprovado,
+            totalVisitas: visitas,
+            atualizadoEm: new Date().toISOString()
+          };
+
+          await firebase.database().ref(`usuarios/${userId}`).update(updates);
+          
+          // Atualizar displayName no Authentication se possível
+          // Nota: Só funciona para o próprio usuário logado
+          // Para outros usuários, seria necessário Firebase Admin SDK no backend
+          
+          alert('✅ Cliente atualizado com sucesso!');
+          fecharModalEditarCliente();
+          await carregarClientesAdmin();
+        } catch (error) {
+          console.error('❌ Erro ao salvar alterações:', error);
+          alert('Erro ao salvar alterações: ' + error.message);
+        }
+      });
+    });
 
     // Deletar Cliente
     async function deletarCliente(userId) {
@@ -2824,6 +2922,125 @@
         'cancelado': '❌ Cancelado'
       };
       return texts[status] || status;
+    }
+
+    // ⭐ APROVAÇÕES PENDENTES
+    async function carregarAprovacoesPendentes() {
+      const container = document.getElementById('listaAprovacoesPendentes');
+      const badge = document.getElementById('badgeAprovacoes');
+      
+      try {
+        container.innerHTML = '<div class="text-center py-8 text-gray-500">🔄 Carregando...</div>';
+        
+        const db = firebase.database();
+        const snapshot = await db.ref('usuarios').once('value');
+        const usuarios = snapshot.val() || {};
+        
+        // Filtrar apenas usuários pendentes de aprovação (não aprovados e não admin)
+        const pendentes = Object.entries(usuarios)
+          .filter(([uid, user]) => user.aprovado === false && user.role !== 'admin')
+          .sort((a, b) => new Date(b[1].criadoEm) - new Date(a[1].criadoEm));
+        
+        console.log('📋 Aprovações pendentes encontradas:', pendentes.length);
+        
+        // Atualizar badge
+        if (pendentes.length > 0) {
+          badge.textContent = pendentes.length;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+        
+        if (pendentes.length === 0) {
+          container.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-8 text-center">
+              <span class="text-6xl">✅</span>
+              <p class="text-green-800 dark:text-green-200 font-semibold mt-4">Nenhuma aprovação pendente!</p>
+              <p class="text-green-600 dark:text-green-300 mt-2">Todos os usuários cadastrados já foram aprovados.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = pendentes.map(([uid, user]) => `
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <h3 class="text-lg font-bold text-gray-900 dark:text-white">📧 ${user.email}</h3>
+                  <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">⏳ Aguardando Aprovação</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <strong>ID:</strong> ${uid}<br>
+                  <strong>Cadastrado em:</strong> ${new Date(user.criadoEm).toLocaleString('pt-BR')}<br>
+                  <strong>Role:</strong> ${user.role || 'cliente'}
+                </p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button onclick="aprovarUsuario('${uid}')" 
+                  class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                  ✅ Aprovar
+                </button>
+                <button onclick="rejeitarUsuario('${uid}')" 
+                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                  ❌ Rejeitar
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (error) {
+        console.error('❌ Erro ao carregar aprovações:', error);
+        container.innerHTML = `
+          <div class="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+            <p class="text-red-800 dark:text-red-200 font-semibold">❌ Erro ao carregar aprovações</p>
+            <p class="text-red-600 dark:text-red-300 text-sm mt-2">${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Aprovar usuário
+    async function aprovarUsuario(uid) {
+      if (!confirm('Tem certeza que deseja APROVAR este usuário?')) return;
+      
+      try {
+        const db = firebase.database();
+        await db.ref(`usuarios/${uid}`).update({
+          aprovado: true,
+          atualizadoEm: new Date().toISOString(),
+          aprovadoEm: new Date().toISOString()
+        });
+        
+        alert('✅ Usuário aprovado com sucesso! Ele já pode fazer login.');
+        carregarAprovacoesPendentes();
+      } catch (error) {
+        console.error('❌ Erro ao aprovar usuário:', error);
+        alert('❌ Erro ao aprovar usuário: ' + error.message);
+      }
+    }
+
+    // Rejeitar usuário
+    async function rejeitarUsuario(uid) {
+      if (!confirm('Tem certeza que deseja REJEITAR este usuário? Esta ação irá EXCLUIR a conta permanentemente!')) return;
+      
+      try {
+        const db = firebase.database();
+        const auth = firebase.auth();
+        
+        // Remover do Realtime Database
+        await db.ref(`usuarios/${uid}`).remove();
+        
+        alert('✅ Usuário rejeitado e removido do sistema.');
+        carregarAprovacoesPendentes();
+        
+        // Nota: Não é possível excluir do Authentication sem Admin SDK
+        // O admin precisará excluir manualmente no Firebase Console se necessário
+      } catch (error) {
+        console.error('❌ Erro ao rejeitar usuário:', error);
+        alert('❌ Erro ao rejeitar usuário: ' + error.message);
+      }
     }
 
   </script>

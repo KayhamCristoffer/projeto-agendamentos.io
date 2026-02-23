@@ -195,9 +195,16 @@
     // Mostrar mensagens
     function mostrarMensagem(tipo, mensagem, divId) {
       const div = document.getElementById(divId);
-      const classes = tipo === 'sucesso' 
-        ? 'bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 dark:text-green-200 px-4 py-3 rounded'
-        : 'bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded';
+      let classes;
+      
+      if (tipo === 'sucesso') {
+        classes = 'bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 dark:text-green-200 px-4 py-3 rounded';
+      } else if (tipo === 'info') {
+        classes = 'bg-blue-100 dark:bg-blue-900 border border-blue-400 text-blue-700 dark:text-blue-200 px-4 py-3 rounded';
+      } else {
+        classes = 'bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded';
+      }
+      
       div.innerHTML = `<div class="${classes}">${mensagem}</div>`;
       setTimeout(() => div.innerHTML = '', 5000);
     }
@@ -215,11 +222,27 @@
         // Verificar role do usuário
         const perfil = await obterPerfilUsuario(user.uid);
         
+        // Admin sempre pode acessar
         if (perfil && perfil.role === 'admin') {
           window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'cliente.html';
+          return;
         }
+        
+        // Cliente precisa estar aprovado
+        if (perfil && !perfil.aprovado) {
+          mostrarMensagem('info', '⏳ Sua conta está aguardando aprovação do administrador. Você receberá um e-mail quando for aprovado.', 'mensagemLogin');
+          await firebase.auth().signOut();
+          return;
+        }
+        
+        // Cliente aprovado mas primeiro acesso
+        if (perfil && perfil.aprovado && perfil.primeiroAcesso) {
+          window.location.href = 'primeiro-acesso.html';
+          return;
+        }
+        
+        // Cliente aprovado e cadastro completo
+        window.location.href = 'cliente.html';
       } catch (error) {
         console.error('Erro ao fazer login:', error);
         mostrarMensagem('erro', 'E-mail ou senha incorretos. Tente novamente.', 'mensagemLogin');
@@ -241,92 +264,57 @@
       }
 
       try {
-        // Verificar se Firebase Database está disponível
-        if (!firebase.database) {
-          throw new Error('Firebase Database não está disponível. Verifique se o SDK foi carregado corretamente.');
-        }
-        
         console.log('🔥 Criando usuário no Authentication...');
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
         const user = userCredential.user;
         
-        console.log('✅ Usuário criado no Authentication:', user.uid);
-        console.log('📧 Email:', user.email);
+        console.log('✅ Usuário criado:', user.uid);
         
         // Atualizar displayName
-        await user.updateProfile({ displayName: nome });
-        console.log('✅ DisplayName atualizado para:', nome);
+        await user.updateProfile({ displayName: 'Aguardando Aprovação' });
         
-        // Preparar dados do perfil
+        // Salvar perfil no Realtime Database COM APROVAÇÃO PENDENTE
         const perfil = {
-          nome: nome,
-          nomeCompleto: nome,
-          telefone: telefone,
+          nome: null, // Será preenchido no primeiro acesso após aprovação
+          nomeCompleto: null,
+          telefone: null,
           email: email,
           role: 'cliente',
-          whatsapp: telefone,
+          whatsapp: null,
           totalVisitas: 0,
           ultimaVisita: null,
+          aprovado: false, // ⭐ CAMPO NOVO - Requer aprovação do admin
+          primeiroAcesso: true, // ⭐ CAMPO NOVO - Indica que precisa completar cadastro
           criadoEm: new Date().toISOString(),
           atualizadoEm: new Date().toISOString()
         };
         
-        console.log('📝 Dados do perfil a serem salvos:', JSON.stringify(perfil, null, 2));
-        console.log('🔑 Salvando em: /usuarios/' + user.uid);
-        
-        // Testar permissões primeiro
-        try {
-          const testRef = firebase.database().ref('.info/connected');
-          const testSnap = await testRef.once('value');
-          console.log('✅ Conexão com Firebase OK:', testSnap.val());
-        } catch (testError) {
-          console.error('❌ Erro de conexão com Firebase:', testError);
-          throw new Error('Não foi possível conectar ao Firebase Database. Verifique as permissões.');
-        }
-        
-        // Obter referência do database
         const db = firebase.database();
-        console.log('✅ Database disponível:', !!db);
-        
-        const dbRef = db.ref('usuarios/' + user.uid);
-        console.log('📍 Referência criada:', dbRef.toString());
-        
-        // Salvar no Realtime Database COM tratamento de erro específico
-        try {
-          await dbRef.set(perfil);
-          console.log('✅ Comando set() executado com sucesso');
-        } catch (setError) {
-          console.error('❌ ERRO ao executar set():', setError);
-          console.error('Código do erro:', setError.code);
-          console.error('Mensagem:', setError.message);
-          
-          if (setError.code === 'PERMISSION_DENIED') {
-            throw new Error('Permissão negada para salvar dados. Verifique as regras do Firebase Realtime Database.');
-          }
-          throw setError;
-        }
-        
-        // Aguardar um momento para garantir que foi salvo
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Verificar se foi realmente salvo
-        const snapshot = await dbRef.once('value');
-        const dadosSalvos = snapshot.val();
-        
-        if (dadosSalvos) {
-          console.log('✅✅✅ SUCESSO! Dados verificados no Firebase:', JSON.stringify(dadosSalvos, null, 2));
-        } else {
-          console.error('❌ ERRO! Dados não foram encontrados após salvar!');
-          throw new Error('Os dados não foram salvos corretamente no Firebase.');
-        }
+        await db.ref('usuarios/' + user.uid).set(perfil);
+        console.log('✅ Perfil salvo com aprovação pendente');
 
-        mostrarMensagem('sucesso', 'Conta criada com sucesso! Redirecionando...', 'mensagemCadastro');
-        setTimeout(() => window.location.href = 'cliente.html', 2000);
+        // Fazer logout imediato para não permitir acesso antes da aprovação
+        await firebase.auth().signOut();
+
+        mostrarMensagem('sucesso', '✅ Conta criada! Aguarde a aprovação do administrador para acessar o sistema.', 'mensagemCadastro');
+        
+        // Voltar para aba de login
+        setTimeout(() => {
+          document.getElementById('cadastroTab').classList.remove('border-primary', 'text-primary');
+          document.getElementById('cadastroTab').classList.add('text-gray-500');
+          document.getElementById('loginTab').classList.add('border-primary', 'text-primary');
+          document.getElementById('loginTab').classList.remove('text-gray-500');
+          document.getElementById('formLogin').classList.remove('hidden');
+          document.getElementById('formCadastro').classList.add('hidden');
+          document.getElementById('formCadastro').reset();
+        }, 3000);
       } catch (error) {
         console.error('❌ Erro ao criar conta:', error);
         let mensagem = 'Erro ao criar conta. Tente novamente.';
         if (error.code === 'auth/email-already-in-use') {
           mensagem = 'Este e-mail já está em uso.';
+        } else if (error.code === 'PERMISSION_DENIED') {
+          mensagem = 'Erro de permissão. Entre em contato com o administrador.';
         }
         mostrarMensagem('erro', mensagem, 'mensagemCadastro');
       }
@@ -364,11 +352,28 @@
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         const perfil = await obterPerfilUsuario(user.uid);
+        
+        // Admin sempre pode acessar
         if (perfil && perfil.role === 'admin') {
           window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'cliente.html';
+          return;
         }
+        
+        // Cliente precisa estar aprovado
+        if (perfil && !perfil.aprovado) {
+          mostrarMensagem('info', 'Sua conta está aguardando aprovação do administrador.', 'mensagemLogin');
+          await firebase.auth().signOut();
+          return;
+        }
+        
+        // Cliente aprovado mas primeiro acesso
+        if (perfil && perfil.aprovado && perfil.primeiroAcesso) {
+          window.location.href = 'primeiro-acesso.html';
+          return;
+        }
+        
+        // Cliente aprovado e cadastro completo
+        window.location.href = 'cliente.html';
       }
     });
   </script>
