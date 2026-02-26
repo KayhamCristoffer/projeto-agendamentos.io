@@ -94,6 +94,17 @@
           </div>
         </div>
 
+        <!-- Selecionar Profissional -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+          <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            👤 Selecione o Profissional *
+          </label>
+          <select id="selectProfissional" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+            <option value="">Carregando profissionais...</option>
+          </select>
+        </div>
+
         <!-- Grid de Serviços -->
         <div>
           <label class="block text-lg font-semibold text-gray-900 dark:text-white mb-3">Serviços</label>
@@ -257,6 +268,8 @@
   <script src="firebase/database.js"></script>
   <script src="firebase/session-manager.js"></script>
   <script src="assets/theme.js"></script>
+  <script src="assets/toast.js"></script>
+  <script src="assets/business-rules.js"></script>
 
   <script>
     let usuarioAtual = null;
@@ -322,6 +335,13 @@
         console.log('✅ Produtos carregados');
       } catch (error) {
         console.error('❌ Erro ao carregar produtos:', error);
+      }
+      
+      try {
+        await carregarProfissionaisSelect();
+        console.log('✅ Profissionais carregados no select');
+      } catch (error) {
+        console.error('❌ Erro ao carregar profissionais:', error);
       }
       
       try {
@@ -420,6 +440,31 @@
     async function listarEquipe() {
       const snapshot = await firebase.database().ref('equipe').once('value');
       return snapshot.val() || {};
+    }
+
+    // Carregar profissionais no select
+    async function carregarProfissionaisSelect() {
+      const select = document.getElementById('selectProfissional');
+      
+      try {
+        const equipe = await listarEquipe();
+        const membros = Object.entries(equipe);
+        
+        if (membros.length === 0) {
+          select.innerHTML = '<option value="">Nenhum profissional cadastrado</option>';
+          return;
+        }
+        
+        select.innerHTML = '<option value="">Selecione um profissional</option>' +
+          membros.map(([id, membro]) => 
+            `<option value="${id}">${membro.nome} - ${membro.cargo}</option>`
+          ).join('');
+        
+        console.log('✅ Profissionais carregados:', membros.length);
+      } catch (error) {
+        console.error('❌ Erro ao carregar profissionais:', error);
+        select.innerHTML = '<option value="">Erro ao carregar profissionais</option>';
+      }
     }
 
     async function curtirMembroEquipe(membroId, usuarioId) {
@@ -704,6 +749,12 @@
         return;
       }
       
+      const profissionalId = document.getElementById('selectProfissional').value;
+      if (!profissionalId) {
+        mostrarMensagem('erro', 'Selecione um profissional!', 'mensagemAgendar');
+        return;
+      }
+      
       const data = document.getElementById('dataAgendamento').value;
       const horario = document.getElementById('horarioSelecionado').value;
       const obs = document.getElementById('observacoes').value;
@@ -728,6 +779,10 @@
       // Determinar o nome do cliente (pessoa para quem é o agendamento)
       const clienteNome = agendadoPara === 'proprio' ? usuarioAtual.displayName : nomeOutraPessoa;
       
+      // Obter dados do profissional
+      const equipe = await listarEquipe();
+      const profissional = equipe[profissionalId];
+      
       try {
         await salvarAgendamento({
           clienteId: usuarioAtual.uid,
@@ -735,6 +790,9 @@
           clienteEmail: usuarioAtual.email,
           agendadoPor: usuarioAtual.displayName,
           paraQuem: agendadoPara === 'proprio' ? 'proprio' : 'terceiro',
+          profissionalId: profissionalId,
+          profissionalNome: profissional.nome,
+          profissionalCargo: profissional.cargo,
           servicos: servicosSelecionados.map(s => ({ id: s.id, nome: s.nome, preco: s.preco, duracao: s.duracao })),
           produtos: produtosSelecionados.length > 0 ? produtosSelecionados.map(p => ({ id: p.id, nome: p.nome, preco: p.preco })) : [],
           dataHora: dataHora,
