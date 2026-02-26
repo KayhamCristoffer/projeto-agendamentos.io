@@ -1,0 +1,1323 @@
+{
+  "agendamentos": {
+    "-N9Z0_ExemploConfirmado": {
+      "agendadoPor": "proprio",
+      "atualizadoEm": "2026-01-26T14:13:04.631Z",
+      "clienteEmail": "kayhamoliveira98@gmail.com",
+      "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+      "clienteNome": "Kayham Cristoffer",
+      "clienteTelefone": "(00) 00000-0000",
+      "criadoEm": "2025-12-16T14:30:00.000Z",
+      "dataHora": "2025-12-20T10:30",
+      "desconto": 10,
+      "duracaoTotal": 50,
+      "observacoes": "Cliente pediu pontualidade.",
+      "precoOriginal": 60,
+      "precoTotal": 50,
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "corte_cabelo_masc",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 35
+        },
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 25
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1734363000000
+    },
+    "-O3A1_ExemploPendente": {
+      "agendadoPor": "proprio",
+      "atualizadoEm": "2026-01-26T14:12:17.871Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "clienteTelefone": "(11) 99999-0000",
+      "criadoEm": "2025-12-16T15:00:00.000Z",
+      "dataHora": "2025-12-21T17:50",
+      "duracaoTotal": 90,
+      "observacoes": "",
+      "precoTotal": 120,
+      "servicos": [
+        {
+          "duracao": 90,
+          "id": "mani_pedi",
+          "nome": "Manicure + Pedicure",
+          "preco": 120
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1734805800000
+    },
+    "-OjucHYvu9NsN8KfAn1z": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-27T16:33:42.576Z",
+      "clienteEmail": "joao@exemplo.com",
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João da Silva",
+      "criadoEm": "2026-01-26T14:07:04.520Z",
+      "dataHora": "2026-01-30T15:00",
+      "desconto": 0,
+      "duracaoTotal": 140,
+      "observacoes": "",
+      "precoOriginal": 240,
+      "precoTotal": 240,
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        },
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        },
+        {
+          "duracao": 90,
+          "id": "depilacao_corporal",
+          "nome": "Depilação Corporal",
+          "preco": 150
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769436424520
+    },
+    "-Ojucj5E3-6TQYf__jKN": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-26T14:12:40.815Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "criadoEm": "2026-01-26T14:09:01.400Z",
+      "dataHora": "2025-12-31T13:00",
+      "desconto": 0,
+      "duracaoTotal": 30,
+      "observacoes": "",
+      "precoOriginal": 50,
+      "precoTotal": 50,
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769436541400
+    },
+    "-Ok-HTK1mI3RdK93duyD": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-27T16:33:49.392Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "criadoEm": "2026-01-27T16:29:28.840Z",
+      "dataHora": "16:00",
+      "duracaoTotal": 80,
+      "observacoes": "",
+      "precoTotal": 150,
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        },
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        },
+        {
+          "duracao": 30,
+          "id": "design_sobrancelhas",
+          "nome": "Design de Sobrancelhas",
+          "preco": 60
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769531368840
+    },
+    "-Ok4fSF4IMUOWXPuB7fd": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-30T18:54:18.464Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "clienteTelefone": "(11) 99999-0000",
+      "criadoEm": "2026-01-28T17:36:44.105Z",
+      "dataHora": "2026-01-29T11:00",
+      "desconto": 5,
+      "duracaoTotal": 90,
+      "observacoes": "",
+      "precoOriginal": 305,
+      "precoTotal": 300,
+      "produtos": [
+        {
+          "id": "shampoo_anti_caspa",
+          "nome": "Shampoo Anti-Caspa",
+          "preco": 45
+        }
+      ],
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "design_sobrancelhas",
+          "nome": "Design de Sobrancelhas",
+          "preco": 60
+        },
+        {
+          "duracao": 60,
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 200
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769621804106
+    },
+    "-OkFFURoO3ScauHqs3en": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-01-30T18:55:38.695Z",
+      "clienteEmail": "joao@exemplo.com",
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João da Silva",
+      "clienteTelefone": "(11) 98888-1111",
+      "criadoEm": "2026-01-30T18:54:44.611Z",
+      "dataHora": "2026-02-01T17:00",
+      "desconto": 0,
+      "duracaoTotal": 20,
+      "observacoes": "",
+      "precoOriginal": 87,
+      "precoTotal": 87,
+      "produtos": [
+        {
+          "id": "shampoo_anti_caspa",
+          "nome": "Shampoo Anti-Caspa",
+          "preco": 45
+        },
+        {
+          "id": "teste",
+          "nome": "teste",
+          "preco": 2
+        }
+      ],
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769799284611
+    },
+    "-OkFGB3FOOb_b5qGPxc5": {
+      "agendadoPor": "Kayham Cristoffer",
+      "atualizadoEm": "2026-02-02T15:13:19.847Z",
+      "clienteEmail": "kayhamoliveira98@gmail.com",
+      "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+      "clienteNome": "Kayham Cristoffer",
+      "criadoEm": "2026-01-30T18:57:47.343Z",
+      "dataHora": "2026-02-02T11:30",
+      "desconto": 22,
+      "duracaoTotal": 140,
+      "observacoes": "",
+      "paraQuem": "proprio",
+      "precoOriginal": 282,
+      "precoTotal": 260,
+      "produtos": [
+        {
+          "id": "teste",
+          "nome": "teste",
+          "preco": 2
+        },
+        {
+          "id": "shampoo_anti_caspa",
+          "nome": "Shampoo Anti-Caspa",
+          "preco": 45
+        }
+      ],
+      "servicos": [
+        {
+          "duracao": 50,
+          "id": "corte_barba",
+          "nome": "Corte + Barba",
+          "preco": 85
+        },
+        {
+          "duracao": 90,
+          "id": "depilacao_corporal",
+          "nome": "Depilação Corporal",
+          "preco": 150
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1769799467344
+    },
+    "-Okixf6d_bLYSNk4-neC": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-05T18:03:24.215Z",
+      "clienteEmail": "joao@exemplo.com",
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João da Silva",
+      "clienteTelefone": "(11) 98888-1111",
+      "criadoEm": "2026-02-05T18:00:45.360Z",
+      "dataHora": "2026-02-06T10:30",
+      "desconto": 0,
+      "duracaoTotal": 90,
+      "observacoes": "",
+      "precoOriginal": 225,
+      "precoTotal": 225,
+      "produtos": [
+        {
+          "id": "shampoo_profissional",
+          "nome": "Shampoo Profissional",
+          "preco": 45
+        }
+      ],
+      "profissionalId": "membro1",
+      "profissionalNome": "Kayham Cristoffer",
+      "servicos": [
+        {
+          "duracao": 90,
+          "id": "limpeza_pele",
+          "nome": "Limpeza de Pele",
+          "preco": 180
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1770314445360
+    },
+    "-OkixxCNyJZQYzyjtznJ": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-05T18:03:05.647Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "clienteTelefone": "(11) 99999-0000",
+      "criadoEm": "2026-02-05T18:01:59.455Z",
+      "dataHora": "2026-02-07T14:00",
+      "desconto": 5,
+      "duracaoTotal": 45,
+      "observacoes": "",
+      "precoOriginal": 125,
+      "precoTotal": 120,
+      "produtos": [
+        {
+          "id": "shampoo_profissional",
+          "nome": "Shampoo Profissional",
+          "preco": 45
+        }
+      ],
+      "profissionalId": "prof_002",
+      "profissionalNome": "Carlos Ferreira",
+      "servicos": [
+        {
+          "duracao": 45,
+          "id": "corte_feminino",
+          "nome": "Corte de Cabelo Feminino",
+          "preco": 80
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1770314519455
+    },
+    "-OkixxCNyJZQYzyjtznK": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-05T18:03:16.743Z",
+      "canceladoEm": "2026-02-05T18:03:16.743Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "clienteTelefone": "(11) 99999-0000",
+      "criadoEm": "2026-02-05T18:01:59.455Z",
+      "dataHora": "2026-02-07T14:00",
+      "desconto": 0,
+      "duracaoTotal": 45,
+      "motivoCancelamento": "duplicado",
+      "observacoes": "",
+      "precoOriginal": 125,
+      "precoTotal": 125,
+      "produtos": [
+        {
+          "id": "shampoo_profissional",
+          "nome": "Shampoo Profissional",
+          "preco": 45
+        }
+      ],
+      "profissionalId": "prof_002",
+      "profissionalNome": "Carlos Ferreira",
+      "servicos": [
+        {
+          "duracao": 45,
+          "id": "corte_feminino",
+          "nome": "Corte de Cabelo Feminino",
+          "preco": 80
+        }
+      ],
+      "status": "cancelado",
+      "timestamp": 1770314519455
+    },
+    "-OlN-33omxIn0We9pqSA": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-18T16:32:35.517Z",
+      "clienteEmail": "teste12@email.com",
+      "clienteId": "Q37XNgvfW1Wssk63P9GSQPrqbZZ2",
+      "clienteNome": "teste12",
+      "clienteTelefone": "12912121212",
+      "criadoEm": "2026-02-13T17:15:37.725Z",
+      "dataHora": "2026-02-14T11:30",
+      "desconto": 0,
+      "duracaoTotal": 20,
+      "observacoes": "",
+      "precoOriginal": 85,
+      "precoTotal": 85,
+      "produtos": [
+        {
+          "id": "shampoo_anti_caspa",
+          "nome": "Shampoo Anti-Caspa",
+          "preco": 45
+        }
+      ],
+      "profissionalId": "prof_002",
+      "profissionalNome": "Carlos Ferreira",
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1771002937725
+    },
+    "-OlOOGmT8gPZ20qod6nm": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-18T16:31:22.135Z",
+      "clienteEmail": "maria@exemplo.com",
+      "clienteId": "KldBfi837hDkfL29Jp2s",
+      "clienteNome": "Maria de Souza",
+      "clienteTelefone": "(11) 99999-0000",
+      "criadoEm": "2026-02-13T23:45:24.238Z",
+      "dataHora": "2026-02-16T11:30",
+      "desconto": 0,
+      "duracaoTotal": 180,
+      "observacoes": "",
+      "precoOriginal": 468,
+      "precoTotal": 468,
+      "produtos": [
+        {
+          "id": "oleo_barba",
+          "nome": "Óleo para Barba",
+          "preco": 38
+        }
+      ],
+      "profissionalId": "membro1",
+      "profissionalNome": "Kayham Cristoffer",
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        },
+        {
+          "duracao": 90,
+          "id": "limpeza_pele",
+          "nome": "Limpeza de Pele",
+          "preco": 180
+        },
+        {
+          "duracao": 60,
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 200
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1771026324238
+    },
+    "-OlOPHSbjp4DZ7Ir1B4m": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-13T23:50:16.425Z",
+      "clienteEmail": "joao@exemplo.com",
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João da Silva",
+      "clienteTelefone": "(11) 98888-1111",
+      "criadoEm": "2026-02-13T23:49:49.139Z",
+      "dataHora": "2026-02-20T08:30",
+      "desconto": 0,
+      "duracaoTotal": 70,
+      "observacoes": "",
+      "precoOriginal": 125,
+      "precoTotal": 125,
+      "profissionalId": "prof_002",
+      "profissionalNome": "Carlos Ferreira",
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        },
+        {
+          "duracao": 50,
+          "id": "corte_barba",
+          "nome": "Corte + Barba",
+          "preco": 85
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1771026589140
+    },
+    "-Ollj398LRKRo3t_25-q": {
+      "agendadoPor": "Kayham Cristoffer",
+      "atualizadoEm": "2026-02-18T17:12:17.345Z",
+      "clienteEmail": "kayhamoliveira98@gmail.com",
+      "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+      "clienteNome": "Kayham Cristoffer",
+      "criadoEm": "2026-02-18T17:11:29.257Z",
+      "dataHora": "2026-03-07T18:00",
+      "desconto": 63,
+      "duracaoTotal": 270,
+      "observacoes": "",
+      "paraQuem": "proprio",
+      "precoOriginal": 763,
+      "precoTotal": 700,
+      "produtos": [
+        {
+          "id": "pomada_modeladora",
+          "nome": "Pomada Modeladora",
+          "preco": 35
+        },
+        {
+          "id": "cera_modeladora",
+          "nome": "Cera Modeladora",
+          "preco": 40
+        },
+        {
+          "id": "oleo_barba",
+          "nome": "Óleo para Barba",
+          "preco": 38
+        },
+        {
+          "id": "shampoo_anti_caspa",
+          "nome": "Shampoo Anti-Caspa",
+          "preco": 45
+        },
+        {
+          "id": "shampoo_profissional",
+          "nome": "Shampoo Profissional",
+          "preco": 45
+        }
+      ],
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "design_sobrancelhas",
+          "nome": "Design de Sobrancelhas",
+          "preco": 60
+        },
+        {
+          "duracao": 90,
+          "id": "manicure_pedicure",
+          "nome": "Manicure + Pedicure",
+          "preco": 120
+        },
+        {
+          "duracao": 60,
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 200
+        },
+        {
+          "duracao": 90,
+          "id": "limpeza_pele",
+          "nome": "Limpeza de Pele",
+          "preco": 180
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1771434689257
+    },
+    "-Olq2RFT0uX-je4CB-OY": {
+      "agendadoPor": "Kayham Cristoffer",
+      "atualizadoEm": "2026-02-23T21:58:45.913Z",
+      "clienteEmail": "kayhamoliveira98@gmail.com",
+      "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+      "clienteNome": "Kayham Cristoffer",
+      "criadoEm": "2026-02-19T13:18:59.684Z",
+      "dataHora": "2026-02-20T08:00",
+      "desconto": 0,
+      "duracaoTotal": 150,
+      "observacoes": "",
+      "paraQuem": "proprio",
+      "precoOriginal": 380,
+      "precoTotal": 380,
+      "servicos": [
+        {
+          "duracao": 90,
+          "id": "limpeza_pele",
+          "nome": "Limpeza de Pele",
+          "preco": 180
+        },
+        {
+          "duracao": 60,
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 200
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1771507139684
+    },
+    "-OmBWCefK7ZLlj-dNIuV": {
+      "agendadoPor": "Kayham Cristoffer",
+      "atualizadoEm": "2026-02-23T22:06:40.979Z",
+      "canceladoEm": "2026-02-23T22:06:40.979Z",
+      "clienteEmail": "kayhamoliveira98@gmail.com",
+      "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+      "clienteNome": "Kayham Cristoffer",
+      "criadoEm": "2026-02-23T22:00:42.950Z",
+      "dataHora": "2026-02-27T13:00",
+      "desconto": 0,
+      "duracaoTotal": 180,
+      "motivoCancelamento": "não veio",
+      "observacoes": "",
+      "paraQuem": "proprio",
+      "precoOriginal": 430,
+      "precoTotal": 430,
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "corte_masculino",
+          "nome": "Corte de Cabelo Masculino",
+          "preco": 50
+        },
+        {
+          "duracao": 90,
+          "id": "limpeza_pele",
+          "nome": "Limpeza de Pele",
+          "preco": 180
+        },
+        {
+          "duracao": 60,
+          "id": "massagem_relaxante",
+          "nome": "Massagem Relaxante",
+          "preco": 200
+        }
+      ],
+      "status": "cancelado",
+      "timestamp": 1771884042950
+    },
+    "-OmBWsr_17LE7PyAeAhB": {
+      "agendadoPor": "taisa",
+      "atualizadoEm": "2026-02-23T22:06:47.768Z",
+      "clienteEmail": "taisa@email.com",
+      "clienteId": "eHlsL4TEvrawo40lK22TZ4Anssi2",
+      "clienteNome": "taisa",
+      "criadoEm": "2026-02-23T22:03:39.928Z",
+      "dataHora": "2026-03-03T09:30",
+      "desconto": 15,
+      "duracaoTotal": 30,
+      "observacoes": "",
+      "paraQuem": "proprio",
+      "precoOriginal": 95,
+      "precoTotal": 80,
+      "produtos": [
+        {
+          "id": "shampoo_profissional",
+          "nome": "Shampoo Profissional",
+          "preco": 45
+        }
+      ],
+      "servicos": [
+        {
+          "duracao": 30,
+          "id": "depilacao_facial",
+          "nome": "Depilação Facial",
+          "preco": 50
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1771884219928
+    },
+    "-OmQAqA_MW5GmNB-BHtP": {
+      "agendadoPor": "admin",
+      "atualizadoEm": "2026-02-26T18:26:32.232Z",
+      "clienteEmail": "teste12@email.com",
+      "clienteId": "Q37XNgvfW1Wssk63P9GSQPrqbZZ2",
+      "clienteNome": "teste12",
+      "clienteTelefone": "12912121212",
+      "criadoEm": "2026-02-26T18:21:40.021Z",
+      "dataHora": "2026-03-05T17:30",
+      "desconto": 0,
+      "duracaoTotal": 20,
+      "observacoes": "",
+      "precoOriginal": 40,
+      "precoTotal": 40,
+      "profissionalId": "membro1",
+      "profissionalNome": "Kayham Cristoffer",
+      "servicos": [
+        {
+          "duracao": 20,
+          "id": "barba",
+          "nome": "Barba",
+          "preco": 40
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1772130100021
+    },
+    "-P4B2_ExemploConcluido": {
+      "agendadoPor": "proprio",
+      "atualizadoEm": "2025-12-15T15:00:00.000Z",
+      "clienteEmail": "joao@exemplo.com",
+      "clienteId": "JdhBfj837hDkfL29Jp1s",
+      "clienteNome": "João da Silva",
+      "clienteTelefone": "(11) 98888-1111",
+      "criadoEm": "2025-12-10T10:00:00.000Z",
+      "dataHora": "2025-12-15T14:00",
+      "duracaoTotal": 50,
+      "observacoes": "Cliente satisfeito",
+      "precoTotal": 85,
+      "servicos": [
+        {
+          "duracao": 50,
+          "id": "corte_barba",
+          "nome": "Corte + Barba",
+          "preco": 85
+        }
+      ],
+      "status": "concluido",
+      "timestamp": 1734271200000
+    }
+  },
+  "chats": {
+    "-N9Z0_ExemploConfirmado": {
+      "mensagens": {
+        "msg1": {
+          "nome": "Kayham Cristoffer",
+          "texto": "Olá! Confirmo meu agendamento.",
+          "timestamp": 1734363100000,
+          "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2"
+        },
+        "msg2": {
+          "nome": "Administrador",
+          "texto": "Perfeito! Te esperamos no horário agendado.",
+          "timestamp": 1734363200000,
+          "userId": "admin_system"
+        }
+      }
+    },
+    "-O3A1_ExemploPendente": {
+      "mensagens": {
+        "msg1": {
+          "nome": "Maria de Souza",
+          "texto": "Olá, preciso de ajuda com meu agendamento.",
+          "timestamp": 1734806000000,
+          "userId": "KldBfi837hDkfL29Jp2s"
+        }
+      }
+    },
+    "-OkFGB3FOOb_b5qGPxc5": {
+      "mensagens": {
+        "-OkFGFvPmtMFM8VG-Da8": {
+          "criadoEm": "2026-01-30T18:58:07.255Z",
+          "nome": "Admin",
+          "texto": "teste",
+          "timestamp": 1769799487255,
+          "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2"
+        },
+        "-OkFGJK2_5lkmN426Je8": {
+          "criadoEm": "2026-01-30T18:58:21.183Z",
+          "nome": "Kayham Cristoffer",
+          "texto": "ok",
+          "timestamp": 1769799501183,
+          "userId": "IEtDxVZXgZOP0M3R8OApILWvKTS2"
+        }
+      }
+    },
+    "-OmBWsr_17LE7PyAeAhB": {
+      "mensagens": {
+        "-OmBXAc08hPlZf2Lsp_1": {
+          "nome": "taisa",
+          "texto": "oiii quero com a maria",
+          "timestamp": 1771884296781,
+          "userId": "eHlsL4TEvrawo40lK22TZ4Anssi2"
+        }
+      }
+    }
+  },
+  "configuracoes": {
+    "horarios": {
+      "diasFuncionamento": [
+        "seg",
+        "ter",
+        "qua",
+        "qui",
+        "sex",
+        "sab"
+      ],
+      "horarioAbertura": "09:00",
+      "horarioFechamento": "19:00",
+      "intervaloAgendamento": 30
+    },
+    "notificacoes": {
+      "emailAdmin": "admin@barbearia.com",
+      "whatsappAdmin": "5511900000000"
+    },
+    "sistema": {
+      "nomeEmpresa": "Barbearia Exemplo",
+      "timeoutSessao": 3600000
+    }
+  },
+  "equipe": {
+    "membro1": {
+      "atualizadoEm": "2026-02-26T18:28:03.184Z",
+      "bio": "Profissional com mais de 5 anos de experiência em atendimento personalizado.",
+      "cargo": "Proprietário e Especialista",
+      "criadoEm": "2025-01-01T10:00:00.000Z",
+      "curtidas": 9,
+      "curtidasUsuarios": {
+        "IEtDxVZXgZOP0M3R8OApILWvKTS2": true
+      },
+      "foto": "img/kay.jpg",
+      "nome": "Kayham Cristoffer"
+    },
+    "prof_001": {
+      "ativo": true,
+      "bio": "Especialista em cortes masculinos com 10 anos de experiência",
+      "cargo": "Barbeiro",
+      "comissao": 40,
+      "criadoEm": "2026-01-15T10:00:00.000Z",
+      "curtidas": 127,
+      "especialidades": [
+        "Corte Masculino",
+        "Barba",
+        "Degradê"
+      ],
+      "foto": "https://via.placeholder.com/150",
+      "id": "prof_001",
+      "nome": "Maria Santos",
+      "telefone": "(11) 91111-2222"
+    },
+    "prof_002": {
+      "ativo": true,
+      "bio": "Cabeleireiro profissional focado em cortes modernos e estilosos",
+      "cargo": "Cabeleireiro",
+      "comissao": 35,
+      "criadoEm": "2026-01-15T10:00:00.000Z",
+      "curtidas": 98,
+      "especialidades": [
+        "Corte Feminino",
+        "Corte Masculino",
+        "Barba"
+      ],
+      "foto": "https://via.placeholder.com/150",
+      "id": "prof_002",
+      "nome": "Carlos Ferreira",
+      "telefone": "(11) 92222-3333"
+    },
+    "prof_003": {
+      "ativo": true,
+      "bio": "Colorista especializada em técnicas avançadas de coloração e mechas",
+      "cargo": "Colorista",
+      "comissao": 45,
+      "criadoEm": "2026-01-20T10:00:00.000Z",
+      "curtidas": 156,
+      "especialidades": [
+        "Coloração",
+        "Mechas",
+        "Luzes",
+        "Tratamento"
+      ],
+      "foto": "https://via.placeholder.com/150",
+      "id": "prof_003",
+      "nome": "Julia Almeida",
+      "telefone": "(11) 93333-4444"
+    }
+  },
+  "faturamento": {
+    "despesas": {
+      "desp_001": {
+        "ativo": true,
+        "criadoEm": "2026-01-01T10:00:00.000Z",
+        "data": "2026-02-05",
+        "descricao": "Aluguel do Salão",
+        "recorrente": true,
+        "tipo": "despesa",
+        "valor": 2500
+      },
+      "desp_002": {
+        "ativo": true,
+        "criadoEm": "2026-01-01T10:00:00.000Z",
+        "data": "2026-02-10",
+        "descricao": "Conta de Luz",
+        "recorrente": true,
+        "tipo": "despesa",
+        "valor": 350
+      },
+      "desp_003": {
+        "ativo": true,
+        "criadoEm": "2026-02-03T10:00:00.000Z",
+        "data": "2026-02-03",
+        "descricao": "Compra de Produtos",
+        "recorrente": false,
+        "tipo": "despesa",
+        "valor": 850
+      }
+    },
+    "despesasRecorrentes": {
+      "-OkTu8hmuYlREOQ-VdkP": {
+        "criadoEm": "2026-02-02T15:11:26.647Z",
+        "descricao": "aluguel",
+        "diaCobranca": 3,
+        "status": "ativo",
+        "ultimaCobranca": "2026-02-03T03:00:00.000Z",
+        "valor": 200
+      }
+    },
+    "extrato": {
+      "-N9Z0_ExemploConfirmado": {
+        "agendamentoId": "-N9Z0_ExemploConfirmado",
+        "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+        "criadoEm": "2026-01-30T18:53:54.467Z",
+        "data": "2025-12-20T10:30",
+        "descricao": "Agendamento - Kayham Cristoffer",
+        "tipo": "receita",
+        "valor": 50
+      },
+      "-O3A1_ExemploPendente": {
+        "agendamentoId": "-O3A1_ExemploPendente",
+        "clienteId": "KldBfi837hDkfL29Jp2s",
+        "criadoEm": "2026-01-30T18:53:54.762Z",
+        "data": "2025-12-21T17:50",
+        "descricao": "Agendamento - Maria de Souza",
+        "tipo": "receita",
+        "valor": 120
+      },
+      "-OjucHYvu9NsN8KfAn1z": {
+        "agendamentoId": "-OjucHYvu9NsN8KfAn1z",
+        "clienteId": "JdhBfj837hDkfL29Jp1s",
+        "criadoEm": "2026-01-30T18:53:55.058Z",
+        "data": "2026-01-30T15:00",
+        "descricao": "Agendamento - João da Silva",
+        "tipo": "receita",
+        "valor": 240
+      },
+      "-Ojucj5E3-6TQYf__jKN": {
+        "agendamentoId": "-Ojucj5E3-6TQYf__jKN",
+        "clienteId": "KldBfi837hDkfL29Jp2s",
+        "criadoEm": "2026-01-30T18:53:55.354Z",
+        "data": "2025-12-31T13:00",
+        "descricao": "Agendamento - Maria de Souza",
+        "tipo": "receita",
+        "valor": 50
+      },
+      "-Ok-HTK1mI3RdK93duyD": {
+        "agendamentoId": "-Ok-HTK1mI3RdK93duyD",
+        "clienteId": "KldBfi837hDkfL29Jp2s",
+        "criadoEm": "2026-01-30T18:53:55.649Z",
+        "data": "16:00",
+        "descricao": "Agendamento - Maria de Souza",
+        "tipo": "receita",
+        "valor": 150
+      },
+      "-Ok4fSF4IMUOWXPuB7fd": {
+        "agendamentoId": "-Ok4fSF4IMUOWXPuB7fd",
+        "clienteId": "KldBfi837hDkfL29Jp2s",
+        "criadoEm": "2026-01-30T18:53:55.941Z",
+        "data": "2026-01-29T11:00",
+        "descricao": "Agendamento - Maria de Souza",
+        "tipo": "receita",
+        "valor": 305
+      },
+      "-OkFFURoO3ScauHqs3en": {
+        "agendamentoId": "-OkFFURoO3ScauHqs3en",
+        "clienteId": "JdhBfj837hDkfL29Jp1s",
+        "criadoEm": "2026-01-30T18:57:59.427Z",
+        "data": "2026-02-01T17:00",
+        "descricao": "Agendamento - João da Silva",
+        "tipo": "receita",
+        "valor": 87
+      },
+      "-OkFGB3FOOb_b5qGPxc5": {
+        "agendamentoId": "-OkFGB3FOOb_b5qGPxc5",
+        "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+        "criadoEm": "2026-02-02T13:09:05.155Z",
+        "data": "2026-02-02T11:30",
+        "descricao": "Agendamento - Kayham Cristoffer",
+        "tipo": "receita",
+        "valor": 280
+      },
+      "-OkTuOo4EUygMN9_Z2Cc": {
+        "criadoEm": "2026-02-02T15:12:32.591Z",
+        "data": "2026-02-02T15:00:00.000Z",
+        "descricao": "teste",
+        "manual": true,
+        "tipo": "despesa",
+        "valor": 52
+      },
+      "-OkYlXs112fjgDKBvaKL": {
+        "criadoEm": "2026-02-03T13:51:56.488Z",
+        "data": "2026-02-03T03:00:00.000Z",
+        "descricao": "aluguel (Recorrente)",
+        "despesaRecorrenteId": "-OkTu8hmuYlREOQ-VdkP",
+        "recorrente": true,
+        "tipo": "despesa",
+        "valor": 200
+      },
+      "-Okixf6d_bLYSNk4-neC": {
+        "agendamentoId": "-Okixf6d_bLYSNk4-neC",
+        "clienteId": "JdhBfj837hDkfL29Jp1s",
+        "criadoEm": "2026-02-05T18:03:41.160Z",
+        "data": "2026-02-06T10:30",
+        "descricao": "Agendamento - João da Silva",
+        "tipo": "receita",
+        "valor": 225
+      },
+      "-OkixxCNyJZQYzyjtznJ": {
+        "agendamentoId": "-OkixxCNyJZQYzyjtznJ",
+        "clienteId": "KldBfi837hDkfL29Jp2s",
+        "criadoEm": "2026-02-05T18:03:41.455Z",
+        "data": "2026-02-07T14:00",
+        "descricao": "Agendamento - Maria de Souza",
+        "tipo": "receita",
+        "valor": 120
+      },
+      "-OlN-33omxIn0We9pqSA": {
+        "agendamentoId": "-OlN-33omxIn0We9pqSA",
+        "clienteId": "Q37XNgvfW1Wssk63P9GSQPrqbZZ2",
+        "criadoEm": "2026-02-19T13:21:50.073Z",
+        "data": "2026-02-14T11:30",
+        "descricao": "Agendamento - teste12",
+        "tipo": "receita",
+        "valor": 85
+      },
+      "-OlOOGmT8gPZ20qod6nm": {
+        "agendamentoId": "-OlOOGmT8gPZ20qod6nm",
+        "clienteId": "KldBfi837hDkfL29Jp2s",
+        "criadoEm": "2026-02-18T16:32:04.051Z",
+        "data": "2026-02-16T11:30",
+        "descricao": "Agendamento - Maria de Souza",
+        "tipo": "receita",
+        "valor": 468
+      },
+      "-OlOPHSbjp4DZ7Ir1B4m": {
+        "agendamentoId": "-OlOPHSbjp4DZ7Ir1B4m",
+        "clienteId": "JdhBfj837hDkfL29Jp1s",
+        "criadoEm": "2026-02-13T23:50:25.796Z",
+        "data": "2026-02-20T08:30",
+        "descricao": "Agendamento - João da Silva",
+        "tipo": "receita",
+        "valor": 125
+      },
+      "-Ollj398LRKRo3t_25-q": {
+        "agendamentoId": "-Ollj398LRKRo3t_25-q",
+        "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+        "criadoEm": "2026-02-19T13:21:50.935Z",
+        "data": "2026-03-07T18:00",
+        "descricao": "Agendamento - Kayham Cristoffer",
+        "tipo": "receita",
+        "valor": 700
+      },
+      "-Olq2RFT0uX-je4CB-OY": {
+        "agendamentoId": "-Olq2RFT0uX-je4CB-OY",
+        "clienteId": "IEtDxVZXgZOP0M3R8OApILWvKTS2",
+        "criadoEm": "2026-02-23T21:58:54.485Z",
+        "data": "2026-02-20T08:00",
+        "descricao": "Agendamento - Kayham Cristoffer",
+        "tipo": "receita",
+        "valor": 380
+      },
+      "-OmBWsr_17LE7PyAeAhB": {
+        "agendamentoId": "-OmBWsr_17LE7PyAeAhB",
+        "clienteId": "eHlsL4TEvrawo40lK22TZ4Anssi2",
+        "criadoEm": "2026-02-24T14:16:20.442Z",
+        "data": "2026-03-03T09:30",
+        "descricao": "Agendamento - taisa",
+        "tipo": "receita",
+        "valor": 80
+      },
+      "-P4B2_ExemploConcluido": {
+        "agendamentoId": "-P4B2_ExemploConcluido",
+        "clienteId": "JdhBfj837hDkfL29Jp1s",
+        "criadoEm": "2026-01-30T18:53:56.234Z",
+        "data": "2025-12-15T14:00",
+        "descricao": "Agendamento - João da Silva",
+        "tipo": "receita",
+        "valor": 85
+      },
+      "ext_001": {
+        "categoria": "servico",
+        "cliente": "João Silva",
+        "data": "2026-01-16T14:30:00.000Z",
+        "descricao": "Corte + Barba - Cliente João",
+        "profissional": "prof_joao",
+        "tipo": "receita",
+        "valor": 85
+      }
+    },
+    "metas": {
+      "2026-01": {
+        "alcancado": 6500,
+        "valor": 10000
+      }
+    },
+    "profissionais": {
+      "prof_joao": {
+        "comissao": 30,
+        "nome": "João Silva",
+        "periodo": "2026-01",
+        "totalAtendimentos": 45,
+        "totalComissao": 675,
+        "totalGerado": 2250
+      }
+    }
+  },
+  "produtos": {
+    "cera_modeladora": {
+      "ativo": true,
+      "categoria": "Finalizacao",
+      "criadoEm": "2026-01-15T10:00:00.000Z",
+      "descricao": "Cera modeladora efeito natural",
+      "estoque": 28,
+      "icone": "💎",
+      "nome": "Cera Modeladora",
+      "preco": 40
+    },
+    "oleo_barba": {
+      "ativo": true,
+      "categoria": "Barba",
+      "criadoEm": "2026-01-20T10:00:00.000Z",
+      "descricao": "Óleo hidratante para barba com fragrância masculina",
+      "estoque": 55,
+      "icone": "🧔",
+      "nome": "Óleo para Barba",
+      "preco": 38
+    },
+    "pomada_modeladora": {
+      "ativo": true,
+      "categoria": "Finalizacao",
+      "criadoEm": "2026-01-15T10:00:00.000Z",
+      "descricao": "Pomada modeladora para cabelos, fixação forte",
+      "estoque": 47,
+      "icone": "🛍️",
+      "nome": "Pomada Modeladora",
+      "preco": 35
+    },
+    "shampoo_anti_caspa": {
+      "ativo": true,
+      "atualizadoEm": "2026-02-18T16:32:33.746Z",
+      "categoria": "shampoo",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Shampoo para tratamento de caspa",
+      "estoque": 19,
+      "nome": "Shampoo Anti-Caspa",
+      "preco": 45
+    },
+    "shampoo_profissional": {
+      "ativo": true,
+      "atualizadoEm": "2026-02-23T22:06:47.208Z",
+      "categoria": "Higiene",
+      "criadoEm": "2026-01-15T10:00:00.000Z",
+      "descricao": "Shampoo profissional para todos os tipos de cabelo",
+      "estoque": 29,
+      "icone": "🧴",
+      "nome": "Shampoo Profissional",
+      "preco": 45
+    },
+    "teste": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-30T18:53:45.376Z",
+      "categoria": "teste",
+      "criadoEm": "2026-01-30T18:53:45.376Z",
+      "descricao": "teste",
+      "estoque": 25,
+      "icone": "🛍️",
+      "nome": "teste",
+      "preco": 2
+    }
+  },
+  "servicos": {
+    "barba": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Aparar e modelar",
+      "duracao": 20,
+      "icone": "🧔",
+      "nome": "Barba",
+      "preco": 40
+    },
+    "corte_barba": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Combo completo",
+      "duracao": 50,
+      "icone": "✂️",
+      "nome": "Corte + Barba",
+      "preco": 85
+    },
+    "corte_feminino": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Corte e finalização",
+      "duracao": 45,
+      "icone": "✂️",
+      "nome": "Corte de Cabelo Feminino",
+      "preco": 80
+    },
+    "corte_masculino": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Corte moderno e profissional",
+      "duracao": 30,
+      "icone": "✂️",
+      "nome": "Corte de Cabelo Masculino",
+      "preco": 50
+    },
+    "depilacao_corporal": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Depilação corpo inteiro",
+      "duracao": 90,
+      "icone": "🧖",
+      "nome": "Depilação Corporal",
+      "preco": 150
+    },
+    "depilacao_facial": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Depilação facial completa",
+      "duracao": 30,
+      "icone": "👩",
+      "nome": "Depilação Facial",
+      "preco": 50
+    },
+    "design_sobrancelhas": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Modelagem de sobrancelhas",
+      "duracao": 30,
+      "icone": "👁️",
+      "nome": "Design de Sobrancelhas",
+      "preco": 60
+    },
+    "limpeza_pele": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Tratamento facial completo",
+      "duracao": 90,
+      "icone": "✨",
+      "nome": "Limpeza de Pele",
+      "preco": 180
+    },
+    "manicure": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Unhas das mãos",
+      "duracao": 40,
+      "icone": "💅",
+      "nome": "Manicure",
+      "preco": 60
+    },
+    "manicure_pedicure": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Pacote completo",
+      "duracao": 90,
+      "icone": "💅",
+      "nome": "Manicure + Pedicure",
+      "preco": 120
+    },
+    "massagem_relaxante": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Massagem terapêutica",
+      "duracao": 60,
+      "icone": "💆",
+      "nome": "Massagem Relaxante",
+      "preco": 200
+    },
+    "pedicure": {
+      "ativo": true,
+      "atualizadoEm": "2026-01-16T10:00:00.000Z",
+      "criadoEm": "2026-01-16T10:00:00.000Z",
+      "descricao": "Unhas dos pés",
+      "duracao": 50,
+      "icone": "🦶",
+      "nome": "Pedicure",
+      "preco": 70
+    }
+  },
+  "usuarios": {
+    "IEtDxVZXgZOP0M3R8OApILWvKTS2": {
+      "atualizadoEm": "2026-02-19T13:19:16.588Z",
+      "criadoEm": "2025-01-01T10:00:00.000Z",
+      "email": "kayhamoliveira98@gmail.com",
+      "nome": "Kayham Cristoffer",
+      "role": "admin",
+      "telefone": "(11) 99454-6931",
+      "totalVisitas": 2,
+      "whatsapp": "(00) 10000-1111"
+    },
+    "JdhBfj837hDkfL29Jp1s": {
+      "atualizadoEm": "2026-02-13T23:50:16.275Z",
+      "criadoEm": "2025-12-01T00:00:00.000Z",
+      "email": "joao@exemplo.com",
+      "nome": "João da Silva",
+      "role": "cliente",
+      "telefone": "(11) 98888-1111",
+      "totalVisitas": 4,
+      "ultimaVisita": "2026-02-13T23:50:16.275Z",
+      "whatsapp": "(11) 98888-1111"
+    },
+    "KldBfi837hDkfL29Jp2s": {
+      "atualizadoEm": "2025-12-16T00:00:00.000Z",
+      "criadoEm": "2025-12-10T00:00:00.000Z",
+      "email": "maria@exemplo.com",
+      "nome": "Maria de Souza",
+      "role": "cliente",
+      "telefone": "(11) 99999-0000",
+      "totalVisitas": 1,
+      "whatsapp": "(11) 99999-0000"
+    },
+    "Q37XNgvfW1Wssk63P9GSQPrqbZZ2": {
+      "atualizadoEm": "2026-02-18T16:32:34.601Z",
+      "criadoEm": "2026-02-12T18:49:35.586Z",
+      "email": "teste12@email.com",
+      "nome": "teste12",
+      "nomeCompleto": "teste12",
+      "role": "cliente",
+      "telefone": "12912121212",
+      "totalVisitas": 1,
+      "ultimaVisita": "2026-02-18T16:32:34.601Z",
+      "whatsapp": "12912121212"
+    }
+  }
+}

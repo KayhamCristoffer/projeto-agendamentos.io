@@ -1,0 +1,72 @@
+{
+  "rules": {
+    "agendamentos": {
+      ".read": "auth != null",
+      "$agendamentoId": {
+        ".write": "auth != null && (
+          !data.exists() || 
+          root.child('usuarios').child(auth.uid).child('role').val() === 'admin' ||
+          data.child('clienteId').val() === auth.uid
+        )",
+        ".validate": "
+          newData.hasChildren(['clienteId', 'clienteNome', 'dataHora', 'status', 'servicos', 'precoTotal', 'duracaoTotal']) &&
+          newData.child('clienteId').isString() &&
+          newData.child('clienteNome').isString() &&
+          newData.child('dataHora').isString() &&
+          newData.child('status').isString() &&
+          (newData.child('status').val() === 'pendente' || newData.child('status').val() === 'confirmado' || newData.child('status').val() === 'concluido' || newData.child('status').val() === 'cancelado') &&
+          newData.child('servicos').hasChildren() &&
+          newData.child('precoTotal').isNumber() &&
+          newData.child('duracaoTotal').isNumber()
+        "
+      }
+    },
+    "chats": {
+      ".read": "auth != null",
+      "$agendamentoId": {
+        "mensagens": {
+          "$mensagemId": {
+            ".write": "auth != null",
+            ".validate": "
+              newData.hasChildren(['userId', 'nome', 'texto', 'timestamp']) &&
+              newData.child('userId').isString() &&
+              newData.child('nome').isString() &&
+              newData.child('texto').isString() &&
+              newData.child('timestamp').isNumber()
+            "
+          }
+        }
+      }
+    },
+    "servicos": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "produtos": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "faturamento": {
+      ".read": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "equipe": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "usuarios": {
+      ".read": "auth != null",
+      "$userId": {
+        ".write": "auth.uid === $userId || root.child('usuarios').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "
+          newData.hasChildren(['email']) &&
+          newData.child('email').isString()
+        "
+      }
+    },
+    "configuracoes": {
+      ".read": "auth != null",
+      ".write": "root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    }
+  }
+}
