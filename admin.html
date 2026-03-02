@@ -20,21 +20,26 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
   
-  <!-- Navbar -->
+  <!-- Navbar Superior (Topo) -->
   <nav class="bg-white dark:bg-gray-800 shadow-lg fixed w-full top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-3">
+          <!-- Menu Toggle (Mobile) -->
+          <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <span class="text-2xl">☰</span>
+          </button>
           <span class="text-2xl">🛠️</span>
-          <span class="text-xl font-bold text-gray-900 dark:text-white">Painel Admin</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">Admin CRM</span>
         </div>
         <div class="flex items-center space-x-4">
           <span id="nomeAdmin" class="text-gray-600 dark:text-gray-300 text-sm hidden md:block"></span>
           <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
             <span id="themeIcon" class="text-xl">🌙</span>
           </button>
-          <a href="cliente.html" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm">
-            👤 Área Cliente
+          <a href="cliente.html" class="hidden md:flex bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm items-center gap-2">
+            <span>👤</span>
+            <span>Área Cliente</span>
           </a>
           <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
             Sair
@@ -44,70 +49,117 @@
     </div>
   </nav>
 
-  <!-- Main Container -->
-  <div class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <!-- Layout: Sidebar + Conteúdo -->
+  <div class="flex h-screen pt-16">
     
-    <!-- Estatísticas -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-      <div class="bg-gradient-to-br from-purple-500 to-purple-700 text-white p-6 rounded-lg shadow-lg text-center">
-        <div id="totalAgendamentos" class="text-4xl font-bold mb-1">0</div>
-        <div class="text-sm opacity-90">Total</div>
-      </div>
-      <div class="bg-gradient-to-br from-yellow-500 to-orange-600 text-white p-6 rounded-lg shadow-lg text-center">
-        <div id="totalPendentes" class="text-4xl font-bold mb-1">0</div>
-        <div class="text-sm opacity-90">Pendentes</div>
-      </div>
-      <div class="bg-gradient-to-br from-blue-500 to-cyan-600 text-white p-6 rounded-lg shadow-lg text-center">
-        <div id="totalConfirmados" class="text-4xl font-bold mb-1">0</div>
-        <div class="text-sm opacity-90">Confirmados</div>
-      </div>
-      <div class="bg-gradient-to-br from-green-500 to-teal-600 text-white p-6 rounded-lg shadow-lg text-center">
-        <div id="totalConcluidos" class="text-4xl font-bold mb-1">0</div>
-        <div class="text-sm opacity-90">Concluídos</div>
-      </div>
-      <div class="bg-gradient-to-br from-red-500 to-pink-600 text-white p-6 rounded-lg shadow-lg text-center">
-        <div id="totalCancelados" class="text-4xl font-bold mb-1">0</div>
-        <div class="text-sm opacity-90">Cancelados</div>
-      </div>
-    </div>
+    <!-- Sidebar Lateral Esquerda -->
+    <aside id="sidebar" class="fixed lg:sticky top-16 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+      <div class="flex flex-col h-full">
+        
+        <!-- Estatísticas Compactas -->
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">Estatísticas</h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <span class="text-xs text-gray-700 dark:text-gray-300">Total</span>
+              <span id="totalAgendamentosSidebar" class="text-lg font-bold text-purple-600 dark:text-purple-400">0</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <span class="text-xs text-gray-700 dark:text-gray-300">Pendentes</span>
+              <span id="totalPendentesSidebar" class="text-lg font-bold text-orange-600 dark:text-orange-400">0</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <span class="text-xs text-gray-700 dark:text-gray-300">Confirmados</span>
+              <span id="totalConfirmadosSidebar" class="text-lg font-bold text-blue-600 dark:text-blue-400">0</span>
+            </div>
+          </div>
+        </div>
 
-    <!-- Botão Novo Agendamento -->
-    <div class="mb-6">
-      <button onclick="abrirModalNovoAgendamento()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105">
-        ➕ Novo Agendamento
-      </button>
-    </div>
+        <!-- Botão Novo Agendamento -->
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+          <button onclick="abrirModalNovoAgendamento()" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2">
+            <span>➕</span>
+            <span>Novo Agendamento</span>
+          </button>
+        </div>
 
-    <!-- Tabs -->
-    <div class="flex space-x-2 mb-6 overflow-x-auto border-b-2 border-gray-200 dark:border-gray-700">
-      <button onclick="mostrarTab('calendario')" id="tabCalendario" class="px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap">
-        📅 Calendário
-      </button>
-      <button onclick="mostrarTab('clientes')" id="tabClientes" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        👥 Clientes
-      </button>
-      <button onclick="mostrarTab('equipe')" id="tabEquipe" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        👥 Equipe
-      </button>
-      <button onclick="mostrarTab('servicos')" id="tabServicos" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        ✂️ Serviços
-      </button>
-      <button onclick="mostrarTab('produtos')" id="tabProdutos" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        🛍️ Ponto de Vendas
-      </button>
-      <button onclick="mostrarTab('faturamento')" id="tabFaturamento" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        💰 Faturamento
-      </button>
-      <button onclick="mostrarTab('pendentes')" id="tabPendentes" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        ⏳ Pendentes
-      </button>
-      <button onclick="mostrarTab('confirmados')" id="tabConfirmados" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        ✅ Confirmados
-      </button>
-      <button onclick="mostrarTab('concluidos')" id="tabConcluidos" class="px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap">
-        🎉 Concluídos
-      </button>
-    </div>
+        <!-- Menu de Navegação -->
+        <nav class="flex-1 overflow-y-auto p-4">
+          <div class="space-y-1">
+            <!-- Calendário -->
+            <button onclick="mostrarTab('calendario')" id="menuCalendario" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg bg-primary text-white font-medium transition">
+              <span class="text-xl">📅</span>
+              <span>Calendário</span>
+            </button>
+            
+            <!-- Clientes -->
+            <button onclick="mostrarTab('clientes')" id="menuClientes" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">👥</span>
+              <span>Clientes</span>
+            </button>
+            
+            <!-- Equipe -->
+            <button onclick="mostrarTab('equipe')" id="menuEquipe" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">👥</span>
+              <span>Equipe</span>
+            </button>
+            
+            <!-- Serviços -->
+            <button onclick="mostrarTab('servicos')" id="menuServicos" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">✂️</span>
+              <span>Serviços</span>
+            </button>
+            
+            <!-- Produtos -->
+            <button onclick="mostrarTab('produtos')" id="menuProdutos" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">🛍️</span>
+              <span>Ponto de Vendas</span>
+            </button>
+            
+            <!-- Faturamento -->
+            <button onclick="mostrarTab('faturamento')" id="menuFaturamento" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">💰</span>
+              <span>Faturamento</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="my-4 border-t border-gray-200 dark:border-gray-700"></div>
+            
+            <!-- Pendentes -->
+            <button onclick="mostrarTab('pendentes')" id="menuPendentes" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">⏳</span>
+              <span>Pendentes</span>
+            </button>
+            
+            <!-- Confirmados -->
+            <button onclick="mostrarTab('confirmados')" id="menuConfirmados" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">✅</span>
+              <span>Confirmados</span>
+            </button>
+            
+            <!-- Concluídos -->
+            <button onclick="mostrarTab('concluidos')" id="menuConcluidos" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">🎉</span>
+              <span>Concluídos</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Versão do Sistema (Rodapé) -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+          <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
+            Sistema v2.0.1
+          </p>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Conteúdo Principal (Direita) -->
+    <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
 
     <!-- Seção: Calendário -->
     <div id="secaoCalendario">
@@ -728,6 +780,10 @@
       </form>
     </div>
   </div>
+
+    </main>
+  </div>
+  <!-- Fim do Layout Sidebar + Conteúdo -->
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -2964,6 +3020,108 @@
       };
       return texts[status] || status;
     }
+
+    // ============================================
+    // FUNÇÕES DO SIDEBAR E LAYOUT CRM
+    // ============================================
+
+    /**
+     * Toggle Sidebar Mobile
+     */
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
+
+    /**
+     * Atualizar Estatísticas do Sidebar
+     */
+    function atualizarEstatisticasSidebar() {
+      // Copiar valores das estatísticas principais para sidebar
+      const total = document.getElementById('totalAgendamentos')?.textContent || '0';
+      const pendentes = document.getElementById('totalPendentes')?.textContent || '0';
+      const confirmados = document.getElementById('totalConfirmados')?.textContent || '0';
+      
+      const totalSidebar = document.getElementById('totalAgendamentosSidebar');
+      const pendentesSidebar = document.getElementById('totalPendentesSidebar');
+      const confirmadosSidebar = document.getElementById('totalConfirmadosSidebar');
+      
+      if (totalSidebar) totalSidebar.textContent = total;
+      if (pendentesSidebar) pendentesSidebar.textContent = pendentes;
+      if (confirmadosSidebar) confirmadosSidebar.textContent = confirmados;
+    }
+
+    /**
+     * Mostrar Tab - Adaptado para Layout CRM
+     * Atualiza tanto os botões do menu lateral quanto o conteúdo
+     */
+    const mostrarTabOriginal = mostrarTab;
+    
+    function mostrarTab(tab) {
+      // Chamar função original
+      if (typeof mostrarTabOriginal === 'function') {
+        mostrarTabOriginal(tab);
+      }
+      
+      // Atualizar menu lateral
+      const menuItems = [
+        'menuCalendario', 'menuClientes', 'menuEquipe', 'menuServicos',
+        'menuProdutos', 'menuFaturamento', 'menuPendentes', 
+        'menuConfirmados', 'menuConcluidos'
+      ];
+      
+      menuItems.forEach(itemId => {
+        const item = document.getElementById(itemId);
+        if (item) {
+          item.classList.remove('bg-primary', 'text-white', 'font-medium');
+          item.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+        }
+      });
+      
+      // Ativar item selecionado
+      const menuMap = {
+        'calendario': 'menuCalendario',
+        'clientes': 'menuClientes',
+        'equipe': 'menuEquipe',
+        'servicos': 'menuServicos',
+        'produtos': 'menuProdutos',
+        'faturamento': 'menuFaturamento',
+        'pendentes': 'menuPendentes',
+        'confirmados': 'menuConfirmados',
+        'concluidos': 'menuConcluidos'
+      };
+      
+      const activeMenuItem = document.getElementById(menuMap[tab]);
+      if (activeMenuItem) {
+        activeMenuItem.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+        activeMenuItem.classList.add('bg-primary', 'text-white', 'font-medium');
+      }
+      
+      // Fechar sidebar no mobile após clicar
+      if (window.innerWidth < 1024) {
+        toggleSidebar();
+      }
+      
+      // Scroll to top do conteúdo
+      const mainContent = document.querySelector('main');
+      if (mainContent) {
+        mainContent.scrollTop = 0;
+      }
+    }
+
+    // Atualizar estatísticas sidebar quando estatísticas principais mudarem
+    const atualizarEstatisticasOriginal = atualizarEstatisticas;
+    
+    async function atualizarEstatisticas() {
+      if (typeof atualizarEstatisticasOriginal === 'function') {
+        await atualizarEstatisticasOriginal();
+      }
+      atualizarEstatisticasSidebar();
+    }
+
 
   </script>
 </body>
