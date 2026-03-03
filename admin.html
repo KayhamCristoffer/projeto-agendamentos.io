@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Admin - Sistema de Agendamentos</title>
+  <title>CRM Admin - Sistema de Agendamentos</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -17,23 +17,35 @@
       }
     }
   </script>
+  <style>
+    /* Scrollbar customizada */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+    .dark ::-webkit-scrollbar-track { background: #2d3748; }
+    .dark ::-webkit-scrollbar-thumb { background: #4a5568; }
+  </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
   
-  <!-- Navbar Superior (Topo) -->
+  <!-- Navbar Superior -->
   <nav class="bg-white dark:bg-gray-800 shadow-lg fixed w-full top-0 z-50">
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center space-x-3">
-          <!-- Menu Toggle (Mobile) -->
           <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
             <span class="text-2xl">☰</span>
           </button>
           <span class="text-2xl">🛠️</span>
-          <span class="text-xl font-bold text-gray-900 dark:text-white">Admin CRM</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">CRM Admin</span>
         </div>
         <div class="flex items-center space-x-4">
           <span id="nomeAdmin" class="text-gray-600 dark:text-gray-300 text-sm hidden md:block"></span>
+          <!-- Botão Config Estatísticas -->
+          <button onclick="abrirModalConfigEstatisticas()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" title="Configurar Estatísticas">
+            <span class="text-xl">⚙️</span>
+          </button>
           <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
             <span id="themeIcon" class="text-xl">🌙</span>
           </button>
@@ -53,24 +65,44 @@
   <div class="flex h-screen pt-16">
     
     <!-- Sidebar Lateral Esquerda -->
-    <aside id="sidebar" class="fixed lg:sticky top-16 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+    <aside id="sidebar" class="fixed lg:sticky top-16 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
       <div class="flex flex-col h-full">
         
         <!-- Estatísticas Compactas -->
         <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">Estatísticas</h3>
-          <div class="space-y-2">
-            <div class="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-              <span class="text-xs text-gray-700 dark:text-gray-300">Total</span>
-              <span id="totalAgendamentosSidebar" class="text-lg font-bold text-purple-600 dark:text-purple-400">0</span>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Estatísticas</h3>
+          </div>
+          <div class="space-y-2" id="statsSidebar">
+            <div class="stat-item" data-stat="total">
+              <div class="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <span class="text-xs text-gray-700 dark:text-gray-300">Total</span>
+                <span id="totalAgendamentosSidebar" class="text-lg font-bold text-purple-600 dark:text-purple-400">0</span>
+              </div>
             </div>
-            <div class="flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-              <span class="text-xs text-gray-700 dark:text-gray-300">Pendentes</span>
-              <span id="totalPendentesSidebar" class="text-lg font-bold text-orange-600 dark:text-orange-400">0</span>
+            <div class="stat-item" data-stat="pendentes">
+              <div class="flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                <span class="text-xs text-gray-700 dark:text-gray-300">Pendentes</span>
+                <span id="totalPendentesSidebar" class="text-lg font-bold text-orange-600 dark:text-orange-400">0</span>
+              </div>
             </div>
-            <div class="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <span class="text-xs text-gray-700 dark:text-gray-300">Confirmados</span>
-              <span id="totalConfirmadosSidebar" class="text-lg font-bold text-blue-600 dark:text-blue-400">0</span>
+            <div class="stat-item" data-stat="confirmados">
+              <div class="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <span class="text-xs text-gray-700 dark:text-gray-300">Confirmados</span>
+                <span id="totalConfirmadosSidebar" class="text-lg font-bold text-blue-600 dark:text-blue-400">0</span>
+              </div>
+            </div>
+            <div class="stat-item" data-stat="concluidos">
+              <div class="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <span class="text-xs text-gray-700 dark:text-gray-300">Concluídos</span>
+                <span id="totalConcluidosSidebar" class="text-lg font-bold text-green-600 dark:text-green-400">0</span>
+              </div>
+            </div>
+            <div class="stat-item" data-stat="cancelados">
+              <div class="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <span class="text-xs text-gray-700 dark:text-gray-300">Cancelados</span>
+                <span id="totalCanceladosSidebar" class="text-lg font-bold text-red-600 dark:text-red-400">0</span>
+              </div>
             </div>
           </div>
         </div>
@@ -86,81 +118,60 @@
         <!-- Menu de Navegação -->
         <nav class="flex-1 overflow-y-auto p-4">
           <div class="space-y-1">
-            <!-- Calendário -->
-            <button onclick="mostrarTab('calendario')" id="menuCalendario" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg bg-primary text-white font-medium transition">
+            <button onclick="mostrarTab('calendario')" id="menuCalendario" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg bg-primary text-white font-medium transition">
               <span class="text-xl">📅</span>
               <span>Calendário</span>
             </button>
-            
-            <!-- Clientes -->
-            <button onclick="mostrarTab('clientes')" id="menuClientes" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('clientes')" id="menuClientes" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">👥</span>
               <span>Clientes</span>
             </button>
-            
-            <!-- Equipe -->
-            <button onclick="mostrarTab('equipe')" id="menuEquipe" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-              <span class="text-xl">👥</span>
+            <button onclick="mostrarTab('equipe')" id="menuEquipe" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <span class="text-xl">💼</span>
               <span>Equipe</span>
             </button>
-            
-            <!-- Serviços -->
-            <button onclick="mostrarTab('servicos')" id="menuServicos" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('servicos')" id="menuServicos" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">✂️</span>
               <span>Serviços</span>
             </button>
-            
-            <!-- Produtos -->
-            <button onclick="mostrarTab('produtos')" id="menuProdutos" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('produtos')" id="menuProdutos" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">🛍️</span>
               <span>Ponto de Vendas</span>
             </button>
-            
-            <!-- Faturamento -->
-            <button onclick="mostrarTab('faturamento')" id="menuFaturamento" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('faturamento')" id="menuFaturamento" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">💰</span>
               <span>Faturamento</span>
             </button>
-
-            <!-- Divider -->
             <div class="my-4 border-t border-gray-200 dark:border-gray-700"></div>
-            
-            <!-- Pendentes -->
-            <button onclick="mostrarTab('pendentes')" id="menuPendentes" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('pendentes')" id="menuPendentes" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">⏳</span>
               <span>Pendentes</span>
             </button>
-            
-            <!-- Confirmados -->
-            <button onclick="mostrarTab('confirmados')" id="menuConfirmados" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('confirmados')" id="menuConfirmados" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">✅</span>
               <span>Confirmados</span>
             </button>
-            
-            <!-- Concluídos -->
-            <button onclick="mostrarTab('concluidos')" id="menuConcluidos" class="w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button onclick="mostrarTab('concluidos')" id="menuConcluidos" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <span class="text-xl">🎉</span>
               <span>Concluídos</span>
             </button>
           </div>
         </nav>
 
-        <!-- Versão do Sistema (Rodapé) -->
+        <!-- Footer Sidebar -->
         <div class="p-4 border-t border-gray-200 dark:border-gray-700">
           <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
-            Sistema v2.0.1
+            v2.1.0 • Sistema CRM
           </p>
         </div>
-
       </div>
     </aside>
 
-    <!-- Overlay (Mobile) -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div>
+    <!-- Overlay para mobile -->
+    <div id="sidebarOverlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30" onclick="toggleSidebar()"></div>
 
-    <!-- Conteúdo Principal (Direita) -->
-    <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
-
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 overflow-y-auto p-6 lg:ml-0">
     <!-- Seção: Calendário -->
     <div id="secaoCalendario">
       <div class="grid md:grid-cols-2 gap-6">
@@ -238,6 +249,10 @@
         </button>
       </div>
     </div>
+    <!-- Campo de Pesquisa Clientes -->
+    <div class="mb-4">
+      <input type="text" id="searchClientes" onkeyup="pesquisarClientes(this.value)" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="🔍 Pesquisar por nome ou email...">
+    </div>
     <div id="listaClientesAdmin" class="space-y-4"></div>
     </div>
 
@@ -248,6 +263,10 @@
       <button onclick="abrirModalAdicionarMembro()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
         ➕ Adicionar Membro
       </button>
+    </div>
+    <!-- Campo de Pesquisa Equipe -->
+    <div class="mb-4">
+      <input type="text" id="searchEquipe" onkeyup="pesquisarEquipe(this.value)" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="🔍 Pesquisar por nome ou cargo...">
     </div>
     <div id="listaEquipeAdmin" class="grid md:grid-cols-3 gap-4"></div>
     </div>
@@ -265,6 +284,10 @@
           <button onclick="carregarServicosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">🔄 Atualizar</button>
         </div>
       </div>
+      <!-- Campo de Pesquisa Serviços -->
+      <div class="mb-4">
+        <input type="text" id="searchServicos" onkeyup="pesquisarServicos(this.value)" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="🔍 Pesquisar serviços...">
+      </div>
       <div id="listaServicosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
   </div>
@@ -280,6 +303,10 @@
           <button onclick="abrirModalProduto()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">➕ Adicionar</button>
           <button onclick="carregarProdutosAdmin()" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">🔄 Atualizar</button>
         </div>
+      </div>
+      <!-- Campo de Pesquisa Produtos -->
+      <div class="mb-4">
+        <input type="text" id="searchProdutos" onkeyup="pesquisarProdutos(this.value)" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="🔍 Pesquisar produtos...">
       </div>
       <div id="listaProdutosAdmin" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
@@ -314,6 +341,10 @@
           <button onclick="abrirModalNovaDespesa()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition">➕ Nova Despesa</button>
           <button onclick="abrirModalDespesasRecorrentes()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition">⚙️ Despesas Recorrentes</button>
         </div>
+      </div>
+      <!-- Campo de Pesquisa Faturamento -->
+      <div class="mb-4">
+        <input type="text" id="searchFaturamento" onkeyup="pesquisarFaturamento(this.value)" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="🔍 Pesquisar no extrato...">
       </div>
       <div class="overflow-x-auto">
         <table class="w-full">
@@ -780,10 +811,6 @@
       </form>
     </div>
   </div>
-
-    </main>
-  </div>
-  <!-- Fim do Layout Sidebar + Conteúdo -->
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -3021,108 +3048,52 @@
       return texts[status] || status;
     }
 
-    // ============================================
-    // FUNÇÕES DO SIDEBAR E LAYOUT CRM
-    // ============================================
-
-    /**
-     * Toggle Sidebar Mobile
-     */
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebarOverlay');
-      
-      sidebar.classList.toggle('-translate-x-full');
-      overlay.classList.toggle('hidden');
-    }
-
-    /**
-     * Atualizar Estatísticas do Sidebar
-     */
-    function atualizarEstatisticasSidebar() {
-      // Copiar valores das estatísticas principais para sidebar
-      const total = document.getElementById('totalAgendamentos')?.textContent || '0';
-      const pendentes = document.getElementById('totalPendentes')?.textContent || '0';
-      const confirmados = document.getElementById('totalConfirmados')?.textContent || '0';
-      
-      const totalSidebar = document.getElementById('totalAgendamentosSidebar');
-      const pendentesSidebar = document.getElementById('totalPendentesSidebar');
-      const confirmadosSidebar = document.getElementById('totalConfirmadosSidebar');
-      
-      if (totalSidebar) totalSidebar.textContent = total;
-      if (pendentesSidebar) pendentesSidebar.textContent = pendentes;
-      if (confirmadosSidebar) confirmadosSidebar.textContent = confirmados;
-    }
-
-    /**
-     * Mostrar Tab - Adaptado para Layout CRM
-     * Atualiza tanto os botões do menu lateral quanto o conteúdo
-     */
-    const mostrarTabOriginal = mostrarTab;
-    
-    function mostrarTab(tab) {
-      // Chamar função original
-      if (typeof mostrarTabOriginal === 'function') {
-        mostrarTabOriginal(tab);
-      }
-      
-      // Atualizar menu lateral
-      const menuItems = [
-        'menuCalendario', 'menuClientes', 'menuEquipe', 'menuServicos',
-        'menuProdutos', 'menuFaturamento', 'menuPendentes', 
-        'menuConfirmados', 'menuConcluidos'
-      ];
-      
-      menuItems.forEach(itemId => {
-        const item = document.getElementById(itemId);
-        if (item) {
-          item.classList.remove('bg-primary', 'text-white', 'font-medium');
-          item.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-        }
-      });
-      
-      // Ativar item selecionado
-      const menuMap = {
-        'calendario': 'menuCalendario',
-        'clientes': 'menuClientes',
-        'equipe': 'menuEquipe',
-        'servicos': 'menuServicos',
-        'produtos': 'menuProdutos',
-        'faturamento': 'menuFaturamento',
-        'pendentes': 'menuPendentes',
-        'confirmados': 'menuConfirmados',
-        'concluidos': 'menuConcluidos'
-      };
-      
-      const activeMenuItem = document.getElementById(menuMap[tab]);
-      if (activeMenuItem) {
-        activeMenuItem.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-        activeMenuItem.classList.add('bg-primary', 'text-white', 'font-medium');
-      }
-      
-      // Fechar sidebar no mobile após clicar
-      if (window.innerWidth < 1024) {
-        toggleSidebar();
-      }
-      
-      // Scroll to top do conteúdo
-      const mainContent = document.querySelector('main');
-      if (mainContent) {
-        mainContent.scrollTop = 0;
-      }
-    }
-
-    // Atualizar estatísticas sidebar quando estatísticas principais mudarem
-    const atualizarEstatisticasOriginal = atualizarEstatisticas;
-    
-    async function atualizarEstatisticas() {
-      if (typeof atualizarEstatisticasOriginal === 'function') {
-        await atualizarEstatisticasOriginal();
-      }
-      atualizarEstatisticasSidebar();
-    }
-
-
   </script>
 </body>
-</html>
+</main></div></body></html>
+
+<!-- Modal Configurar Estatísticas -->
+<div id="modalConfigEstatisticas" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white">⚙️ Configurar Estatísticas</h3>
+      <button onclick="fecharModalConfigEstatisticas()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl">×</button>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+      Escolha quais estatísticas deseja exibir na sidebar:
+    </p>
+    <div class="space-y-3">
+      <label class="flex items-center cursor-pointer">
+        <input type="checkbox" id="check_total" class="w-5 h-5 text-primary focus:ring-primary rounded">
+        <span class="ml-3 text-gray-700 dark:text-gray-300">📊 Total de Agendamentos</span>
+      </label>
+      <label class="flex items-center cursor-pointer">
+        <input type="checkbox" id="check_pendentes" class="w-5 h-5 text-primary focus:ring-primary rounded">
+        <span class="ml-3 text-gray-700 dark:text-gray-300">⏳ Pendentes</span>
+      </label>
+      <label class="flex items-center cursor-pointer">
+        <input type="checkbox" id="check_confirmados" class="w-5 h-5 text-primary focus:ring-primary rounded">
+        <span class="ml-3 text-gray-700 dark:text-gray-300">✅ Confirmados</span>
+      </label>
+      <label class="flex items-center cursor-pointer">
+        <input type="checkbox" id="check_concluidos" class="w-5 h-5 text-primary focus:ring-primary rounded">
+        <span class="ml-3 text-gray-700 dark:text-gray-300">🎉 Concluídos</span>
+      </label>
+      <label class="flex items-center cursor-pointer">
+        <input type="checkbox" id="check_cancelados" class="w-5 h-5 text-primary focus:ring-primary rounded">
+        <span class="ml-3 text-gray-700 dark:text-gray-300">❌ Cancelados</span>
+      </label>
+    </div>
+    <div class="flex gap-2 mt-6">
+      <button onclick="salvarEstatisticasConfig()" class="flex-1 bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+        ✅ Salvar
+      </button>
+      <button onclick="fecharModalConfigEstatisticas()" class="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-lg transition">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Incluir script CRM Features -->
+<script src="assets/crm-features.js"></script>
