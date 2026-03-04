@@ -270,8 +270,6 @@
     </div>
     <div id="listaEquipeAdmin" class="grid md:grid-cols-3 gap-4"></div>
     </div>
-  </div>
-  <!-- ADICIONAR ESTAS 3 SEÇÕES COMPLETAS -->
 
 <!-- Seção: Serviços -->
 <div id="secaoServicos" class="hidden">
@@ -864,20 +862,37 @@
 
     // Alternar tabs
     function mostrarTab(tab) {
+      console.log('🔄 Mostrando tab:', tab);
       // Tabs disponíveis
       const allTabs = ['calendario', 'usuarios', 'clientes', 'equipe', 'servicos', 'produtos', 'faturamento', 'pendentes', 'confirmados', 'concluidos'];
       
+      // Esconder todas as seções
       allTabs.forEach(t => {
         const secao = document.getElementById(`secao${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (secao) secao.classList.add('hidden');
-        const tabBtn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        if (tabBtn) tabBtn.className = 'px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-primary whitespace-nowrap';
       });
       
+      // Remover destaque de todos os botões do menu
+      document.querySelectorAll('.menu-item').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white', 'font-medium');
+        btn.classList.add('text-gray-700', 'dark:text-gray-300');
+      });
+      
+      // Mostrar seção ativa
       const secaoAtiva = document.getElementById(`secao${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-      if (secaoAtiva) secaoAtiva.classList.remove('hidden');
-      const tabAtiva = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-      if (tabAtiva) tabAtiva.className = 'px-6 py-3 font-semibold text-primary border-b-4 border-primary whitespace-nowrap';
+      if (secaoAtiva) {
+        secaoAtiva.classList.remove('hidden');
+        console.log('✅ Seção mostrada:', `secao${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+      } else {
+        console.error('❌ Seção não encontrada:', `secao${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+      }
+      
+      // Destacar botão ativo
+      const menuAtivo = document.getElementById(`menu${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+      if (menuAtivo) {
+        menuAtivo.classList.remove('text-gray-700', 'dark:text-gray-300');
+        menuAtivo.classList.add('bg-primary', 'text-white', 'font-medium');
+      }
       
       // Carregar dados da seção
       if (tab === 'pendentes') carregarPendentes();
@@ -896,11 +911,28 @@
         const agendamentos = await listarAgendamentosOnce();
         const todos = Object.values(agendamentos || {});
         
-        document.getElementById('totalAgendamentos').textContent = todos.length;
-        document.getElementById('totalPendentes').textContent = todos.filter(a => a.status === 'pendente').length;
-        document.getElementById('totalConfirmados').textContent = todos.filter(a => a.status === 'confirmado').length;
-        document.getElementById('totalConcluidos').textContent = todos.filter(a => a.status === 'concluido').length;
-        document.getElementById('totalCancelados').textContent = todos.filter(a => a.status === 'cancelado').length;
+        const stats = {
+          total: todos.length,
+          pendentes: todos.filter(a => a.status === 'pendente').length,
+          confirmados: todos.filter(a => a.status === 'confirmado').length,
+          concluidos: todos.filter(a => a.status === 'concluido').length,
+          cancelados: todos.filter(a => a.status === 'cancelado').length
+        };
+        
+        // Atualizar sidebar
+        const elemTotal = document.getElementById('totalAgendamentosSidebar');
+        const elemPend = document.getElementById('totalPendentesSidebar');
+        const elemConf = document.getElementById('totalConfirmadosSidebar');
+        const elemConc = document.getElementById('totalConcluidosSidebar');
+        const elemCanc = document.getElementById('totalCanceladosSidebar');
+        
+        if (elemTotal) elemTotal.textContent = stats.total;
+        if (elemPend) elemPend.textContent = stats.pendentes;
+        if (elemConf) elemConf.textContent = stats.confirmados;
+        if (elemConc) elemConc.textContent = stats.concluidos;
+        if (elemCanc) elemCanc.textContent = stats.cancelados;
+        
+        console.log('✅ Estatísticas atualizadas:', stats);
       } catch (error) {
         console.error('Erro ao atualizar estatísticas:', error);
       }
@@ -3097,3 +3129,7 @@
 
 <!-- Incluir script CRM Features -->
 <script src="assets/crm-features.js"></script>
+</main>
+  </div>
+</body>
+</html>
