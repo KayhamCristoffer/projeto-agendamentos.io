@@ -590,6 +590,18 @@
           <input type="tel" id="editClienteTelefone" required maxlength="15" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
         </div>
 
+        <!-- Cargo/Função -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cargo *</label>
+          <select id="editClienteRole" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+            <option value="cliente">👤 Cliente</option>
+            <option value="admin">🛠️ Administrador</option>
+          </select>
+          <p class="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+            ⚠️ Administradores têm acesso total ao sistema
+          </p>
+        </div>
+
         <!-- Status de Aprovação -->
         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
           <label class="flex items-center cursor-pointer">
@@ -1545,22 +1557,27 @@
           return;
         }
         
-        // Filtrar apenas clientes (role !== admin) e ordenar por data de criação
-        const clientes = Object.entries(usuariosDB)
-          .filter(([id, u]) => u.role !== 'admin')
+        // MOSTRAR TODOS os usuários (clientes E admins) e ordenar por data de criação
+        const usuarios = Object.entries(usuariosDB)
           .sort(([, a], [, b]) => {
             const dataA = new Date(a.criadoEm || 0);
             const dataB = new Date(b.criadoEm || 0);
             return dataB - dataA; // Mais recente primeiro
           });
         
-        if (clientes.length === 0) {
-          lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum cliente cadastrado</div>';
+        if (usuarios.length === 0) {
+          lista.innerHTML = '<div class="text-center py-8 text-gray-600 dark:text-gray-400">Nenhum usuário cadastrado</div>';
           return;
         }
         
-        lista.innerHTML = clientes.map(([id, u]) => `
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        lista.innerHTML = usuarios.map(([id, u]) => {
+          const isAdmin = u.role === 'admin';
+          const badgeClass = isAdmin ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+          const badgeIcon = isAdmin ? '🛠️' : '👤';
+          const badgeText = isAdmin ? 'Administrador' : 'Cliente';
+          
+          return `
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow ${isAdmin ? 'border-l-4 border-red-500' : ''}">
             <div class="flex justify-between items-start">
               <div class="flex-1">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">${u.nome || u.nomeCompleto || 'Sem nome'}</h3>
@@ -1571,8 +1588,8 @@
                   <p class="text-sm text-gray-500 dark:text-gray-400">📅 Última Visita: <span class="font-semibold">${u.ultimaVisita ? new Date(u.ultimaVisita).toLocaleDateString('pt-BR') : 'Nunca'}</span></p>
                   <p class="text-sm text-gray-500 dark:text-gray-400">📝 Cadastrado em: <span class="font-semibold">${u.criadoEm ? new Date(u.criadoEm).toLocaleDateString('pt-BR') : 'Data desconhecida'}</span></p>
                 </div>
-                <span class="inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                  👤 Cliente
+                <span class="inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold ${badgeClass}">
+                  ${badgeIcon} ${badgeText}
                 </span>
               </div>
               <div class="flex flex-col gap-2 ml-4">
@@ -1588,7 +1605,8 @@
               </div>
             </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       } catch (error) {
         console.error('Erro ao carregar clientes:', error);
         lista.innerHTML = '<div class="text-center py-8 text-red-600">Erro ao carregar clientes</div>';
@@ -1809,6 +1827,7 @@
         document.getElementById('editClienteNome').value = perfil.nome || perfil.nomeCompleto || '';
         document.getElementById('editClienteEmail').value = perfil.email || '';
         document.getElementById('editClienteTelefone').value = perfil.telefone || perfil.whatsapp || '';
+        document.getElementById('editClienteRole').value = perfil.role || 'cliente';
         document.getElementById('editClienteAprovado').checked = perfil.aprovado === true;
         document.getElementById('editClienteVisitas').value = perfil.totalVisitas || 0;
         
@@ -1858,6 +1877,7 @@
         const userId = document.getElementById('editClienteId').value;
         const nome = document.getElementById('editClienteNome').value.trim();
         const telefone = document.getElementById('editClienteTelefone').value.trim();
+        const role = document.getElementById('editClienteRole').value;
         const aprovado = document.getElementById('editClienteAprovado').checked;
         const visitas = parseInt(document.getElementById('editClienteVisitas').value) || 0;
 
@@ -1881,6 +1901,7 @@
             nomeCompleto: nome,
             telefone: telefone,
             whatsapp: telefone,
+            role: role,
             aprovado: aprovado,
             totalVisitas: visitas,
             atualizadoEm: new Date().toISOString()
@@ -1888,11 +1909,9 @@
 
           await firebase.database().ref(`usuarios/${userId}`).update(updates);
           
-          // Atualizar displayName no Authentication se possível
-          // Nota: Só funciona para o próprio usuário logado
-          // Para outros usuários, seria necessário Firebase Admin SDK no backend
+          console.log(`✅ Cliente atualizado! Role: ${role}`);
           
-          alert('✅ Cliente atualizado com sucesso!');
+          Toast?.success(`Cliente atualizado com sucesso! Cargo: ${role === 'admin' ? 'Administrador' : 'Cliente'}`);
           fecharModalEditarCliente();
           await carregarClientesAdmin();
         } catch (error) {
@@ -2711,11 +2730,18 @@
         const snapshot = await firebase.database().ref('usuarios').once('value');
         const usuarios = snapshot.val() || {};
         
+        // Mostrar TODOS os usuários (clientes E admins) para poder agendar
         select.innerHTML = '<option value="">Selecione o cliente</option>' + 
           Object.entries(usuarios)
-            .filter(([id, u]) => u.role === 'cliente')
-            .map(([id, u]) => `<option value="${id}">${u.nome || u.nomeCompleto} (${u.email})</option>`)
+            .sort(([, a], [, b]) => (a.nome || a.nomeCompleto || '').localeCompare(b.nome || b.nomeCompleto || ''))
+            .map(([id, u]) => {
+              const isAdmin = u.role === 'admin';
+              const badge = isAdmin ? ' 🛠️ [Admin]' : '';
+              return `<option value="${id}">${u.nome || u.nomeCompleto}${badge} (${u.email})</option>`;
+            })
             .join('');
+        
+        console.log('✅ Clientes carregados no select (incluindo admins):', Object.keys(usuarios).length);
       } catch (error) {
         console.error('Erro ao carregar clientes:', error);
       }
