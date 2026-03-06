@@ -530,7 +530,7 @@ exports.backupDatabase = functions.pubsub
 - **Repositório GitHub:** https://github.com/KayhamCristoffer/projeto-agendamentos.io
 - **Issues:** https://github.com/KayhamCristoffer/projeto-agendamentos.io/issues
 - **Discussions:** https://github.com/KayhamCristoffer/projeto-agendamentos.io/discussions
-- **Documentação:** README.md, README-MELHORIAS.md, TUTORIAL.md
+- **Documentação:** ANALISE_PROJETO.md, README.md, TUTORIAL.md
 
 ---
 
