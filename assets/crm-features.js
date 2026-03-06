@@ -145,6 +145,18 @@ function pesquisarFaturamento(termo) {
   });
 }
 
+// Pesquisa em Concluídos
+function pesquisarConcluidos(termo) {
+  const lista = document.getElementById('listaConcluidos');
+  if (!lista) return;
+  
+  const cards = lista.querySelectorAll('.bg-white, .bg-gray-800');
+  cards.forEach(card => {
+    const texto = card.textContent.toLowerCase();
+    card.style.display = texto.includes(termo.toLowerCase()) ? '' : 'none';
+  });
+}
+
 // Filtro de Status para Agendamentos
 function filtrarAgendamentosPorStatus(status, containerElement) {
   if (!containerElement) return;
@@ -215,5 +227,6 @@ window.pesquisarEquipe = pesquisarEquipe;
 window.pesquisarServicos = pesquisarServicos;
 window.pesquisarProdutos = pesquisarProdutos;
 window.pesquisarFaturamento = pesquisarFaturamento;
+window.pesquisarConcluidos = pesquisarConcluidos;
 window.filtrarAgendamentosPorStatus = filtrarAgendamentosPorStatus;
 window.atualizarEstatisticasSidebar = atualizarEstatisticasSidebar;

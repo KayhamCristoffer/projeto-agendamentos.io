@@ -233,6 +233,10 @@
           🔄 Atualizar
         </button>
       </div>
+      <!-- Campo de Pesquisa Concluídos -->
+      <div class="mb-4">
+        <input type="text" id="searchConcluidos" onkeyup="pesquisarConcluidos(this.value)" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white" placeholder="🔍 Pesquisar concluído por cliente, profissional ou serviço...">
+      </div>
       <div id="listaConcluidos" class="space-y-4"></div>
     </div>
 
@@ -660,6 +664,16 @@
         <div>
           <label class="block text-sm font-medium mb-2">URL da Foto</label>
           <input type="url" id="fotoMembro" placeholder="https://..." required class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">❤️ Curtidas</label>
+            <input type="number" id="curtidasMembro" min="0" value="0" class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">💰 Salário (R$)</label>
+            <input type="number" id="salarioMembro" min="0" step="0.01" value="0" placeholder="500.00" class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+          </div>
         </div>
         <div class="flex gap-2">
           <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
@@ -1967,25 +1981,35 @@
           return;
         }
         
-        lista.innerHTML = Object.entries(equipe).map(([id, m]) => `
+        lista.innerHTML = Object.entries(equipe).map(([id, m]) => {
+          const salario = m.salario ? parseFloat(m.salario).toFixed(2) : '0.00';
+          return `
           <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
             <img src="${m.foto}" class="w-32 h-32 rounded-full mx-auto mb-3 object-cover">
             <h4 class="text-center font-bold text-lg text-gray-900 dark:text-white">${m.nome}</h4>
             <p class="text-center text-sm text-primary">${m.cargo}</p>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">${m.bio}</p>
-            <div class="flex justify-between items-center mt-4">
-              <span class="text-sm">❤️ ${m.curtidas || 0} curtidas</span>
-              <div class="flex gap-2">
-                <button onclick="editarMembro('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-                  ✏️
-                </button>
-                <button onclick="deletarMembro('${id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
-                  🗑️
-                </button>
+            <div class="mt-3 space-y-1">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 dark:text-gray-400">❤️ Curtidas:</span>
+                <span class="font-semibold text-gray-900 dark:text-white">${m.curtidas || 0}</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 dark:text-gray-400">💰 Salário:</span>
+                <span class="font-semibold text-green-600 dark:text-green-400">R$ ${salario}</span>
               </div>
             </div>
+            <div class="flex justify-center gap-2 mt-4">
+              <button onclick="editarMembro('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                ✏️ Editar
+              </button>
+              <button onclick="deletarMembro('${id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                🗑️ Excluir
+              </button>
+            </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       } catch (error) {
         console.error('Erro ao carregar equipe:', error);
         lista.innerHTML = '<div class="col-span-3 text-center py-8 text-red-600">Erro ao carregar equipe</div>';
@@ -2010,7 +2034,9 @@
         nome: document.getElementById('nomeMembro').value,
         cargo: document.getElementById('cargoMembro').value,
         bio: document.getElementById('bioMembro').value,
-        foto: document.getElementById('fotoMembro').value
+        foto: document.getElementById('fotoMembro').value,
+        curtidas: parseInt(document.getElementById('curtidasMembro').value) || 0,
+        salario: parseFloat(document.getElementById('salarioMembro').value) || 0
       };
       
       try {
@@ -2043,6 +2069,8 @@
         document.getElementById('cargoMembro').value = membro.cargo || '';
         document.getElementById('bioMembro').value = membro.bio || '';
         document.getElementById('fotoMembro').value = membro.foto || '';
+        document.getElementById('curtidasMembro').value = membro.curtidas || 0;
+        document.getElementById('salarioMembro').value = membro.salario || 0;
         
         // Abrir modal
         document.getElementById('modalAdicionarMembro').classList.remove('hidden');
