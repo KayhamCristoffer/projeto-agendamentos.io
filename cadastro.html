@@ -185,7 +185,7 @@
         icon.textContent = '👁️';
       }
     }
-
+    
     // Submit do formulário
     document.getElementById('formCadastro').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -223,36 +223,39 @@
       }
 
       try {
-        console.log('🔥 Criando conta...');
-        
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
-        const user = userCredential.user;
-        
-        console.log('✅ Usuário criado no Authentication:', user.uid);
-        
-        await user.updateProfile({ displayName: nome });
-        
-        const perfilCompleto = {
-          nome: nome,
-          nomeCompleto: nome, 
-          email: email,
-          telefone: telefone,
-          whatsapp: telefone, 
-          role: 'cliente',
-          aprovado: true,
-          totalVisitas: 0,
-          criadoEm: new Date().toISOString(),
-          atualizadoEm: new Date().toISOString()
-        };
+    console.log('🔥 Criando conta...');
+    
+    // 1. Criar usuário no Authentication
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, senha);
+    const user = userCredential.user;
+    
+    // 2. Atualizar o Perfil do Firebase Auth (DisplayName)
+    await user.updateProfile({ displayName: nome });
+    
+    // 3. Montar o Objeto EXATAMENTE como o seu JSON exige
+    const perfilParaODataBase = {
+        nome: nome,
+        nomeCompleto: nome, // Importante para o painel admin
+        email: email,
+        telefone: telefone,
+        whatsapp: telefone, // Copia o telefone para o campo whatsapp
+        role: 'cliente',
+        aprovado: true,
+        totalVisitas: 0,
+        criadoEm: new Date().toISOString(),
+        atualizadoEm: new Date().toISOString(),
+        ultimaVisita: "" // Inicia vazio para novos usuários
+    };
 
-        await firebase.database().ref(`usuarios/${user.uid}`).set(perfilCompleto);
-        console.log('✅ Perfil completo salvo no Database');
-
-        Toast.success('🎉 Conta criada com sucesso! Redirecionando...');
-        
-        setTimeout(() => {
-          window.location.href = 'cliente.html';
-        }, 2000);
+    // 4. Salvar no Realtime Database
+    await firebase.database().ref(`usuarios/${user.uid}`).set(perfilParaODataBase);
+    
+    console.log('✅ Perfil completo gerado no Database');
+    Toast.success('🎉 Conta criada com sucesso! Redirecionando...');
+    
+    setTimeout(() => {
+        window.location.href = 'cliente.html';
+    }, 2000);
         
       } catch (error) {
         console.error('❌ Erro ao criar conta:', error);
